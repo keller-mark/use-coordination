@@ -13,3 +13,4 @@ sites/**/CHANGELOG.md
 RELEASE_NOTES.md
 *.tsbuildinfo
 stats.html
+packages/*/coverage/

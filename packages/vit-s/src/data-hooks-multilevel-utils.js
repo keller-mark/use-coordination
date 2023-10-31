@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
 import { extent } from 'd3-array';
-import { DataType, STATUS } from '@vitessce/constants-internal';
+import { DataType, STATUS } from '@mm-cmv/constants-internal';
 import {
   getMatchingLoader,
   useSetWarning,

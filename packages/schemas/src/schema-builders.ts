@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { fromEntries } from '@vitessce/utils';
+import { fromEntries } from '@mm-cmv/utils';
 import {
   PluginViewType,
   PluginCoordinationType,
   PluginFileType,
   PluginJointFileType,
-} from '@vitessce/plugins';
+} from '@mm-cmv/plugins';
 import {
   requestInit,
   componentCoordinationScopes,

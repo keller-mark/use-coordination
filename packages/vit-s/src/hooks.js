@@ -3,8 +3,8 @@ import {
 } from 'react';
 import { debounce, every } from 'lodash-es';
 import { extent } from 'd3-array';
-import { capitalize, fromEntries } from '@vitessce/utils';
-import { STATUS } from '@vitessce/constants-internal';
+import { capitalize, fromEntries } from '@mm-cmv/utils';
+import { STATUS } from '@mm-cmv/constants-internal';
 import { useGridResize, useEmitGridResize } from './state/hooks.js';
 import { VITESSCE_CONTAINER } from './classNames.js';
 

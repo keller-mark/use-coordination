@@ -1,7 +1,7 @@
 import React from 'react';
 import { useId } from 'react-aria';
 import { TableCell, TableRow } from '@material-ui/core';
-import { capitalize } from '@vitessce/utils';
+import { capitalize } from '@mm-cmv/utils';
 import OptionSelect from './OptionSelect.js';
 import { useStyles } from './styles.js';
 

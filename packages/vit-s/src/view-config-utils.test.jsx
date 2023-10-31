@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 import { describe, it, expect } from 'vitest';
 import React from 'react';
-import { z } from '@vitessce/schemas';
-import { PluginViewType, PluginCoordinationType } from '@vitessce/plugins';
+import { z } from '@mm-cmv/schemas';
+import { PluginViewType, PluginCoordinationType } from '@mm-cmv/plugins';
 import {
   getExistingScopesForCoordinationType,
   initialize,

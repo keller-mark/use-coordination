@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ViewType } from '@vitessce/constants-internal';
+import { ViewType } from '@mm-cmv/constants-internal';
 import { arrayToString, ViewTypesToText, getAltText } from './generate-alt-text.js';
 
 describe('Tests for generating an alt text from the vitessce config', () => {

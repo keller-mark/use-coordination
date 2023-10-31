@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-import { getNextScope } from '@vitessce/utils';
-import { CoordinationType } from '@vitessce/constants-internal';
+import { getNextScope } from '@mm-cmv/utils';
+import { CoordinationType } from '@mm-cmv/constants-internal';
 
 /**
  * Get the name of the metaCoordinationScopes coordination scope

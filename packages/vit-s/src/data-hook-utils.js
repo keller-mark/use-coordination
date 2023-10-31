@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useQuery, useQueries } from '@tanstack/react-query';
-import { capitalize, fromEntries } from '@vitessce/utils';
-import { STATUS } from '@vitessce/constants-internal';
+import { capitalize, fromEntries } from '@mm-cmv/utils';
+import { STATUS } from '@mm-cmv/constants-internal';
 import {
   getMatchingLoader,
   useMatchingLoader,

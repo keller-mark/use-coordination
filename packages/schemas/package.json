@@ -1,12 +1,7 @@
 {
-  "name": "@vitessce/schemas",
+  "name": "@mm-cmv/schemas",
   "version": "3.3.0",
-  "author": "Gehlenborg Lab",
-  "homepage": "http://vitessce.io",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vitessce/vitessce.git"
-  },
+  "author": "Mark Keller",
   "license": "MIT",
   "type": "module",
   "main": "dist-tsc/index.js",
@@ -34,10 +29,9 @@
     "@types/lodash-es": "^4.17.7",
     "@types/semver": "^7.3.13",
     "@types/uuid": "^9.0.1",
-    "@vitessce/constants": "workspace:*",
-    "@vitessce/constants-internal": "workspace:*",
-    "@vitessce/plugins": "workspace:*",
-    "@vitessce/utils": "workspace:*",
+    "@mm-cmv/constants-internal": "workspace:*",
+    "@mm-cmv/plugins": "workspace:*",
+    "@mm-cmv/utils": "workspace:*",
     "lodash-es": "^4.17.21",
     "semver": "^7.3.8",
     "uuid": "^9.0.0",

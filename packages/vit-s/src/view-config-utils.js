@@ -1,11 +1,11 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable camelcase */
 import { cloneDeep } from 'lodash-es';
-import { fromEntries, getNextScope } from '@vitessce/utils';
+import { fromEntries, getNextScope } from '@mm-cmv/utils';
 import {
   AUTO_INDEPENDENT_COORDINATION_TYPES,
   META_VERSION,
-} from '@vitessce/constants-internal';
+} from '@mm-cmv/constants-internal';
 
 export function logConfig(config, name) {
   console.groupCollapsed(`🚄 VitS (${META_VERSION.version}) ${name}`);

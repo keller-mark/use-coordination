@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { cleanup, render, screen } from '@testing-library/react';
 
 import React from 'react';
-import { PluginViewType } from '@vitessce/plugins';
+import { PluginViewType } from '@mm-cmv/plugins';
 import { VitessceGridLayout } from './VitessceGridLayout.js';
 
 afterEach(() => {

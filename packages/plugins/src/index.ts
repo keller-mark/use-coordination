@@ -54,7 +54,7 @@ export class PluginFileType<
 }
 
 // TODO: cleaning up any type requires refactoring
-// latestFileDefSchema out of @vitessce/schemas to avoid circular dependency
+// latestFileDefSchema out of @mm-cmv/schemas to avoid circular dependency
 // eslint-disable-next-line no-unused-vars
 type ExpandFunction = (a: any) => Array<any>;
 

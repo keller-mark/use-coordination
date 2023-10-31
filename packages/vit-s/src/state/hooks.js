@@ -5,8 +5,8 @@ import create from 'zustand';
 import createContext from 'zustand/context';
 import shallow from 'zustand/shallow';
 import { isMatch, merge, cloneDeep } from 'lodash-es';
-import { CoordinationType } from '@vitessce/constants-internal';
-import { fromEntries, capitalize } from '@vitessce/utils';
+import { CoordinationType } from '@mm-cmv/constants-internal';
+import { fromEntries, capitalize } from '@mm-cmv/utils';
 import {
   removeImageChannelInMetaCoordinationScopesHelper,
   addImageChannelInMetaCoordinationScopesHelper,

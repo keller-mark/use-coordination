@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 import { z } from 'zod';
 import { gte as semverGte } from 'semver';
-import { OldCoordinationType } from '@vitessce/constants';
-import { fromEntries } from '@vitessce/utils';
+import { OldCoordinationType } from '@mm-cmv/constants';
+import { fromEntries } from '@mm-cmv/utils';
 import { SCHEMA_HANDLERS, latestConfigSchema, AnyVersionConfig } from './previous-config-meta.js';
 
 export function configSchemaToVersion<T extends z.ZodTypeAny>(zodSchema: T): string {

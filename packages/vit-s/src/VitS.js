@@ -8,7 +8,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 import { isEqual } from 'lodash-es';
-import { buildConfigSchema, latestConfigSchema } from '@vitessce/schemas';
+import { buildConfigSchema, latestConfigSchema } from '@mm-cmv/schemas';
 import { muiTheme } from './shared-mui/styles.js';
 import {
   ViewConfigProvider,

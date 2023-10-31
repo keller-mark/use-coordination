@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { CoordinationType, DataType, STATUS } from '@vitessce/constants-internal';
-import { fromEntries } from '@vitessce/utils';
+import { CoordinationType, DataType, STATUS } from '@mm-cmv/constants-internal';
+import { fromEntries } from '@mm-cmv/utils';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import {
   useMultiCoordinationValues,

@@ -3,8 +3,8 @@ import {
 } from 'react';
 import { InternMap } from 'internmap';
 import { isEqual, pick } from 'lodash-es';
-import { fromEntries } from '@vitessce/utils';
-import { DATA_TYPE_COORDINATION_VALUE_USAGE } from '@vitessce/constants-internal';
+import { fromEntries } from '@mm-cmv/utils';
+import { DATA_TYPE_COORDINATION_VALUE_USAGE } from '@mm-cmv/constants-internal';
 import { getSourceAndLoaderFromFileType, getDataTypeFromFileType } from './data/loader-registry.js';
 
 /**

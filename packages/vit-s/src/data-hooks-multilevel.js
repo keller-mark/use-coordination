@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { CoordinationType } from '@vitessce/constants-internal';
-import { fromEntries } from '@vitessce/utils';
+import { CoordinationType } from '@mm-cmv/constants-internal';
+import { fromEntries } from '@mm-cmv/utils';
 import {
   useComplexCoordination,
   useComplexCoordinationSecondary,

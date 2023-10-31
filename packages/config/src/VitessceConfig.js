@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { CoordinationType } from '@vitessce/constants-internal';
-import { fromEntries, getNextScope } from '@vitessce/utils';
+import { CoordinationType } from '@mm-cmv/constants-internal';
+import { fromEntries, getNextScope } from '@mm-cmv/utils';
 
 /**
  * Class representing a file within a Vitessce config dataset.

@@ -1,12 +1,7 @@
 {
-  "name": "@vitessce/json-schema",
+  "name": "@mm-cmv/json-schema",
   "version": "3.3.0",
-  "author": "Gehlenborg Lab",
-  "homepage": "http://vitessce.io",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vitessce/vitessce.git"
-  },
+  "author": "Mark Keller",
   "license": "MIT",
   "files": [
     "dist"
@@ -15,7 +10,7 @@
     "build-json-schema": "node scripts/convert-schemas.mjs"
   },
   "dependencies": {
-    "@vitessce/schemas": "workspace:*",
+    "@mm-cmv/schemas": "workspace:*",
     "zod-to-json-schema": "^3.20.4"
   }
 }

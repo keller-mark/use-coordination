@@ -1,4 +1,4 @@
-import { ViewType } from '@vitessce/constants-internal';
+import { ViewType } from '@mm-cmv/constants-internal';
 
 /**
    * Method for converting an array with strings to a natural sentence,
