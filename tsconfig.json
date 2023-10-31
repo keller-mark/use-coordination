@@ -20,7 +20,13 @@
     "declarationMap": true
   },
   "references": [
+    { "path": "packages/config" },
+    { "path": "packages/constants" },
+    { "path": "packages/constants-internal" },
+    { "path": "packages/plugins" },
     { "path": "packages/utils" },
+    { "path": "packages/schemas" },
+    { "path": "packages/vit-s" },
     { "path": "packages/provider" },
     { "path": "packages/main/all" },
     { "path": "packages/main/dev" },
