@@ -1,0 +1,41 @@
+{
+  "name": "@mm-cmv/all",
+  "version": "1.0.11",
+  "author": "",
+  "description": "",
+  "type": "module",
+  "main": "dist-tsc/index.js",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "exports": {
+      ".": {
+        "types": "./dist-tsc/index.d.ts",
+        "import": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "src",
+    "dist",
+    "dist-tsc"
+  ],
+  "scripts": {
+    "start": "pnpm -C ../../../ run start-tsc",
+    "build": "pnpm -C ../../../ run build-tsc",
+    "bundle": "pnpm exec vite build -c ../../../scripts/vite.config.js",
+    "test": "pnpm exec vitest --run -r ../../../ --dir ."
+  },
+  "dependencies": {
+    "@mm-cmv/provider": "workspace:*",
+    "@mm-cmv/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "react": "^18.0.0",
+    "@types/react": "^18.0.28",
+    "vitest": "^0.23.4"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  }
+}

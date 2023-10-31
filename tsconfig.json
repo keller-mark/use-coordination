@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "jsx": "react-jsx",
+    "moduleResolution": "Node",
+    "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "declaration": true,
+    "declarationMap": true
+  },
+  "references": [
+    { "path": "packages/utils" },
+    { "path": "packages/provider" },
+    { "path": "packages/main/all" },
+    { "path": "packages/main/dev" },
+    { "path": "packages/main/prod" }
+  ],
+  "files": []
+}
