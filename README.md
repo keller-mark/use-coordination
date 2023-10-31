@@ -1,6 +1,6 @@
 # mmCMV
 
-A library for Coordinated Multiple Views in React-based visualization systems.
+A library for coordinated multiple views in React-based visualization systems.
 
 
 ## Usage
