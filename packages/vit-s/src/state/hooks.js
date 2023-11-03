@@ -343,6 +343,17 @@ export function useInitialCoordination(parameters, coordinationScopes) {
   return values;
 }
 
+export function useCoordinationProps(viewUid) {
+  const layout = useViewConfigStore((state) => {
+    const { layout } = state.viewConfig;
+    return layout;
+  }, shallow);
+
+  return useMemo(() => {
+    return layout.find(v => v.uid === viewUid).coordinationScopes;
+  }, [layout, viewUid])
+}
+
 /**
  * The useCoordination hook returns both the
  * values and setter functions for the coordination objects

@@ -46,6 +46,7 @@ export function VitS(props) {
     jointFileTypes: jointFileTypesProp,
     coordinationTypes: coordinationTypesProp,
     warning,
+    children,
   } = props;
 
   const viewTypes = useMemo(() => (viewTypesProp || []), [viewTypesProp]);
@@ -191,7 +192,9 @@ export function VitS(props) {
                 height={height}
                 theme={theme}
                 isBounded={isBounded}
-              />
+              >
+                {children}
+              </VitessceGrid>
               <CallbackPublisher
                 onWarn={onWarn}
                 onConfigChange={onConfigChange}

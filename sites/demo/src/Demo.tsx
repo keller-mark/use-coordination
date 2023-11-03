@@ -34,7 +34,6 @@ const EnabledLink = styled(SingleLineLink as any)`
 ` as typeof Link;
 
 
-
 export default function Demo() {
 
   return (

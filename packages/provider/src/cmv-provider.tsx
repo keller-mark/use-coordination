@@ -1,5 +1,5 @@
 import React from 'react';
-import { VitS, useCoordination, TitleInfo } from '@mm-cmv/vit-s';
+import { VitS, useCoordination, useCoordinationProps, TitleInfo } from '@mm-cmv/vit-s';
 import * as Plugins from '@mm-cmv/plugins';
 import { z } from 'zod';
 
@@ -19,11 +19,15 @@ const MyPluginSlider = ({
 }
 
 const MyPluginSliderSubscriber = ({
-  coordinationScopes,
-  removeGridComponent,
-  theme,
-  title = 'My plugin slider',
+  viewUid,
+  //coordinationScopes,
+  //removeGridComponent,
+  //theme,
+  //title = 'My plugin slider',
 }: any) => {
+
+  const coordinationScopes = useCoordinationProps(viewUid);
+
   const [{
     myCustomCoordinationType,
   }, {
@@ -35,12 +39,10 @@ const MyPluginSliderSubscriber = ({
     coordinationScopes,
   );
   return (
-    <TitleInfo title={title} theme={theme} removeGridComponent={removeGridComponent} isReady >
-      <MyPluginSlider
-        myCustomCoordinationType={myCustomCoordinationType}
-        setMyCustomCoordinationType={setMyCustomCoordinationType}
-      />
-    </TitleInfo>
+    <MyPluginSlider
+      myCustomCoordinationType={myCustomCoordinationType}
+      setMyCustomCoordinationType={setMyCustomCoordinationType}
+    />
   );
 }
 
@@ -72,6 +74,7 @@ const config = {
   },
   layout: [
     {
+      uid: "slider1",
       component: "myCustomSlider",
       coordinationScopes: {
         myCustomCoordinationType: "B",
@@ -79,6 +82,7 @@ const config = {
       x: 0, y: 6, w: 6, h: 6
     },
     {
+      uid: "slider2",
       component: "myCustomSlider",
       coordinationScopes: {
         myCustomCoordinationType: "A",
@@ -86,6 +90,7 @@ const config = {
       x: 6, y: 0, w: 6, h: 6
     },
     {
+      uid: "slider3",
       component: "myCustomSlider",
       coordinationScopes: {
         myCustomCoordinationType: "A",
@@ -95,6 +100,8 @@ const config = {
   ],
   initStrategy: "auto"
 };
+
+
 
 
 export function CmvProvider(props: any) {
@@ -109,7 +116,17 @@ export function CmvProvider(props: any) {
         theme="light"
         viewTypes={pluginViewTypes}
         coordinationTypes={pluginCoordinationTypes}
-      /> 
+      >
+        <div style={{ height: '200px', width: '300px' }}>
+          <MyPluginSliderSubscriber viewUid="slider1" />
+        </div>
+        <div style={{ height: '200px', width: '300px' }}>
+          <MyPluginSliderSubscriber viewUid="slider2" />
+        </div>
+        <div style={{ height: '200px', width: '300px' }}>
+          <MyPluginSliderSubscriber viewUid="slider3" />
+        </div>
+      </VitS> 
     </>
   );
 }

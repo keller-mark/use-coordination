@@ -50,6 +50,7 @@ export default function VitessceGrid(props) {
     viewTypes,
     fileTypes,
     coordinationTypes,
+    children,
   } = props;
 
   const [rowHeight, containerRef] = useRowHeight(config, initialRowHeight, height, margin, padding);
@@ -100,6 +101,8 @@ export default function VitessceGrid(props) {
     setLoaders(newLoaders);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success, configKey]);
+
+  return children;
 
   return (
     <div
