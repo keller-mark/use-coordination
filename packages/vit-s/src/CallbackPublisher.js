@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useViewConfigStoreApi, useLoaders, useWarning } from './state/hooks.js';
+import { useViewConfigStoreApi, useWarning } from './state/hooks.js';
 
 
 function validateViewConfig(viewConfig, pluginSpecificConfigSchema) {
@@ -29,13 +29,11 @@ export default function CallbackPublisher(props) {
   const {
     onWarn,
     onConfigChange,
-    onLoaderChange,
     validateOnConfigChange,
     pluginSpecificConfigSchema,
   } = props;
 
   const warning = useWarning();
-  const loaders = useLoaders();
 
   const viewConfigStoreApi = useViewConfigStoreApi();
 
@@ -64,13 +62,6 @@ export default function CallbackPublisher(props) {
       onWarn(warning);
     }
   }, [warning, onWarn]);
-
-  // Emit updates to the loaders.
-  useEffect(() => {
-    if (onLoaderChange && loaders) {
-      onLoaderChange(loaders);
-    }
-  }, [loaders, onLoaderChange]);
 
   // Render nothing.
   return null;

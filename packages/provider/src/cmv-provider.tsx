@@ -1,5 +1,5 @@
 import React from 'react';
-import { VitS, useCoordination, useCoordinationProps, TitleInfo } from '@mm-cmv/vit-s';
+import { VitS, useCoordination, useCoordinationProps } from '@mm-cmv/vit-s';
 import * as Plugins from '@mm-cmv/plugins';
 import { z } from 'zod';
 
@@ -20,10 +20,6 @@ const MyPluginSlider = ({
 
 const MyPluginSliderSubscriber = ({
   viewUid,
-  //coordinationScopes,
-  //removeGridComponent,
-  //theme,
-  //title = 'My plugin slider',
 }: any) => {
 
   const coordinationScopes = useCoordinationProps(viewUid);
@@ -49,10 +45,6 @@ const MyPluginSliderSubscriber = ({
 
 const pluginCoordinationTypes = [
   new Plugins.PluginCoordinationType('myCustomCoordinationType', 0.75, z.number()),
-];
-const pluginViewTypes = [
-  new Plugins.PluginViewType('myCustomSlider', MyPluginSliderSubscriber, ['myCustomCoordinationType']),
-  //new Plugins.PluginViewType('description', Description.DescriptionSubscriber, ['dataset']),
 ];
 
 const config = {
@@ -88,14 +80,8 @@ const config = {
 export function CmvProvider(props: any) {
   return (
     <>
-      <p>
-        mmCMV provider
-      </p>
       <VitS
         config={config}
-        height={400}
-        theme="light"
-        viewTypes={pluginViewTypes}
         coordinationTypes={pluginCoordinationTypes}
       >
         <div style={{ height: '200px', width: '300px' }}>

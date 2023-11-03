@@ -19,8 +19,6 @@ export function VitS(props) {
     onLoaderChange,
     validateConfig = true,
     validateOnConfigChange = false,
-    uid = null,
-    viewTypes: viewTypesProp,
     fileTypes: fileTypesProp,
     jointFileTypes: jointFileTypesProp,
     coordinationTypes: coordinationTypesProp,
@@ -28,7 +26,6 @@ export function VitS(props) {
     children,
   } = props;
 
-  const viewTypes = useMemo(() => (viewTypesProp || []), [viewTypesProp]);
   const fileTypes = useMemo(() => (fileTypesProp || []), [fileTypesProp]);
   const jointFileTypes = useMemo(
     () => (jointFileTypesProp || []),
@@ -57,8 +54,8 @@ export function VitS(props) {
     fileTypes,
     jointFileTypes,
     coordinationTypes,
-    viewTypes,
-  ), [viewTypes, fileTypes, jointFileTypes, coordinationTypes]);
+    null, // TODO(cmv): remove param
+  ), [fileTypes, jointFileTypes, coordinationTypes]);
 
   // Process the view config and memoize the result:
   // - Validate.
