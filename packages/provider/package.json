@@ -25,12 +25,16 @@
   },
   "dependencies": {
     "@mm-cmv/utils": "workspace:*",
+    "@mm-cmv/vit-s": "workspace:*",
+    "@mm-cmv/plugins": "workspace:*",
+    "@mm-cmv/schemas": "workspace:*",
     "@mui/material": "^5.14.10",
     "@mui/icons-material": "^5.14.11",
     "@mui/x-data-grid": "^6.16.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@tanstack/react-query": "^4.35.3"
+    "@tanstack/react-query": "^4.35.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.28"

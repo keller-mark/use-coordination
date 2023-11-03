@@ -255,9 +255,18 @@ importers:
       '@emotion/styled':
         specifier: ^11.11.0
         version: 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.24)(react@16.14.0)
+      '@mm-cmv/plugins':
+        specifier: workspace:*
+        version: link:../plugins
+      '@mm-cmv/schemas':
+        specifier: workspace:*
+        version: link:../schemas
       '@mm-cmv/utils':
         specifier: workspace:*
         version: link:../utils
+      '@mm-cmv/vit-s':
+        specifier: workspace:*
+        version: link:../vit-s
       '@mui/icons-material':
         specifier: ^5.14.11
         version: 5.14.11(@mui/material@5.14.10)(@types/react@18.2.24)(react@16.14.0)
@@ -273,6 +282,9 @@ importers:
       react:
         specifier: ^16.8.0 || ^17.0.0 || ^18.0.0
         version: 16.14.0
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
     devDependencies:
       '@types/react':
         specifier: ^18.0.28
@@ -280,6 +292,9 @@ importers:
 
   packages/schemas:
     dependencies:
+      '@mm-cmv/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@mm-cmv/constants-internal':
         specifier: workspace:*
         version: link:../constants-internal
@@ -6974,8 +6989,8 @@ packages:
     resolution: {integrity: sha512-sXOGON+WNTh3MLE9rve97ftaZukN3oNf2KjDy7YTx6hcTO2uuLHuCGynMDhFwGw/jYf4OJ2Qk0i4i79qMNNkyw==}
     engines: {node: '>=12'}
     peerDependencies:
-      react: ^18.0.0 || 18
-      react-dom: ^18.0.0 || 18
+      react: ^18.0.0
+      react-dom: ^18.0.0
     dependencies:
       '@babel/runtime': 7.23.1
       '@testing-library/dom': 8.20.0
@@ -14234,8 +14249,8 @@ packages:
   /react-aria@3.28.0(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-M0R12U5X83zktim4V/4le7KEV4REu25yDr6zOwRFOTXwILLxYsmWnaajX7ye5da84tl4kDjYoJIKJWVNvhjNoA==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || 18
-      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || 18
+      react: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0-rc.1 || ^18.0.0
     dependencies:
       '@react-aria/breadcrumbs': 3.5.7(react@18.2.0)
       '@react-aria/button': 3.8.4(react@18.2.0)

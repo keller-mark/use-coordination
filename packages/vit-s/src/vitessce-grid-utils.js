@@ -4,8 +4,9 @@ import {
 import { InternMap } from 'internmap';
 import { isEqual, pick } from 'lodash-es';
 import { fromEntries } from '@mm-cmv/utils';
-import { DATA_TYPE_COORDINATION_VALUE_USAGE } from '@mm-cmv/constants-internal';
 import { getSourceAndLoaderFromFileType, getDataTypeFromFileType } from './data/loader-registry.js';
+
+const DATA_TYPE_COORDINATION_VALUE_USAGE = {};
 
 /**
  * Return the bottom coordinate of the layout.

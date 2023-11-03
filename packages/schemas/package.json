@@ -29,6 +29,7 @@
     "@types/lodash-es": "^4.17.7",
     "@types/semver": "^7.3.13",
     "@types/uuid": "^9.0.1",
+    "@mm-cmv/constants": "workspace:*",
     "@mm-cmv/constants-internal": "workspace:*",
     "@mm-cmv/plugins": "workspace:*",
     "@mm-cmv/utils": "workspace:*",
