@@ -1,4 +1,4 @@
-export { VitS } from './VitS.js';
+export { MmCmv } from './VitS.js';
 export {
   useCoordinationScopes,
   useCoordinationScopesBy,
@@ -12,8 +12,6 @@ export {
   useMultiCoordinationScopesSecondary,
   useMultiCoordinationScopesSecondaryNonNull,
   useMultiCoordinationValues,
-  useMultiDatasetCoordination,
-  useDatasetUids,
   useViewConfigStore,
   useViewConfigStoreApi,
 } from './state/hooks.js';

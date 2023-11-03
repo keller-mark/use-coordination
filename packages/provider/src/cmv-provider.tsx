@@ -1,5 +1,5 @@
 import React from 'react';
-import { VitS, useCoordination, useCoordinationProps } from '@mm-cmv/vit-s';
+import { MmCmv, useCoordination, useCoordinationProps } from '@mm-cmv/vit-s';
 import * as Plugins from '@mm-cmv/plugins';
 import { z } from 'zod';
 
@@ -42,7 +42,6 @@ const MyPluginSliderSubscriber = ({
   );
 }
 
-
 const pluginCoordinationTypes = [
   new Plugins.PluginCoordinationType('myCustomCoordinationType', 0.75, z.number()),
 ];
@@ -80,7 +79,7 @@ const config = {
 export function CmvProvider(props: any) {
   return (
     <>
-      <VitS
+      <MmCmv
         config={config}
         coordinationTypes={pluginCoordinationTypes}
       >
@@ -93,7 +92,7 @@ export function CmvProvider(props: any) {
         <div style={{ height: '200px', width: '300px' }}>
           <MyPluginSliderSubscriber viewUid="slider3" />
         </div>
-      </VitS> 
+      </MmCmv> 
     </>
   );
 }
