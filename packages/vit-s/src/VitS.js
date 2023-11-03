@@ -3,20 +3,13 @@ import {
   ThemeProvider,
   StylesProvider,
 } from '@material-ui/core';
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
 import { isEqual } from 'lodash-es';
 import { buildConfigSchema, latestConfigSchema } from '@mm-cmv/schemas';
 import { muiTheme } from './shared-mui/styles.js';
 import {
   ViewConfigProvider,
   createViewConfigStore,
-  AuxiliaryProvider,
-  createAuxiliaryStore,
 } from './state/hooks.js';
-
 import VitessceGrid from './VitessceGrid.js';
 import { Warning } from './Warning.js';
 import CallbackPublisher from './CallbackPublisher.js';
@@ -31,15 +24,12 @@ export function VitS(props) {
   const {
     config,
     stores,
-    rowHeight,
-    height,
     theme,
     onWarn,
     onConfigChange,
     onLoaderChange,
     validateConfig = true,
     validateOnConfigChange = false,
-    isBounded = false,
     uid = null,
     viewTypes: viewTypesProp,
     fileTypes: fileTypesProp,
@@ -139,15 +129,6 @@ export function VitS(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey, configVersion, pluginSpecificConfigSchema, warning]);
 
-  const queryClient = useMemo(() => new QueryClient({
-    // Reference: https://tanstack.com/query/latest/docs/react/guides/window-focus-refetching
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        retry: 2,
-      },
-    },
-  }), [configKey]);
 
   // Emit the upgraded/initialized view config
   // to onConfigChange if necessary.
@@ -176,37 +157,22 @@ export function VitS(props) {
   }, [success, configKey]);
 
   return success ? (
-    <StylesProvider generateClassName={generateClassName}>
-      <ThemeProvider theme={muiTheme[theme]}>
-        <QueryClientProvider client={queryClient}>
-          <ViewConfigProvider key={configKey} createStore={createViewConfigStoreClosure}>
-            <AuxiliaryProvider createStore={createAuxiliaryStore}>
-              <VitessceGrid
-                success={success}
-                configKey={configKey}
-                viewTypes={viewTypes}
-                fileTypes={fileTypes}
-                coordinationTypes={coordinationTypes}
-                config={configOrWarning}
-                rowHeight={rowHeight}
-                height={height}
-                theme={theme}
-                isBounded={isBounded}
-              >
-                {children}
-              </VitessceGrid>
-              <CallbackPublisher
-                onWarn={onWarn}
-                onConfigChange={onConfigChange}
-                onLoaderChange={onLoaderChange}
-                validateOnConfigChange={validateOnConfigChange}
-                pluginSpecificConfigSchema={pluginSpecificConfigSchema}
-              />
-            </AuxiliaryProvider>
-          </ViewConfigProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
-    </StylesProvider>
+    <ViewConfigProvider key={configKey} createStore={createViewConfigStoreClosure}>
+        <VitessceGrid
+          success={success}
+          configKey={configKey}
+          config={configOrWarning}
+        >
+          {children}
+        </VitessceGrid>
+        <CallbackPublisher
+          onWarn={onWarn}
+          onConfigChange={onConfigChange}
+          onLoaderChange={onLoaderChange}
+          validateOnConfigChange={validateOnConfigChange}
+          pluginSpecificConfigSchema={pluginSpecificConfigSchema}
+        />
+    </ViewConfigProvider>
   ) : (
     <StylesProvider generateClassName={generateClassName}>
       <ThemeProvider theme={muiTheme[theme]}>
