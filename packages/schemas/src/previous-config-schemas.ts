@@ -257,3 +257,17 @@ export const configSchema1_0_16 = configSchema1_0_13.extend({
     }),
   ),
 });
+
+export const configSchema1_0_17 = z.object({
+  coordinationSpace: coordinationSpaceSchema.optional(),
+  viewCoordination: z.record(
+    z.object({
+      // Updates coordinationScopes and coordinationScopesBy
+      coordinationScopes: componentCoordinationScopes
+        .optional(),
+      coordinationScopesBy: componentCoordinationScopesBy
+        .optional(),
+    }),
+  ),
+  initStrategy: initStrategySchema,
+});

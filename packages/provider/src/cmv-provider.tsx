@@ -56,48 +56,29 @@ const pluginViewTypes = [
 ];
 
 const config = {
-  name: "test",
-  description: "This is a test of using vit-s with plugin views and coordination types!",
-  version: "1.0.16",
-  datasets: [
-    {
-      uid: "my-dataset",
-      name: "My dataset",
-      files: [],
-    }
-  ],
   coordinationSpace: {
     "myCustomCoordinationType": {
       "A": 0.5,
       "B": 0.75,
     }
   },
-  layout: [
-    {
-      uid: "slider1",
-      component: "myCustomSlider",
+  viewCoordination: {
+    slider1: {
       coordinationScopes: {
         myCustomCoordinationType: "B",
       },
-      x: 0, y: 6, w: 6, h: 6
     },
-    {
-      uid: "slider2",
-      component: "myCustomSlider",
+    slider2: {
       coordinationScopes: {
         myCustomCoordinationType: "A",
       },
-      x: 6, y: 0, w: 6, h: 6
     },
-    {
-      uid: "slider3",
-      component: "myCustomSlider",
+    slider3: {
       coordinationScopes: {
         myCustomCoordinationType: "A",
       },
-      x: 6, y: 6, w: 6, h: 6
-    }
-  ],
+    },
+  },
   initStrategy: "auto"
 };
 

@@ -10,16 +10,6 @@ export function configSchemaToVersion<T extends z.ZodTypeAny>(zodSchema: T): str
   return ((zodSchema as unknown) as z.AnyZodObject).shape.version._def.value;
 }
 
-export const VERSIONED_CONFIG_SCHEMAS: Record<string, z.ZodTypeAny> = {
-  ...fromEntries(SCHEMA_HANDLERS.map(([zodSchema]) => {
-    // eslint-disable-next-line no-underscore-dangle
-    const version = configSchemaToVersion(zodSchema);
-    return [version, zodSchema];
-  })),
-  // eslint-disable-next-line no-underscore-dangle
-  [latestConfigSchema.shape.version._def.value]: latestConfigSchema,
-};
-
 /**
  * Check for deprecated coordination types.
  * @param {object} config The parsed config.
@@ -49,39 +39,4 @@ function refineCoordinationTypes(config: AnyVersionConfig, ctx: z.RefinementCtx)
       // TODO: check config.layout[].coordinationScopes also?
     });
   }
-}
-
-// Run upgrade, then parse against the latest schema built against the registered plugins.
-export function upgradeAndParse(
-  config: any,
-  onConfigUpgrade: ((a: any, b: any) => void)|null = null,
-): z.infer<typeof latestConfigSchema> {
-  // If this is the latest schema version, then no upgrading required.
-  if (config?.version === latestConfigSchema.shape.version.value) {
-    return latestConfigSchema.parse(config);
-  }
-  // Otherwise, do an upgrade (potentially multiple).
-  // eslint-disable-next-line no-underscore-dangle
-  const versions: string[] = SCHEMA_HANDLERS.map(([zodSchema]) => configSchemaToVersion(zodSchema));
-  if (versions.includes(config?.version)) {
-    const versionIndex = versions.indexOf(config.version);
-    let upgradable = SCHEMA_HANDLERS[versionIndex][0];
-    SCHEMA_HANDLERS.slice(versionIndex, SCHEMA_HANDLERS.length).forEach((versionInfo) => {
-      upgradable = upgradable
-        .superRefine(refineCoordinationTypes)
-        .transform((prevConfig) => {
-          const nextConfig = versionInfo[1](prevConfig);
-          if (typeof onConfigUpgrade === 'function') {
-            onConfigUpgrade(prevConfig, nextConfig);
-          }
-          return nextConfig;
-        });
-    });
-    upgradable = upgradable.pipe(latestConfigSchema);
-    return upgradable.parse(config);
-  }
-  if (typeof config === 'object' && !('version' in config)) {
-    throw new Error('Missing version');
-  }
-  throw new Error('Config version was not recognized');
 }

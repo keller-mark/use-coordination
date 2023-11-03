@@ -104,26 +104,6 @@ export function buildConfigSchema<
 
   // TODO: make this less redundant with latestSchema from ./previous-base-schemas
   return z.object({
-    // eslint-disable-next-line no-underscore-dangle
-    version: z.literal(configSchemaToVersion(latestConfigSchema))
-      .describe('The schema version for the view config.'),
-    uid: z.string().optional(),
-    name: z.string(),
-    public: z.boolean().optional(),
-    description: z.string().optional(),
-    datasets: z.array(
-      z.object({
-        uid: z.string(),
-        name: z.string().optional(),
-        description: z.string().optional(),
-        files: z.array(
-          fileDefs,
-        ),
-      }),
-    )
-      .describe(
-        'The datasets array defines groups of files, where the files within each dataset reference the same entities (cells, genes, cell sets, etc).',
-      ),
     // Merge with coordination type schemas.
     coordinationSpace: z.object(
       // Wrap each value schema in z.record()
@@ -146,24 +126,8 @@ export function buildConfigSchema<
         'The coordination space stores the values for each scope of each coordination object.',
       )
       .optional(),
-    layout: z.array(
+    viewCoordination: z.record(
       z.object({
-        uid: z.string()
-          .describe(
-            'A unique identifier for the view, to refer to it in getter and setter functions in object-oriented contexts.',
-          )
-          .optional(),
-        component: toEnum(pluginViewTypes.map(vt => vt.name))
-          .describe(
-            'Specify a component using a name defined in the component registry.',
-          ),
-        props: z.record(z.any())
-          .describe('Extra prop values for the component.')
-          .optional(),
-        x: z.number().int(),
-        y: z.number().int(),
-        w: z.number().int().optional(),
-        h: z.number().int().optional(),
         coordinationScopes: componentCoordinationScopes
           .optional(),
         coordinationScopesBy: componentCoordinationScopesBy

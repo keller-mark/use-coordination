@@ -1,7 +1,6 @@
 export { buildConfigSchema } from './schema-builders.js';
 export { latestConfigSchema } from './previous-config-meta.js';
 export { latestFileDefSchema } from './previous-config-schemas.js';
-export { upgradeAndParse, VERSIONED_CONFIG_SCHEMAS } from './view-config-versions.js';
 export { rasterJsonSchema } from './raster-json.js';
 export {
   obsEmbeddingCsvSchema,

@@ -13,9 +13,6 @@ import {
   implicitPerDatasetCoordinations,
   explicitPerDatasetCoordinations,
 } from './view-config-utils.test.fixtures.js';
-import {
-  upgradeAndParse,
-} from './view-config-versions.js';
 
 describe('src/app/view-config-utils.js', () => {
   describe('upgrade', () => {
@@ -30,10 +27,6 @@ describe('src/app/view-config-utils.js', () => {
     it('upgrade view config from v1.0.9 to v1.0.16', () => {
       expect(upgradeFrom1_0_15(implicitPerDatasetCoordinations))
         .toEqual(explicitPerDatasetCoordinations);
-    });
-    it('upgrades more than once', () => {
-      const latestConfig = upgradeAndParse(legacyViewConfig1_0_0);
-      expect(latestConfig.version).toEqual('1.0.16');
     });
   });
 });

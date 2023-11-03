@@ -1,30 +1,19 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
-import {
-  ThemeProvider,
-  StylesProvider,
-} from '@material-ui/core';
 import { isEqual } from 'lodash-es';
-import { buildConfigSchema, latestConfigSchema } from '@mm-cmv/schemas';
-import { muiTheme } from './shared-mui/styles.js';
+import { buildConfigSchema } from '@mm-cmv/schemas';
 import {
   ViewConfigProvider,
   createViewConfigStore,
 } from './state/hooks.js';
 import VitessceGrid from './VitessceGrid.js';
-import { Warning } from './Warning.js';
 import CallbackPublisher from './CallbackPublisher.js';
 import {
-  initialize,
   logConfig,
 } from './view-config-utils.js';
-import { createLoaders } from './vitessce-grid-utils.js';
-import { createGenerateClassName } from './mui-utils.js';
 
 export function VitS(props) {
   const {
     config,
-    stores,
-    theme,
     onWarn,
     onConfigChange,
     onLoaderChange,
@@ -49,8 +38,6 @@ export function VitS(props) {
     () => (coordinationTypesProp || []),
     [coordinationTypesProp],
   );
-
-  const generateClassName = useMemo(() => createGenerateClassName(uid), [uid]);
 
   const configVersion = config?.version;
 
@@ -86,7 +73,7 @@ export function VitS(props) {
     if (!validateConfig) {
       return [config, true];
     }
-    const result = latestConfigSchema.safeParse(config);
+    const result = { success: true, data: config };
     if (result.success) {
       const upgradedConfig = result.data;
       logConfig(upgradedConfig, 'parsed view config');
@@ -96,12 +83,14 @@ export function VitS(props) {
       if (pluginSpecificResult.success) {
         try {
           const upgradedConfigWithValidPlugins = pluginSpecificResult.data;
-          const initializedConfig = initialize(
+          /*const initializedConfig = initialize(
             upgradedConfigWithValidPlugins,
             jointFileTypes,
             coordinationTypes,
             viewTypes,
-          );
+          );*/
+          // TODO(cmv): initialize?
+          const initializedConfig = upgradedConfigWithValidPlugins;
           logConfig(initializedConfig, 'initialized view config');
           return [initializedConfig, true];
         } catch (e) {
@@ -142,13 +131,7 @@ export function VitS(props) {
   // Initialize the view config and loaders in the global state.
   const createViewConfigStoreClosure = useCallback(() => {
     if (success) {
-      const loaders = createLoaders(
-        configOrWarning.datasets,
-        configOrWarning.description,
-        fileTypes,
-        coordinationTypes,
-        stores,
-      );
+      const loaders = null;
       return createViewConfigStore(loaders, configOrWarning);
     }
     // No config found, so clear the loaders.
@@ -156,6 +139,7 @@ export function VitS(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success, configKey]);
 
+  // TODO(cmv): just throw normal error. parent can use ErrorBoundary.
   return success ? (
     <ViewConfigProvider key={configKey} createStore={createViewConfigStoreClosure}>
         <VitessceGrid
@@ -174,10 +158,10 @@ export function VitS(props) {
         />
     </ViewConfigProvider>
   ) : (
-    <StylesProvider generateClassName={generateClassName}>
-      <ThemeProvider theme={muiTheme[theme]}>
-        <Warning {...configOrWarning} />
-      </ThemeProvider>
-    </StylesProvider>
+    <>
+      <h1>{configOrWarning.title}</h1>
+      {configOrWarning.preformatted ? (<pre>{configOrWarning.preformatted}</pre>) : null}
+      <p>{configOrWarning.unformatted}</p>
+    </>
   );
 }

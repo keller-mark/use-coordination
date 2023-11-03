@@ -344,14 +344,14 @@ export function useInitialCoordination(parameters, coordinationScopes) {
 }
 
 export function useCoordinationProps(viewUid) {
-  const layout = useViewConfigStore((state) => {
-    const { layout } = state.viewConfig;
-    return layout;
+  const viewCoordination = useViewConfigStore((state) => {
+    const { viewCoordination } = state.viewConfig;
+    return viewCoordination;
   }, shallow);
 
   return useMemo(() => {
-    return layout.find(v => v.uid === viewUid).coordinationScopes;
-  }, [layout, viewUid])
+    return viewCoordination[viewUid].coordinationScopes;
+  }, [viewCoordination, viewUid])
 }
 
 /**
