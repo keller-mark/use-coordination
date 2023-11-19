@@ -1,4 +1,5 @@
 export { CmvProvider } from './CmvProvider.js';
+export { ZodCmvProvider } from './ZodCmvProvider.js';
 export {
   useCoordinationScopes,
   useCoordinationScopesBy,

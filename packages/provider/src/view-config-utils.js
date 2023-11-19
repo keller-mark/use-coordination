@@ -8,7 +8,7 @@ import {
 } from '@mm-cmv/constants-internal';
 
 export function logConfig(config, name) {
-  console.groupCollapsed(`🚄 VitS (${META_VERSION.version}) ${name}`);
+  console.groupCollapsed(`🚄 mmCMV (${META_VERSION.version}) ${name}`);
   console.info(`data:,${JSON.stringify(config)}`);
   console.info(JSON.stringify(config, null, 2));
   console.groupEnd();

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useCallback } from 'react';
 import { isEqual } from 'lodash-es';
-import { buildConfigSchema } from '@mm-cmv/schemas';
 import {
   ViewConfigProvider,
   createViewConfigStore,
@@ -16,25 +15,10 @@ export function CmvProvider(props) {
     config,
     onWarn,
     onConfigChange,
-    onLoaderChange,
-    validateConfig = true,
     validateOnConfigChange = false,
-    fileTypes: fileTypesProp,
-    jointFileTypes: jointFileTypesProp,
-    coordinationTypes: coordinationTypesProp,
-    warning,
+    validateViewConfig = null,
     children,
   } = props;
-
-  const fileTypes = useMemo(() => (fileTypesProp || []), [fileTypesProp]);
-  const jointFileTypes = useMemo(
-    () => (jointFileTypesProp || []),
-    [jointFileTypesProp],
-  );
-  const coordinationTypes = useMemo(
-    () => (coordinationTypesProp || []),
-    [coordinationTypesProp],
-  );
 
   const configVersion = config?.version;
 
@@ -50,70 +34,16 @@ export function CmvProvider(props) {
     return JSON.stringify(config);
   }, [config]);
 
-  const pluginSpecificConfigSchema = useMemo(() => buildConfigSchema(
-    fileTypes,
-    jointFileTypes,
-    coordinationTypes,
-    null, // TODO(cmv): remove param
-  ), [fileTypes, jointFileTypes, coordinationTypes]);
-
   // Process the view config and memoize the result:
   // - Validate.
   // - Upgrade, if legacy schema.
   // - Validate after upgrade, if legacy schema.
   // - Initialize (based on initStrategy).
   const [configOrWarning, success] = useMemo(() => {
-    if (warning) {
-      return [warning, false];
-    }
-    logConfig(config, 'input view config');
-    if (!validateConfig) {
-      return [config, true];
-    }
-    const result = { success: true, data: config };
-    if (result.success) {
-      const upgradedConfig = result.data;
-      logConfig(upgradedConfig, 'parsed view config');
-      // Perform second round of parsing against plugin-specific config schema.
-      const pluginSpecificResult = pluginSpecificConfigSchema.safeParse(upgradedConfig);
-      // Initialize the view config according to the initStrategy.
-      if (pluginSpecificResult.success) {
-        try {
-          const upgradedConfigWithValidPlugins = pluginSpecificResult.data;
-          /*const initializedConfig = initialize(
-            upgradedConfigWithValidPlugins,
-            jointFileTypes,
-            coordinationTypes,
-            viewTypes,
-          );*/
-          // TODO(cmv): initialize?
-          const initializedConfig = upgradedConfigWithValidPlugins;
-          logConfig(initializedConfig, 'initialized view config');
-          return [initializedConfig, true];
-        } catch (e) {
-          return [
-            {
-              title: 'Config initialization failed.',
-              unformatted: e.message,
-            },
-            false,
-          ];
-        }
-      }
-      return [
-        {
-          title: 'Config validation failed on second pass.',
-          unformatted: pluginSpecificResult.error.message,
-        },
-        false,
-      ];
-    }
-    return [{
-      title: 'Config validation failed on first pass.',
-      unformatted: result.error.message,
-    }, result.success];
+    logConfig(config, 'CmvProvider input config');
+    return [config, true];
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, configVersion, pluginSpecificConfigSchema, warning]);
+  }, [configKey, configVersion]);
 
 
   // Emit the upgraded/initialized view config
@@ -149,9 +79,8 @@ export function CmvProvider(props) {
         <CallbackPublisher
           onWarn={onWarn}
           onConfigChange={onConfigChange}
-          onLoaderChange={onLoaderChange}
           validateOnConfigChange={validateOnConfigChange}
-          pluginSpecificConfigSchema={pluginSpecificConfigSchema}
+          validateViewConfig={validateViewConfig}
         />
     </ViewConfigProvider>
   ) : (
