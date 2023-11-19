@@ -97,10 +97,6 @@ export function buildConfigSchema<
   pluginCoordinationTypes: Array<T3>,
   pluginViewTypes: Array<PluginViewType>,
 ) {
-  const fileTypeSchemas = [...pluginFileTypes, ...pluginJointFileTypes]
-    .map(ft => buildFileDefSchema(ft.name, ft.optionsSchema));
-
-  const fileDefs = toFileDefUnion(fileTypeSchemas);
 
   // TODO: make this less redundant with latestSchema from ./previous-base-schemas
   return z.object({

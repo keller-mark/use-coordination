@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core';
-import { VITESSCE_CONTAINER } from './classNames.js';
 
 const useStyles = makeStyles(theme => ({
   warningLayout: {
@@ -47,7 +46,7 @@ export function Warning(props) {
   } = props;
   const classes = useStyles();
   return (
-    <div className={VITESSCE_CONTAINER}>
+    <div className="vitessce-container">
       <div className={clsx(classes.warningLayout, classes.containerFluid)}>
         <div className={classes.row}>
           <div className={classes.warningCard}>
