@@ -9,7 +9,7 @@ import {
 } from './state/hooks.js';
 
 /**
- * The wrapper for the VitessceGrid and LoadingIndicator components.
+ * The wrapper for the views.
  * @param {object} props
  * @param {number} props.rowHeight The height of each grid row. Optional.
  * @param {object} props.config The view config.
@@ -20,9 +20,8 @@ import {
  * @param {PluginFileType[]} props.fileTypes
  * @param {PluginCoordinationType[]} props.coordinationTypes
  */
-export default function VitessceGrid(props) {
+export default function ViewWrapper(props) {
   const {
-    success,
     configKey,
     config,
     children,
@@ -36,13 +35,9 @@ export default function VitessceGrid(props) {
   // the store has already been initialized with a view config,
   // and we want to replace it with a new view config.
   useEffect(() => {
-    let newConfig = null;
-    if (success) {
-      newConfig = config;
-    }
-    setViewConfig(newConfig);
+    setViewConfig(config);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [success, configKey]);
+  }, [configKey]);
 
   return children;
 }
