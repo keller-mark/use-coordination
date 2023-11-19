@@ -11,7 +11,7 @@ import {
   logConfig,
 } from './view-config-utils.js';
 
-export function MmCmv(props) {
+export function CmvProvider(props) {
   const {
     config,
     onWarn,

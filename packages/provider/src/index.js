@@ -1,4 +1,4 @@
-export { MmCmv } from './VitS.js';
+export { CmvProvider } from './CmvProvider.js';
 export {
   useCoordinationScopes,
   useCoordinationScopesBy,

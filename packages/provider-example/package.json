@@ -1,0 +1,48 @@
+{
+  "name": "@mm-cmv/provider-example",
+  "version": "1.0.11",
+  "description": "",
+  "type": "module",
+  "main": "dist-tsc/index.js",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "exports": {
+      ".": {
+        "types": "./dist-tsc/index.d.ts",
+        "import": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "src",
+    "dist",
+    "dist-tsc"
+  ],
+  "scripts": {
+    "bundle": "pnpm exec vite build -c ../../scripts/vite.config.js",
+    "test": "pnpm exec vitest --run -r ../../ --dir ."
+  },
+  "dependencies": {
+    "@mm-cmv/utils": "workspace:*",
+    "@mm-cmv/provider": "workspace:*",
+    "@mm-cmv/plugins": "workspace:*",
+    "@mm-cmv/schemas": "workspace:*",
+    "@mui/material": "^5.14.10",
+    "@mui/icons-material": "^5.14.11",
+    "@mui/x-data-grid": "^6.16.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@tanstack/react-query": "^4.35.3",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

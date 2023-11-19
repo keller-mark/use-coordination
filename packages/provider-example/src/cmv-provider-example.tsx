@@ -1,5 +1,5 @@
 import React from 'react';
-import { MmCmv, useCoordination, useCoordinationProps } from '@mm-cmv/vit-s';
+import { CmvProvider, useCoordination, useCoordinationProps } from '@mm-cmv/provider';
 import * as Plugins from '@mm-cmv/plugins';
 import { z } from 'zod';
 
@@ -76,10 +76,10 @@ const config = {
 
 
 
-export function CmvProvider(props: any) {
+export function CmvProviderExample(props: any) {
   return (
     <>
-      <MmCmv
+      <CmvProvider
         config={config}
         coordinationTypes={pluginCoordinationTypes}
       >
@@ -92,7 +92,7 @@ export function CmvProvider(props: any) {
         <div style={{ height: '200px', width: '300px' }}>
           <MyPluginSliderSubscriber viewUid="slider3" />
         </div>
-      </MmCmv> 
+      </CmvProvider> 
     </>
   );
 }

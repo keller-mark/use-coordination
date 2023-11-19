@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@mm-cmv/provider": "workspace:*",
+    "@mm-cmv/provider-example": "workspace:*",
     "@mm-cmv/utils": "workspace:*"
   },
   "devDependencies": {
