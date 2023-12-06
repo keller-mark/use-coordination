@@ -1,8 +1,9 @@
+const path = require('path');
 module.exports = {
   title: 'mmCMV',
   tagline: 'Example repo',
-  url: 'https://mm-cmv.com',
-  baseUrl: '/',
+  url: 'https://keller-mark.github.io',
+  baseUrl: '/mm-cmv/',
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
@@ -25,6 +26,12 @@ module.exports = {
           label: 'Docs',
           position: 'left',
         },
+        {
+          href: 'https://github.com/keller-mark/mm-cmv',
+          position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
+        },
       ]
     }
   },
@@ -40,7 +47,9 @@ module.exports = {
           showReadingTime: true,
         },
         theme: {
-          customCss: [],
+          customCss: [
+            require.resolve('./src/css/custom.css'),
+          ],
         },
       },
     ],

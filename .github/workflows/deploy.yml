@@ -60,9 +60,15 @@ jobs:
           pnpm run build-demo
           touch dist/.nojekyll
           cd -
+      - name: Build docs site
+        run: |
+          cd sites/docs
+          pnpm run build-root
+          touch dist-root/.nojekyll
+          cd -
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: sites/demo/dist
+          path: sites/docs/dist-root
   deploy:
     runs-on: ubuntu-latest
     permissions:
