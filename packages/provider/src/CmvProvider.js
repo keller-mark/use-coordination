@@ -9,10 +9,10 @@ import CallbackPublisher from './CallbackPublisher.js';
 export function CmvProvider(props) {
   const {
     config,
-    onWarn,
     onConfigChange,
     validateOnConfigChange = false,
     validateViewConfig = null,
+    initializer = null,
     children,
   } = props;
 
@@ -40,10 +40,12 @@ export function CmvProvider(props) {
 
   // Initialize the view config and loaders in the global state.
   const createViewConfigStoreClosure = useCallback(() => {
-    const loaders = null;
-    return createViewConfigStore(loaders, config);
+    const initializedConfig = initializer
+      ? initializer(config)
+      : config;
+    return createViewConfigStore(initializedConfig);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey]);
+  }, [configKey, initializer]);
 
   // TODO(cmv): just throw normal error. parent can use ErrorBoundary.
   return (
@@ -55,7 +57,6 @@ export function CmvProvider(props) {
           {children}
         </ViewWrapper>
         <CallbackPublisher
-          onWarn={onWarn}
           onConfigChange={onConfigChange}
           validateOnConfigChange={validateOnConfigChange}
           validateViewConfig={validateViewConfig}

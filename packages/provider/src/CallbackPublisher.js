@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useViewConfigStoreApi, useWarning } from './state/hooks.js';
+import { useViewConfigStoreApi } from './state/hooks.js';
 
 
 /**
@@ -16,13 +16,11 @@ import { useViewConfigStoreApi, useWarning } from './state/hooks.js';
  */
 export default function CallbackPublisher(props) {
   const {
-    onWarn,
     onConfigChange,
     validateViewConfig,
     validateOnConfigChange,
   } = props;
 
-  const warning = useWarning();
 
   const viewConfigStoreApi = useViewConfigStoreApi();
 
@@ -44,13 +42,6 @@ export default function CallbackPublisher(props) {
     // we want to subscribe to.
     state => state.viewConfig,
   ), [onConfigChange, validateViewConfig, validateOnConfigChange, viewConfigStoreApi]);
-
-  // Emit updates to the warning message.
-  useEffect(() => {
-    if (onWarn && warning) {
-      onWarn(warning);
-    }
-  }, [warning, onWarn]);
 
   // Render nothing.
   return null;

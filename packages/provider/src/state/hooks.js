@@ -129,7 +129,7 @@ export function getParameterScopeBy(
  * - https://github.com/pmndrs/zustand#using-subscribe-with-selector
  * @returns {function} The useStore hook.
  */
-export const createViewConfigStore = (initialLoaders, initialConfig) => create(set => ({
+export const createViewConfigStore = (initialConfig) => create(set => ({
   // State:
   // The viewConfig is an object which must conform to the schema
   // found in src/schemas/config.schema.json.
@@ -138,7 +138,6 @@ export const createViewConfigStore = (initialLoaders, initialConfig) => create(s
   initialViewConfig: cloneDeep(initialConfig),
   // The loaders object is a mapping from dataset ID to
   // data type to loader object instance.
-  loaders: initialLoaders,
   // Reducer functions which update the state
   // (although technically also part of state):
   setViewConfig: viewConfig => set({ viewConfig, initialViewConfig: viewConfig }),

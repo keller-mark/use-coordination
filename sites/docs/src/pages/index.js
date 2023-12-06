@@ -18,11 +18,12 @@ export default function Index() {
         </div>
       </header>
       <main>
-        <section className="">
+        <section style={{ margin: '20px'}}>
           <h3>Installation</h3>
           <pre>
             npm install mm-cmv
           </pre>
+          <h3>Demo</h3>
           <CmvProviderExample />
         </section>
       </main>

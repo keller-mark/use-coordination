@@ -8,13 +8,10 @@ const MyPluginSlider = ({
   setMyCustomCoordinationType,
 }: any) => {
   function handleChange(e: any) {
-
-    setMyCustomCoordinationType(e.target.value);
+    setMyCustomCoordinationType(parseFloat(e.target.value));
   }
   return (
-    <p>
-      <input type="range" min={0} max={1} step={0.01} value={myCustomCoordinationType} onChange={handleChange} />
-    </p>
+    <input type="range" min={0} max={1} step={0.01} value={myCustomCoordinationType} onChange={handleChange} />
   );
 }
 
@@ -46,11 +43,13 @@ const pluginCoordinationTypes = [
   new Plugins.PluginCoordinationType('myCustomCoordinationType', 0.75, z.number()),
 ];
 
-const config = {
+const initialConfig = {
+  uid: 1,
   coordinationSpace: {
     "myCustomCoordinationType": {
       "A": 0.5,
       "B": 0.75,
+      "C": 0.25
     }
   },
   viewCoordination: {
@@ -70,29 +69,107 @@ const config = {
       },
     },
   },
-  initStrategy: "auto"
 };
 
+class ErrorBoundary extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
+  static getDerivedStateFromError(error: { message: any; name: any; }) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true, name: error.name, message: error.message };
+  }
 
+  render() {
+    if (this.state.hasError) {
+      return (
+        <>
+          <h1>{this.state.name}</h1>
+          <pre>{this.state.message}</pre>
+        </>
+      );
+    }
 
-export function CmvProviderExample(props: any) {
+    return this.props.children;
+  }
+}
+
+function SelectScope(props: any) {
+  const {
+    config,
+    viewUid,
+    cType = "myCustomCoordinationType",
+    onConfigChange,
+  } = props;
+
+  const allScopes = Object.keys(config.coordinationSpace[cType]);
+
+  function handleChange(event: any) {
+    const newScope = event.target.value;
+    const newConfig = {
+      ...config,
+      uid: config.uid + 1,
+      viewCoordination: {
+        ...config.viewCoordination,
+        [viewUid]: {
+          ...config.viewCoordination[viewUid],
+          coordinationScopes: {
+            ...config.viewCoordination[viewUid].coordinationScopes,
+            [cType]: newScope,
+          },
+        },
+      },
+    };
+    onConfigChange(newConfig)
+  }
+
   return (
     <>
-      <ZodCmvProvider
-        config={config}
-        coordinationTypes={pluginCoordinationTypes}
-      >
-        <div style={{ height: '200px', width: '300px' }}>
-          <MyPluginSliderSubscriber viewUid="slider1" />
-        </div>
-        <div style={{ height: '200px', width: '300px' }}>
-          <MyPluginSliderSubscriber viewUid="slider2" />
-        </div>
-        <div style={{ height: '200px', width: '300px' }}>
-          <MyPluginSliderSubscriber viewUid="slider3" />
-        </div>
-      </ZodCmvProvider> 
+      <label>Coordination scope for {viewUid}:&nbsp;</label>
+      <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]}>
+        {allScopes.map((scope: any) => (
+          <option key={scope} value={scope}>{scope}</option>
+        ))}
+      </select>
+    </>
+  )
+}
+
+export function CmvProviderExample(props: any) {
+  const [config, setConfig] = React.useState<any>(initialConfig);
+  return (
+    <>
+      <style>{`
+        .slider-container {
+          display: flex;
+          flex-direction: row;
+        }
+      `}</style>
+      <ErrorBoundary>
+        <ZodCmvProvider
+          config={config}
+          coordinationTypes={pluginCoordinationTypes}
+          onConfigChange={setConfig}
+        >
+          <div className="slider-container">
+            <MyPluginSliderSubscriber viewUid="slider1" />
+            <SelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <MyPluginSliderSubscriber viewUid="slider2" />
+            <SelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <MyPluginSliderSubscriber viewUid="slider3" />
+            <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
+          </div>
+        </ZodCmvProvider>
+        <pre>
+          {JSON.stringify(config, null, 2)}
+        </pre>
+      </ErrorBoundary>
     </>
   );
 }

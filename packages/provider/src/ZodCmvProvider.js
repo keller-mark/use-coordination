@@ -13,24 +13,15 @@ export function ZodCmvProvider(props) {
     onConfigChange,
     validateConfig = true,
     validateOnConfigChange = false,
-    fileTypes: fileTypesProp,
-    jointFileTypes: jointFileTypesProp,
     coordinationTypes: coordinationTypesProp,
-    warning,
+    initializer = null,
     children,
   } = props;
 
-  const fileTypes = useMemo(() => (fileTypesProp || []), [fileTypesProp]);
-  const jointFileTypes = useMemo(
-    () => (jointFileTypesProp || []),
-    [jointFileTypesProp],
-  );
   const coordinationTypes = useMemo(
     () => (coordinationTypesProp || []),
     [coordinationTypesProp],
   );
-
-  const configVersion = config?.version;
 
   // If config.uid exists, then use it for hook dependencies to detect changes
   // (controlled component case). If not, then use the config object itself
@@ -45,79 +36,35 @@ export function ZodCmvProvider(props) {
   }, [config]);
 
   const pluginSpecificConfigSchema = useMemo(() => buildConfigSchema(
-    fileTypes,
-    jointFileTypes,
     coordinationTypes,
-    null, // TODO(cmv): remove param
-  ), [fileTypes, jointFileTypes, coordinationTypes]);
+  ), [coordinationTypes]);
 
   // Process the view config and memoize the result:
   // - Validate.
   // - Upgrade, if legacy schema.
   // - Validate after upgrade, if legacy schema.
   // - Initialize (based on initStrategy).
-  const [configOrWarning, success] = useMemo(() => {
-    if (warning) {
-      return [warning, false];
-    }
+  const validConfig = useMemo(() => {
     logConfig(config, 'ZodCmvProvider input config');
     if (!validateConfig) {
-      return [config, true];
+      return config;
     }
-    const result = { success: true, data: config };
-    if (result.success) {
-      const upgradedConfig = result.data;
-      logConfig(upgradedConfig, 'ZodCmvProvider parsed config');
-      // Perform second round of parsing against plugin-specific config schema.
-      const pluginSpecificResult = pluginSpecificConfigSchema.safeParse(upgradedConfig);
-      // Initialize the view config according to the initStrategy.
-      if (pluginSpecificResult.success) {
-        try {
-          const upgradedConfigWithValidPlugins = pluginSpecificResult.data;
-          /*const initializedConfig = initialize(
-            upgradedConfigWithValidPlugins,
-            jointFileTypes,
-            coordinationTypes,
-            viewTypes,
-          );*/
-          // TODO(cmv): initialize?
-          const initializedConfig = upgradedConfigWithValidPlugins;
-          logConfig(initializedConfig, 'ZodCmvProvider initialized config');
-          return [initializedConfig, true];
-        } catch (e) {
-          return [
-            {
-              title: 'Config initialization failed.',
-              unformatted: e.message,
-            },
-            false,
-          ];
-        }
-      }
-      return [
-        {
-          title: 'Config validation failed on second pass.',
-          unformatted: pluginSpecificResult.error.message,
-        },
-        false,
-      ];
-    }
-    return [{
-      title: 'Config validation failed on first pass.',
-      unformatted: result.error.message,
-    }, result.success];
+    // Perform second round of parsing against plugin-specific config schema.
+    const parsedConfig = pluginSpecificConfigSchema.parse(config);
+    logConfig(parsedConfig, 'ZodCmvProvider parsed config');
+    return parsedConfig;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, configVersion, pluginSpecificConfigSchema, warning]);
+  }, [configKey, pluginSpecificConfigSchema, validateConfig]);
 
 
   // Emit the upgraded/initialized view config
   // to onConfigChange if necessary.
   useEffect(() => {
-    if (success && !isEqual(configOrWarning, config) && onConfigChange) {
-      onConfigChange(configOrWarning);
+    if (!isEqual(validConfig, config) && onConfigChange) {
+      onConfigChange(validConfig);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [success, configKey, configOrWarning, onConfigChange]);
+  }, [configKey, validConfig, onConfigChange]);
 
   const validateViewConfig = useCallback((viewConfig) => {
     // Need the try-catch here since Zustand will actually
@@ -130,23 +77,16 @@ export function ZodCmvProvider(props) {
     // Do nothing if successful.
   }, [pluginSpecificConfigSchema]);
 
-  // TODO(cmv): just throw normal error. parent can use ErrorBoundary.
-  return success ? (
+  return (
     <CmvProvider
-      config={configOrWarning}
+      config={validConfig}
       onWarn={onWarn}
       onConfigChange={onConfigChange}
-      warning={configOrWarning}
       validateOnConfigChange={validateOnConfigChange}
       validateViewConfig={validateViewConfig}
+      initializer={initializer}
     >
       {children}
     </CmvProvider>
-  ) : (
-    <>
-      <h1>{configOrWarning.title}</h1>
-      {configOrWarning.preformatted ? (<pre>{configOrWarning.preformatted}</pre>) : null}
-      <p>{configOrWarning.unformatted}</p>
-    </>
   );
 }
