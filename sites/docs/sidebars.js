@@ -10,7 +10,11 @@ module.exports = {
     },
     {
       type: 'doc',
-      id: 'components',
+      id: 'provider-components',
+    },
+    {
+      type: 'doc',
+      id: 'view-hooks',
     },
     {
       type: 'doc',

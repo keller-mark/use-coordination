@@ -1,5 +1,10 @@
 import React from 'react';
-import { ZodCmvProvider, useCoordination, useCoordinationProps } from '@mm-cmv/provider';
+import {
+  ZodCmvProvider,
+  useCoordination,
+  useCoordinationProps,
+  useCoordinationScopes,
+} from '@mm-cmv/provider';
 import * as Plugins from '@mm-cmv/plugins';
 import { z } from 'zod';
 
@@ -19,7 +24,9 @@ const MyPluginSliderSubscriber = ({
   viewUid,
 }: any) => {
 
-  const coordinationScopes = useCoordinationProps(viewUid);
+  const coordinationScopesRaw = useCoordinationProps(viewUid);
+  // Support meta-coordination.
+  const coordinationScopes = useCoordinationScopes(coordinationScopesRaw);
 
   const [{
     myCustomCoordinationType,
@@ -139,6 +146,82 @@ function SelectScope(props: any) {
 
 export function CmvProviderExample(props: any) {
   const [config, setConfig] = React.useState<any>(initialConfig);
+  return (
+    <>
+      <style>{`
+        .slider-container {
+          display: flex;
+          flex-direction: row;
+        }
+      `}</style>
+      <ErrorBoundary>
+        <ZodCmvProvider
+          config={config}
+          coordinationTypes={pluginCoordinationTypes}
+          onConfigChange={setConfig}
+        >
+          <div className="slider-container">
+            <MyPluginSliderSubscriber viewUid="slider1" />
+            <SelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <MyPluginSliderSubscriber viewUid="slider2" />
+            <SelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <MyPluginSliderSubscriber viewUid="slider3" />
+            <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
+          </div>
+        </ZodCmvProvider>
+        <pre>
+          {JSON.stringify(config, null, 2)}
+        </pre>
+      </ErrorBoundary>
+    </>
+  );
+}
+
+const initialMetaConfig = {
+  uid: 1,
+  coordinationSpace: {
+    "myCustomCoordinationType": {
+      "A": 0.5,
+      "B": 0.75,
+      "C": 0.25
+    },
+    metaCoordinationScopes: {
+      A: {
+        myCustomCoordinationType: "B",
+      },
+      B: {
+        myCustomCoordinationType: "A",
+      },
+      C: {
+        myCustomCoordinationType: "A",
+      }
+    }
+  },
+  viewCoordination: {
+    slider1: {
+      coordinationScopes: {
+        metaCoordinationScopes: "A",
+      },
+    },
+    slider2: {
+      coordinationScopes: {
+        metaCoordinationScopes: "B",
+      },
+    },
+    slider3: {
+      coordinationScopes: {
+        metaCoordinationScopes: "C",
+      },
+    },
+  },
+};
+
+export function MetaCoordinationExample(props: any) {
+  const [config, setConfig] = React.useState<any>(initialMetaConfig);
   return (
     <>
       <style>{`
