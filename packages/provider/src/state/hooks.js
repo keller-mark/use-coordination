@@ -4,7 +4,7 @@ import { useRef, useCallback, useMemo } from 'react';
 import create from 'zustand';
 import createContext from 'zustand/context';
 import shallow from 'zustand/shallow';
-import { isMatch, merge, cloneDeep } from 'lodash-es';
+import { merge, cloneDeep } from 'lodash-es';
 import { CoordinationType } from '@mm-cmv/constants-internal';
 import { fromEntries, capitalize } from '@mm-cmv/utils';
 import {
@@ -243,7 +243,10 @@ export function useCoordinationProps(viewUid) {
   }, shallow);
 
   return useMemo(() => {
-    return viewCoordination[viewUid].coordinationScopes;
+    return {
+      coordinationScopes: viewCoordination?.[viewUid]?.coordinationScopes,
+      coordinationScopesBy: viewCoordination?.[viewUid]?.coordinationScopesBy,
+    };
   }, [viewCoordination, viewUid])
 }
 
@@ -535,7 +538,9 @@ export function useComplexCoordination(
  * @param {object} coordinationScopes The original coordinationScopes passed to the view.
  * @returns {object} The coordinationScopes after filling in with meta-coordinationScopes.
  */
-export function useCoordinationScopes(coordinationScopes) {
+export function useCoordinationScopes(viewUid) {
+  const { coordinationScopes } = useCoordinationProps(viewUid);
+
   const metaSpace = useViewConfigStore((state) => {
     const { coordinationSpace } = state.viewConfig;
     return coordinationSpace?.[CoordinationType.META_COORDINATION_SCOPES];
@@ -559,7 +564,11 @@ export function useCoordinationScopes(coordinationScopes) {
  * @param {object} coordinationScopesBy The original coordinationScopesBy passed to the view.
  * @returns {object} The coordinationScopesBy after filling in with meta-coordinationScopesBy.
  */
-export function useCoordinationScopesBy(coordinationScopes, coordinationScopesBy) {
+export function useCoordinationScopesBy(viewUid) {
+  const coordinationScopes = useCoordinationScopes(viewUid);
+  const { coordinationScopesBy } = useCoordinationProps(viewUid);
+  
+
   const metaSpaceBy = useViewConfigStore((state) => {
     const { coordinationSpace } = state.viewConfig;
     return coordinationSpace?.[CoordinationType.META_COORDINATION_SCOPES_BY];

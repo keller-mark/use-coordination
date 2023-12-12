@@ -1,14 +1,4 @@
 import React from 'react';
-import {
-  ZodCmvProvider,
-  ZodErrorBoundary,
-  useCoordination,
-  useCoordinationProps,
-  useCoordinationScopes,
-} from '@mm-cmv/provider';
-import * as Plugins from '@mm-cmv/plugins';
-import { z } from 'zod';
-
 
 export function SelectScope(props: any) {
   const {
@@ -16,6 +6,7 @@ export function SelectScope(props: any) {
     viewUid,
     cType = "sliderValue",
     onConfigChange,
+    showType = false,
   } = props;
 
   const allScopes = Object.keys(config.coordinationSpace[cType]);
@@ -41,7 +32,7 @@ export function SelectScope(props: any) {
 
   return (
     <>
-      <label>Coordination scope for {viewUid}:&nbsp;</label>
+      <label>{showType ? cType : "Coordination"} scope for {viewUid}:&nbsp;</label>
       <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]}>
         {allScopes.map((scope: any) => (
           <option key={scope} value={scope}>{scope}</option>
