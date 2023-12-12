@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { fromEntries } from '@mm-cmv/utils';
+import { CoordinationType } from '@mm-cmv/constants-internal';
 import {
   PluginCoordinationType,
 } from '@mm-cmv/plugins';
@@ -7,16 +8,27 @@ import {
   componentCoordinationScopes,
   componentCoordinationScopesBy,
 } from './shared.js';
+
+const baseCoordinationTypes = [
+  new PluginCoordinationType(
+    CoordinationType.META_COORDINATION_SCOPES,
+    null,
+    z.record(z.any()).nullable(),
+  ),
+  new PluginCoordinationType(
+    CoordinationType.META_COORDINATION_SCOPES_BY,
+    null,
+    z.record(z.any()).nullable(),
+  ),
+];
+
 /**
  * Build a Zod schema for the latest Vitessce config,
  * which is specific to any registered plugins.
  * The builder pattern allows the returned
  * Zod schema to be typed despite not knowing
  * the plugin names or sub-schemas in advance.
- * @param pluginFileTypes
- * @param pluginJointFileTypes
  * @param pluginCoordinationTypes
- * @param pluginViewTypes
  * @returns The Zod schema.
  */
 export function buildConfigSchema<
@@ -30,8 +42,10 @@ export function buildConfigSchema<
     coordinationSpace: z.object(
       // Wrap each value schema in z.record()
       fromEntries(
-        pluginCoordinationTypes
-          .map(ct => ([
+        [
+          ...baseCoordinationTypes,
+          ...pluginCoordinationTypes,
+        ].map(ct => ([
             ct.name,
             z.record(
               // For now, assume the key type is string (though it would be

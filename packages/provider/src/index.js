@@ -1,5 +1,4 @@
 export { CmvProvider } from './CmvProvider.js';
-export { ZodCmvProvider } from './ZodCmvProvider.js';
 export {
   useCoordinationScopes,
   useCoordinationScopesBy,
@@ -16,3 +15,5 @@ export {
   useViewConfigStore,
   useViewConfigStoreApi,
 } from './state/hooks.js';
+export { ZodCmvProvider } from './ZodCmvProvider.js';
+export { ZodErrorBoundary } from './ZodErrorBoundary.js';

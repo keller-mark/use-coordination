@@ -3,7 +3,6 @@
 import { cloneDeep } from 'lodash-es';
 import { fromEntries, getNextScope } from '@mm-cmv/utils';
 import {
-  AUTO_INDEPENDENT_COORDINATION_TYPES,
   META_VERSION,
 } from '@mm-cmv/constants-internal';
 
@@ -160,20 +159,9 @@ function initializeAuto(config, coordinationTypeObjs, viewTypeObjs) {
         // if there is at least one dataset.
         defaultValue = datasets[0].uid;
       }
-      // Use the list of "independent" coordination types
-      // to determine whether a particular coordination type
-      // should be initialized to
-      // a unique scope for every component ("independent")
-      // vs. the same scope for every component ("together").
-      if (AUTO_INDEPENDENT_COORDINATION_TYPES.includes(coordinationType)) {
-        newConfig = coordinateComponentsIndependent(
-          newConfig, coordinationType, defaultValue, viewTypeObjs,
-        );
-      } else {
-        newConfig = coordinateComponentsTogether(
-          newConfig, coordinationType, defaultValue, viewTypeObjs,
-        );
-      }
+      newConfig = coordinateComponentsTogether(
+        newConfig, coordinationType, defaultValue, viewTypeObjs,
+      );
     }
   });
 

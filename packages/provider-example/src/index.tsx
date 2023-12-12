@@ -1,4 +1,8 @@
-export { CmvProviderExample } from './cmv-provider-example.js';
+export {
+  CmvProviderExample,
+  MultiViewTypeExample,
+  MetaCoordinationExample,
+} from './cmv-provider-example.js';
 export type {
-    CmvProviderProps,
+  CmvProviderProps,
 } from './types.js';
