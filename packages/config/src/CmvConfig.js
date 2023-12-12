@@ -2,111 +2,6 @@
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@mm-cmv/constants-internal';
 import { fromEntries, getNextScope } from '@mm-cmv/utils';
 
-const CoordinationType = {
-  DATASET: 'dataset',
-  EMBEDDING_TYPE: 'embeddingType',
-};
-
-/**
- * Class representing a file within a Vitessce config dataset.
- */
-export class VitessceConfigDatasetFile {
-  /**
-   * Construct a new file definition instance.
-   * @param {string} url The URL to the file.
-   * @param {string} dataType The type of data contained in the file.
-   * @param {string} fileType The file type.
-   * @param {object|array|null} options An optional object or array
-   * which may provide additional parameters to the loader class
-   * corresponding to the specified fileType.
-   */
-  constructor(url, fileType, coordinationValues, options) {
-    this.file = {
-      url,
-      fileType,
-      ...(coordinationValues ? { coordinationValues } : {}),
-      ...(options ? { options } : {}),
-    };
-  }
-
-  /**
-   * @returns {object} This dataset file as a JSON object.
-   */
-  toJSON() {
-    return this.file;
-  }
-}
-
-/**
- * Class representing a dataset within a Vitessce config.
- */
-export class VitessceConfigDataset {
-  /**
-   * Construct a new dataset definition instance.
-   * @param {string} uid The unique ID for the dataset.
-   * @param {string} name The name of the dataset.
-   * @param {string} description A description for the dataset.
-   */
-  constructor(uid, name, description) {
-    this.dataset = {
-      uid,
-      name,
-      description,
-      files: [],
-    };
-  }
-
-  /**
-   * Add a file definition to the dataset.
-   * @param {object} params An object with named arguments.
-   * @param {string|undefined} params.url The URL to the file.
-   * @param {string} params.fileType The file type.
-   * @param {object|undefined} params.coordinationValues The coordination values.
-   * @param {object|array|undefined} params.options An optional object or array
-   * which may provide additional parameters to the loader class
-   * corresponding to the specified fileType.
-   * @returns {VitessceConfigDataset} This, to allow chaining.
-   */
-  addFile(params, ...args) {
-    let url;
-    let fileType;
-    let coordinationValues;
-    let options;
-    if (args.length > 0) {
-      // Old behavior.
-      url = params;
-      // eslint-disable-next-line no-unused-vars
-      let dataType;
-      if (args.length === 2) {
-        [dataType, fileType] = args;
-      } else if (args.length === 3) {
-        // eslint-disable-next-line no-unused-vars
-        [dataType, fileType, options] = args;
-      }
-    } else if (typeof params === 'object') {
-      ({
-        url, fileType, options, coordinationValues,
-      } = params);
-    } else {
-      throw new Error('Expected addFile argument to be an object.');
-    }
-    this.dataset.files.push(
-      new VitessceConfigDatasetFile(url, fileType, coordinationValues, options),
-    );
-    return this;
-  }
-
-  /**
-   * @returns {object} This dataset as a JSON object.
-   */
-  toJSON() {
-    return {
-      ...this.dataset,
-      files: this.dataset.files.map(f => f.toJSON()),
-    };
-  }
-}
-
 function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationScopesBy) {
   // Set this.coordinationScopes and this.coordinationScopesBy by recursion on `scopes`.
   /*
@@ -246,37 +141,32 @@ function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationS
 /**
  * Class representing a view within a Vitessce layout.
  */
-export class VitessceConfigView {
+export class CmvConfigView {
   /**
    * Construct a new view instance.
-   * @param {string} component The name of the Vitessce component type.
    * @param {object} coordinationScopes A mapping from coordination type
    * names to coordination scope names.
-   * @param {number} x The x-coordinate of the view in the layout.
-   * @param {number} y The y-coordinate of the view in the layout.
-   * @param {number} w The width of the view in the layout.
-   * @param {number} h The height of the view in the layout.
+   * @param {object} coordinationScopesBy A mapping from coordination type
+   * names to coordination scope names, for multi-level coordination.
    */
-  constructor(component, coordinationScopes, x, y, w, h) {
+  constructor(coordinationScopes, coordinationScopesBy) {
     this.view = {
-      component,
       coordinationScopes,
-      coordinationScopesBy: undefined, // TODO: initialize from parameter?
-      x,
-      y,
-      w,
-      h,
+      coordinationScopesBy,
     };
   }
 
   /**
    * Attach coordination scopes to this view.
-   * @param  {...VitessceConfigCoordinationScope} args A variable number of
+   * @param  {...CmvConfigCoordinationScope} args A variable number of
    * coordination scope instances.
-   * @returns {VitessceConfigView} This, to allow chaining.
+   * @returns {CmvConfigView} This, to allow chaining.
    */
   useCoordination(...args) {
     const cScopes = args;
+    if (!this.view.coordinationScopes) {
+      this.view.coordinationScopes = {};
+    }
     cScopes.forEach((cScope) => {
       this.view.coordinationScopes[cScope.cType] = cScope.cScope;
     });
@@ -285,9 +175,9 @@ export class VitessceConfigView {
 
   /**
    * Attach potentially multi-level coordination scopes to this view.
-   * @param {object} scopes A value returned by `VitessceConfig.addCoordinationByObject`.
+   * @param {object} scopes A value returned by `CmvConfig.addCoordinationByObject`.
    * Not intended to be a manually-constructed object.
-   * @returns {VitessceConfigView} This, to allow chaining.
+   * @returns {CmvConfigView} This, to allow chaining.
    */
   useCoordinationByObject(scopes) {
     if (!this.view.coordinationScopes) {
@@ -308,8 +198,8 @@ export class VitessceConfigView {
 
   /**
    * Attach meta coordination scopes to this view.
-   * @param {VitessceConfigMetaCoordinationScope} metaScope A meta coordination scope instance.
-   * @returns {VitessceConfigView} This, to allow chaining.
+   * @param {CmvConfigMetaCoordinationScope} metaScope A meta coordination scope instance.
+   * @returns {CmvConfigView} This, to allow chaining.
    */
   useMetaCoordination(metaScope) {
     if (!this.view.coordinationScopes) {
@@ -326,34 +216,6 @@ export class VitessceConfigView {
     return this;
   }
 
-  /**
-    * Set the x, y, w, h values for this view.
-    * @param {number} x The x-coordinate of the view in the layout.
-    * @param {number} y The y-coordinate of the view in the layout.
-    * @param {number} w The width of the view in the layout.
-    * @param {number} h The height of the view in the layout.
-    * @returns {VitessceConfigView} This, to allow chaining.
-    */
-  setXYWH(x, y, w, h) {
-    this.view.x = x;
-    this.view.y = y;
-    this.view.w = w;
-    this.view.h = h;
-
-    return this;
-  }
-
-  /**
-   * Set props for this view.
-   * @returns {VitessceConfigView} This, to allow chaining.
-   */
-  setProps(props) {
-    this.view.props = {
-      ...(this.view.props || {}),
-      ...props,
-    };
-    return this;
-  }
 
   /**
    * @returns {object} This view as a JSON object.
@@ -361,46 +223,6 @@ export class VitessceConfigView {
   toJSON() {
     return this.view;
   }
-}
-
-/**
- * Class representing a horizontal concatenation of views.
- */
-export class VitessceConfigViewHConcat {
-  constructor(views) {
-    this.views = views;
-  }
-}
-
-/**
- * Class representing a vertical concatenation of views.
- */
-export class VitessceConfigViewVConcat {
-  constructor(views) {
-    this.views = views;
-  }
-}
-
-/**
- * A helper function to create a horizontal concatenation of views.
- * @param  {...(VitessceConfigView|VitessceConfigViewHConcat|VitessceConfigViewVConcat)} views A
- * variable number of views or view concatenations.
- * @returns {VitessceConfigViewHConcat} A new horizontal view concatenation instance.
- */
-export function hconcat(...views) {
-  const vcvhc = new VitessceConfigViewHConcat(views);
-  return vcvhc;
-}
-
-/**
- * A helper function to create a vertical concatenation of views.
- * @param  {...(VitessceConfigView|VitessceConfigViewHConcat|VitessceConfigViewVConcat)} views A
- * variable number of views or view concatenations.
- * @returns {VitessceConfigViewVConcat} A new vertical view concatenation instance.
- */
-export function vconcat(...views) {
-  const vcvvc = new VitessceConfigViewVConcat(views);
-  return vcvvc;
 }
 
 // would import as CL for convenience
@@ -430,7 +252,7 @@ export function CL(value) {
 /**
  * Class representing a coordination scope in the coordination space.
  */
-export class VitessceConfigCoordinationScope {
+export class CmvConfigCoordinationScope {
   /**
    * Construct a new coordination scope instance.
    * @param {string} cType The coordination type for this coordination scope.
@@ -445,7 +267,7 @@ export class VitessceConfigCoordinationScope {
   /**
    * Set the coordination value of the coordination scope.
    * @param {any} cValue The value to set.
-   * @returns {VitessceConfigCoordinationScope} This, to allow chaining.
+   * @returns {CmvConfigCoordinationScope} This, to allow chaining.
    */
   setValue(cValue) {
     this.cValue = cValue;
@@ -458,18 +280,18 @@ export class VitessceConfigCoordinationScope {
  * for metaCoordinationScopes and metaCoordinationScopesBy,
  * respectively, in the coordination space.
  */
-export class VitessceConfigMetaCoordinationScope {
+export class CmvConfigMetaCoordinationScope {
   /**
    * Construct a new coordination scope instance.
    * @param {string} metaScope The name of the coordination scope for metaCoordinationScopes.
    * @param {string} metaByScope The name of the coordination scope for metaCoordinationScopesBy.
    */
   constructor(metaScope, metaByScope) {
-    this.metaScope = new VitessceConfigCoordinationScope(
+    this.metaScope = new CmvConfigCoordinationScope(
       META_COORDINATION_SCOPES,
       metaScope,
     );
-    this.metaByScope = new VitessceConfigCoordinationScope(
+    this.metaByScope = new CmvConfigCoordinationScope(
       META_COORDINATION_SCOPES_BY,
       metaByScope,
     );
@@ -477,9 +299,9 @@ export class VitessceConfigMetaCoordinationScope {
 
   /**
    * Attach coordination scopes to this meta scope.
-   * @param  {...VitessceConfigCoordinationScope} args A variable number of
+   * @param  {...CmvConfigCoordinationScope} args A variable number of
    * coordination scope instances.
-   * @returns {VitessceConfigMetaCoordinationScope} This, to allow chaining.
+   * @returns {CmvConfigMetaCoordinationScope} This, to allow chaining.
    */
   useCoordination(...args) {
     const cScopes = args;
@@ -494,9 +316,9 @@ export class VitessceConfigMetaCoordinationScope {
   /**
    * Attach potentially multi-level coordination scopes to this meta coordination
    * scope instance.
-   * @param {object} scopes A value returned by `VitessceConfig.addCoordinationByObject`.
+   * @param {object} scopes A value returned by `CmvConfig.addCoordinationByObject`.
    * Not intended to be a manually-constructed object.
-   * @returns {VitessceConfigView} This, to allow chaining.
+   * @returns {CmvConfigView} This, to allow chaining.
    */
   useCoordinationByObject(scopes) {
     if (!this.metaScope.cValue) {
@@ -519,7 +341,7 @@ export class VitessceConfigMetaCoordinationScope {
 /**
  * Class representing a Vitessce view config.
  */
-export class VitessceConfig {
+export class CmvConfig {
   /**
    * Construct a new view config instance.
    * @param {object} params An object with named arguments.
@@ -527,64 +349,17 @@ export class VitessceConfig {
    * @param {string} params.name A name for the config. Optional.
    * @param {string|undefined} params.description A description for the config. Optional.
    */
-  constructor(params, ...args) {
-    let name;
-    let description;
-    let schemaVersion;
-    if (typeof params === 'string') {
-      // Old behavior for backwards compatibility.
-      schemaVersion = '1.0.7';
-      name = params || '';
-      if (args.length === 1) {
-        [description] = args;
-      } else if (args.length > 1) {
-        throw new Error('Expected only one VitessceConfig constructor argument.');
-      }
-    } else if (typeof params === 'object') {
-      ({ schemaVersion, name, description } = params);
-      if (!name) {
-        throw new Error('Expected params.name argument in VitessceConfig constructor');
-      }
-      if (!schemaVersion) {
-        throw new Error('Expected params.schemaVersion argument in VitessceConfig constructor');
-      }
-    } else {
-      throw new Error('Expected VitessceConfig constructor argument to be an object.');
-    }
+  constructor(uid) {
     this.config = {
-      version: schemaVersion,
-      name,
-      description,
-      datasets: [],
+      uid,
       coordinationSpace: {},
-      layout: [],
-      initStrategy: 'auto',
+      viewCoordination: {},
     };
   }
 
   /**
-   * Add a new dataset to the config.
-   * @param {string} name A name for the dataset. Optional.
-   * @param {string} description A description for the dataset. Optional.
-   * @param {object} options Extra parameters to be used internally. Optional.
-   * @param {string} options.uid Override the automatically-generated dataset ID.
-   * Intended for internal usage by the VitessceConfig.fromJSON code.
-   * @returns {VitessceConfigDataset} A new dataset instance.
-   */
-  addDataset(name = undefined, description = undefined, options = undefined) {
-    const { uid } = options || {};
-    const prevDatasetUids = this.config.datasets.map(d => d.dataset.uid);
-    const nextUid = (uid || getNextScope(prevDatasetUids));
-    const newDataset = new VitessceConfigDataset(nextUid, name, description);
-    this.config.datasets.push(newDataset);
-    const [newScope] = this.addCoordination(CoordinationType.DATASET);
-    newScope.setValue(nextUid);
-    return newDataset;
-  }
-
-  /**
    * Add a new view to the config.
-   * @param {VitessceConfigDataset} dataset The dataset instance which defines the data
+   * @param {CmvConfigDataset} dataset The dataset instance which defines the data
    * that will be displayed in the view.
    * @param {string} component A component name, such as "scatterplot" or "spatial".
    * @param {object} options Extra options for the component.
@@ -594,40 +369,11 @@ export class VitessceConfig {
    * @param {number} options.h The height for the view in the grid layout.
    * @param {number} options.mapping A convenience parameter for setting the EMBEDDING_TYPE
    * coordination value. Only applicable if the component is "scatterplot".
-   * @returns {VitessceConfigView} A new view instance.
+   * @returns {CmvConfigView} A new view instance.
    */
-  addView(dataset, component, options) {
-    const {
-      x = 0,
-      y = 0,
-      w = 1,
-      h = 1,
-      mapping = null,
-    } = options || {};
-    const datasetMatches = (
-      this.config.coordinationSpace[CoordinationType.DATASET]
-        ? Object.entries(this.config.coordinationSpace[CoordinationType.DATASET])
-        // eslint-disable-next-line no-unused-vars
-          .filter(([scopeName, datasetScope]) => datasetScope.cValue === dataset.dataset.uid)
-          .map(([scopeName]) => scopeName)
-        : []
-    );
-    let datasetScope;
-    if (datasetMatches.length === 1) {
-      [datasetScope] = datasetMatches;
-    } else {
-      throw new Error('No coordination scope matching the dataset parameter could be found in the coordination space.');
-    }
-    const coordinationScopes = {
-      [CoordinationType.DATASET]: datasetScope,
-    };
-    const newView = new VitessceConfigView(component, coordinationScopes, x, y, w, h);
-    if (mapping) {
-      const [etScope] = this.addCoordination(CoordinationType.EMBEDDING_TYPE);
-      etScope.setValue(mapping);
-      newView.useCoordination(etScope);
-    }
-    this.config.layout.push(newView);
+  addView(viewUid) {
+    const newView = new CmvConfigView(undefined, undefined);
+    this.config.viewCoordination[viewUid] = newView;
     return newView;
   }
 
@@ -635,7 +381,7 @@ export class VitessceConfig {
    * Get an array of new coordination scope instances corresponding to coordination types
    * of interest.
    * @param {...string} args A variable number of coordination type names.
-   * @returns {VitessceConfigCoordinationScope[]} An array of coordination scope instances.
+   * @returns {CmvConfigCoordinationScope[]} An array of coordination scope instances.
    */
   addCoordination(...args) {
     const cTypes = args;
@@ -646,7 +392,7 @@ export class VitessceConfig {
           ? Object.keys(this.config.coordinationSpace[cType])
           : []
       );
-      const scope = new VitessceConfigCoordinationScope(cType, getNextScope(prevScopes));
+      const scope = new CmvConfigCoordinationScope(cType, getNextScope(prevScopes));
       if (!this.config.coordinationSpace[scope.cType]) {
         this.config.coordinationSpace[scope.cType] = {};
       }
@@ -659,7 +405,7 @@ export class VitessceConfig {
   /**
    * Initialize a new meta coordination scope in the coordination space,
    * and get a reference to it in the form of a meta coordination scope instance.
-   * @returns {VitessceConfigMetaCoordinationScope} A new meta coordination scope instance.
+   * @returns {CmvConfigMetaCoordinationScope} A new meta coordination scope instance.
    */
   addMetaCoordination() {
     const prevMetaScopes = (
@@ -672,7 +418,7 @@ export class VitessceConfig {
         ? Object.keys(this.config.coordinationSpace[META_COORDINATION_SCOPES_BY])
         : []
     );
-    const metaContainer = new VitessceConfigMetaCoordinationScope(
+    const metaContainer = new CmvConfigMetaCoordinationScope(
       getNextScope(prevMetaScopes),
       getNextScope(prevMetaByScopes),
     );
@@ -694,7 +440,7 @@ export class VitessceConfig {
    * Get a reference to these values to pass to the `useCoordinationByObject` method
    * of either view or meta coordination scope instances.
    * @param {object} input A (potentially nested) object with coordination types as keys
-   * and values being either the initial coordination value, a `VitessceConfigCoordinationScope`
+   * and values being either the initial coordination value, a `CmvConfigCoordinationScope`
    * instance, or a `CoordinationLevel` instance.
    * The CL function takes an array of objects as its argument, and returns a CoordinationLevel
    * instance, to support nesting.
@@ -749,7 +495,7 @@ export class VitessceConfig {
         ]),
       }
       // Which would correspond to this `output`,
-      // a valid input for `VitessceConfigMetaCoordinationScope.useCoordinationByObject()`:
+      // a valid input for `CmvConfigMetaCoordinationScope.useCoordinationByObject()`:
       {
         [CoordinationType.SPATIAL_IMAGE_LAYER]: [
           {
@@ -816,7 +562,7 @@ export class VitessceConfig {
         } else {
           // Base case.
           const initialValue = nextLevelOrInitialValue;
-          if (initialValue instanceof VitessceConfigCoordinationScope) {
+          if (initialValue instanceof CmvConfigCoordinationScope) {
             result[cType] = { scope: initialValue };
           } else {
             const [scope] = this.addCoordination(cType);
@@ -834,11 +580,11 @@ export class VitessceConfig {
 
   /**
    * A convenience function for setting up new coordination scopes across a set of views.
-   * @param {VitessceConfigView[]} views An array of view objects to link together.
+   * @param {CmvConfigView[]} views An array of view objects to link together.
    * @param {string[]} cTypes The coordination types on which to coordinate the views.
    * @param {any[]} cValues Initial values corresponding to each coordination type.
    * Should have the same length as the cTypes array. Optional.
-   * @returns {VitessceConfig} This, to allow chaining.
+   * @returns {CmvConfig} This, to allow chaining.
    */
   linkViews(views, cTypes, cValues = null) {
     const cScopes = this.addCoordination(...cTypes);
@@ -858,14 +604,14 @@ export class VitessceConfig {
   /**
    * A convenience function for setting up multi-level and meta-coordination scopes
    * across a set of views.
-   * @param {VitessceConfigView[]} views An array of view objects to link together.
+   * @param {CmvConfigView[]} views An array of view objects to link together.
    * @param {object} input A (potentially nested) object with coordination types as keys
-   * and values being either the initial coordination value, a `VitessceConfigCoordinationScope`
+   * and values being either the initial coordination value, a `CmvConfigCoordinationScope`
    * instance, or a `CoordinationLevel` instance.
    * The CL function takes an array of objects as its argument, and returns a CoordinationLevel
    * instance, to support nesting.
    * @param {boolean} meta Should meta-coordination be used? Optional. By default, true.
-   * @returns {VitessceConfig} This, to allow chaining.
+   * @returns {CmvConfig} This, to allow chaining.
    */
   linkViewsByObject(views, input, meta = true) {
     const scopes = this.addCoordinationByObject(input);
@@ -885,45 +631,12 @@ export class VitessceConfig {
   }
 
   /**
-   * Set the layout of views.
-   * @param {VitessceConfigView|VitessceConfigViewHConcat|VitessceConfigViewVConcat} viewConcat A
-   * view or a concatenation of views.
-   * @returns {VitessceConfig} This, to allow chaining.
-   */
-  layout(viewConcat) {
-    function layoutAux(obj, xMin, xMax, yMin, yMax) {
-      const w = xMax - xMin;
-      const h = yMax - yMin;
-      if (obj instanceof VitessceConfigView) {
-        obj.setXYWH(xMin, yMin, w, h);
-      } else if (obj instanceof VitessceConfigViewHConcat) {
-        const { views } = obj;
-        const numViews = views.length;
-        views.forEach((view, i) => {
-          layoutAux(view, xMin + (w / numViews) * i, xMin + (w / numViews) * (i + 1), yMin, yMax);
-        });
-      } else if (obj instanceof VitessceConfigViewVConcat) {
-        const { views } = obj;
-        const numViews = views.length;
-        views.forEach((view, i) => {
-          layoutAux(view, xMin, xMax, yMin + (h / numViews) * i, yMin + (h / numViews) * (i + 1));
-        });
-      }
-    }
-
-    layoutAux(viewConcat, 0, 12, 0, 12);
-
-    return this;
-  }
-
-  /**
    * Convert this instance to a JSON object that can be passed to the Vitessce component.
    * @returns {object} The view config as a JSON object.
    */
   toJSON() {
     return {
       ...this.config,
-      datasets: this.config.datasets.map(d => d.toJSON()),
       coordinationSpace: fromEntries(
         Object.entries(this.config.coordinationSpace).map(([cType, cScopes]) => ([
           cType,
@@ -935,45 +648,38 @@ export class VitessceConfig {
           ),
         ])),
       ),
-      layout: this.config.layout.map(c => c.toJSON()),
+      viewCoordination: fromEntries(
+        Object.entries(this.config.viewCoordination).map(([viewUid, viewObj]) => ([
+          viewUid,
+          viewObj.toJSON(),
+        ])),
+      ),
     };
   }
 
   /**
-   * Create a VitessceConfig instance from an existing view config, to enable
+   * Create a CmvConfig instance from an existing view config, to enable
    * manipulation with the JavaScript API.
    * @param {object} config An existing Vitessce view config as a JSON object.
-   * @returns {VitessceConfig} A new config instance, with values set to match
+   * @returns {CmvConfig} A new config instance, with values set to match
    * the config parameter.
    */
   static fromJSON(config) {
-    const { name, description, version: schemaVersion } = config;
-    const vc = new VitessceConfig({ schemaVersion, name, description });
-    config.datasets.forEach((d) => {
-      const newDataset = vc.addDataset(d.name, d.description, { uid: d.uid });
-      d.files.forEach((f) => {
-        newDataset.addFile({
-          url: f.url,
-          fileType: f.fileType,
-          coordinationValues: f.coordinationValues,
-          options: f.options,
-        });
+    const { uid } = config;
+    const vc = new CmvConfig(uid);
+    Object.keys(config.coordinationSpace).forEach((cType) => {
+      const cObj = config.coordinationSpace[cType];
+      vc.config.coordinationSpace[cType] = {};
+      Object.entries(cObj).forEach(([cScopeName, cScopeValue]) => {
+        const scope = new CmvConfigCoordinationScope(cType, cScopeName);
+        scope.setValue(cScopeValue);
+        vc.config.coordinationSpace[cType][cScopeName] = scope;
       });
     });
-    Object.keys(config.coordinationSpace).forEach((cType) => {
-      if (cType !== CoordinationType.DATASET) {
-        const cObj = config.coordinationSpace[cType];
-        vc.config.coordinationSpace[cType] = {};
-        Object.entries(cObj).forEach(([cScopeName, cScopeValue]) => {
-          const scope = new VitessceConfigCoordinationScope(cType, cScopeName);
-          scope.setValue(cScopeValue);
-          vc.config.coordinationSpace[cType][cScopeName] = scope;
-        });
-      }
-    });
-    config.layout.forEach((c) => {
-      const newView = new VitessceConfigView(c.component, c.coordinationScopes, c.x, c.y, c.w, c.h);
-      vc.config.layout.push(newView);
+    Object.keys(config.viewCoordination).forEach((viewUid) => {
+      const viewObj = config.viewCoordination[viewUid];
+      const newView = new CmvConfigView(viewObj.coordinationScopes, viewObj.coordinationScopesBy);
+      vc.config.viewCoordination[viewUid] = newView;
     });
     return vc;
   }

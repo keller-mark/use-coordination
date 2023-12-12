@@ -1,2 +1,2 @@
-export { VitessceConfig, vconcat, hconcat, CL as CoordinationLevel } from './VitessceConfig.js';
+export { CmvConfig, CL as CoordinationLevel } from './CmvConfig.js';
 

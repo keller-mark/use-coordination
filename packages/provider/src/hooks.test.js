@@ -6,7 +6,7 @@ import {
   getScopesBy,
 } from './hooks.js';
 
-describe('provider/state/hooks.js', () => {
+describe('provider/hooks.js', () => {
   describe('getParameterScope', () => {
     it('works', () => {
       expect(getParameterScope(

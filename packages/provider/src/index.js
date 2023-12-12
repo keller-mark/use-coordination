@@ -14,6 +14,6 @@ export {
   useMultiCoordinationValues,
   useViewConfigStore,
   useViewConfigStoreApi,
-} from './state/hooks.js';
+} from './hooks.js';
 export { ZodCmvProvider } from './ZodCmvProvider.js';
 export { ZodErrorBoundary } from './ZodErrorBoundary.js';

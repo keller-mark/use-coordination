@@ -27,5 +27,8 @@
   "dependencies": {
     "@mm-cmv/constants-internal": "workspace:*",
     "@mm-cmv/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^0.23.4"
   }
 }

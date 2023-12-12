@@ -1,204 +1,50 @@
 import { describe, it, expect } from 'vitest';
 import {
-  VitessceConfig,
-  hconcat,
-  vconcat,
+  CmvConfig,
   CL,
-} from './VitessceConfig.js';
+} from './CmvConfig.js';
 
-const CoordinationType = {
-  EMBEDDING_ZOOM: 'embeddingZoom',
-  EMBEDDING_TARGET_X: 'embeddingTargetX',
-  EMBEDDING_TARGET_Y: 'embeddingTargetY',
-};
-
-describe('src/api/VitessceConfig.js', () => {
-  describe('VitessceConfig', () => {
-    it('can be instantiated in the old way for backwards compatibility', () => {
-      const config = new VitessceConfig('My config');
-
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
-        coordinationSpace: {},
-        datasets: [],
-        initStrategy: 'auto',
-        layout: [],
-        name: 'My config',
-        version: '1.0.7',
-      });
-    });
+describe('src/api/CmvConfig.js', () => {
+  describe('CmvConfig', () => {
     it('can be instantiated', () => {
-      const config = new VitessceConfig({ schemaVersion: '1.0.4', name: 'My config' });
+      const config = new CmvConfig('My config');
 
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
         coordinationSpace: {},
-        datasets: [],
-        initStrategy: 'auto',
-        layout: [],
-        name: 'My config',
-        version: '1.0.4',
-      });
-    });
-    it('can add a dataset', () => {
-      const config = new VitessceConfig({ schemaVersion: '1.0.4', name: 'My config' });
-      config.addDataset('My dataset');
-
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
-        coordinationSpace: {
-          dataset: {
-            A: 'A',
-          },
-        },
-        datasets: [{
-          name: 'My dataset',
-          uid: 'A',
-          files: [],
-        }],
-        initStrategy: 'auto',
-        layout: [],
-        name: 'My config',
-        version: '1.0.4',
-      });
-    });
-    it('can add a file to a dataset in the old way for backwards compatibility', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.4',
-        name: 'My config',
-        description: 'My config description',
-      });
-      // Positional arguments.
-      config.addDataset('My dataset', 'My dataset description').addFile(
-        'http://example.com/cells.json',
-        'cells',
-        'cells.json',
-      );
-
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
-        coordinationSpace: {
-          dataset: {
-            A: 'A',
-          },
-        },
-        datasets: [{
-          name: 'My dataset',
-          description: 'My dataset description',
-          uid: 'A',
-          files: [{
-            url: 'http://example.com/cells.json',
-            fileType: 'cells.json',
-          }],
-        }],
-        description: 'My config description',
-        initStrategy: 'auto',
-        layout: [],
-        name: 'My config',
-        version: '1.0.4',
-      });
-    });
-    it('can add a file to a dataset', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.4',
-        name: 'My config',
-        description: 'My config description',
-      });
-      // Named arguments.
-      config.addDataset('My dataset', 'My dataset description').addFile({
-        url: 'http://example.com/cells.json',
-        fileType: 'cells.json',
-      });
-
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
-        coordinationSpace: {
-          dataset: {
-            A: 'A',
-          },
-        },
-        datasets: [{
-          name: 'My dataset',
-          description: 'My dataset description',
-          uid: 'A',
-          files: [{
-            url: 'http://example.com/cells.json',
-            fileType: 'cells.json',
-          }],
-        }],
-        description: 'My config description',
-        initStrategy: 'auto',
-        layout: [],
-        name: 'My config',
-        version: '1.0.4',
+        viewCoordination: {},
+        uid: 'My config',
       });
     });
 
     it('can add a view', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.4',
-        name: 'My config',
-      });
-      const dataset = config.addDataset('My dataset');
-      config.addView(dataset, 'description');
-      config.addView(dataset, 'scatterplot', { mapping: 'PCA' });
+      const config = new CmvConfig('My config');
+      config.addView('description');
+      config.addView('scatterplot');
 
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
-        coordinationSpace: {
-          dataset: {
-            A: 'A',
+        coordinationSpace: {},
+        viewCoordination: {
+          description: {
+
           },
-          embeddingType: {
-            A: 'PCA',
+          scatterplot: {
+
           },
         },
-        datasets: [{
-          name: 'My dataset',
-          uid: 'A',
-          files: [],
-        }],
-        initStrategy: 'auto',
-        layout: [
-          {
-            component: 'description',
-            coordinationScopes: {
-              dataset: 'A',
-            },
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
-          },
-          {
-            component: 'scatterplot',
-            coordinationScopes: {
-              dataset: 'A',
-              embeddingType: 'A',
-            },
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
-          },
-        ],
-        name: 'My config',
-        version: '1.0.4',
+        uid: 'My config',
       });
     });
     it('can add a coordination scope', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.4',
-        name: 'My config',
-      });
-      const dataset = config.addDataset('My dataset');
-      const pca = config.addView(dataset, 'scatterplot', { mapping: 'PCA' });
-      const tsne = config.addView(dataset, 'scatterplot', { mapping: 't-SNE' });
+      const config = new CmvConfig('My config');
+      const pca = config.addView('pca');
+      const tsne = config.addView('tsne');
 
       const [ezScope, etxScope, etyScope] = config.addCoordination(
-        CoordinationType.EMBEDDING_ZOOM,
-        CoordinationType.EMBEDDING_TARGET_X,
-        CoordinationType.EMBEDDING_TARGET_Y,
+        'embeddingZoom',
+        'embeddingTargetX',
+        'embeddingTargetY',
       );
       pca.useCoordination(ezScope, etxScope, etyScope);
       tsne.useCoordination(ezScope, etxScope, etyScope);
@@ -211,13 +57,6 @@ describe('src/api/VitessceConfig.js', () => {
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
         coordinationSpace: {
-          dataset: {
-            A: 'A',
-          },
-          embeddingType: {
-            A: 'PCA',
-            B: 't-SNE',
-          },
           embeddingZoom: {
             A: 10,
           },
@@ -228,52 +67,28 @@ describe('src/api/VitessceConfig.js', () => {
             A: 12,
           },
         },
-        datasets: [{
-          name: 'My dataset',
-          uid: 'A',
-          files: [],
-        }],
-        initStrategy: 'auto',
-        layout: [
-          {
-            component: 'scatterplot',
+        viewCoordination: {
+          pca: {
             coordinationScopes: {
-              dataset: 'A',
-              embeddingType: 'A',
+              embeddingZoom: 'A',
               embeddingTargetX: 'A',
               embeddingTargetY: 'A',
-              embeddingZoom: 'A',
             },
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
           },
-          {
-            component: 'scatterplot',
+          tsne: {
             coordinationScopes: {
-              dataset: 'A',
-              embeddingType: 'B',
+              embeddingZoom: 'A',
               embeddingTargetX: 'A',
               embeddingTargetY: 'A',
-              embeddingZoom: 'A',
             },
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
           },
-        ],
-        name: 'My config',
-        version: '1.0.4',
+        },
+        uid: 'My config',
       });
     });
 
     it('can add complex coordination', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.16',
-        name: 'My config',
-      });
+      const config = new CmvConfig('My config');
       config.addCoordinationByObject({
         spatialImageLayer: CL([
           {
@@ -341,11 +156,7 @@ describe('src/api/VitessceConfig.js', () => {
     });
 
     it('can add _and use_ complex coordination', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.16',
-        name: 'My config',
-      });
-      const dataset = config.addDataset('My dataset');
+      const config = new CmvConfig('My config');
 
       // Coordinate all segmentation channels on the same color,
       // to test out the use of a coordination scope instance as a value.
@@ -398,16 +209,13 @@ describe('src/api/VitessceConfig.js', () => {
         ]),
       });
 
-      const spatialView = config.addView(dataset, 'spatial');
+      const spatialView = config.addView('spatial');
       spatialView.useCoordinationByObject(scopes);
 
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
-        version: '1.0.16',
-        name: 'My config',
-        datasets: [{ uid: 'A', name: 'My dataset', files: [] }],
+        uid: 'My config',
         coordinationSpace: {
-          dataset: { A: 'A' },
           spatialImageLayer: { A: '__dummy__' },
           image: { A: 'S-1905-017737_bf', B: 'S-1905-017737' },
           spatialLayerVisible: { A: true, B: true },
@@ -429,51 +237,42 @@ describe('src/api/VitessceConfig.js', () => {
             C: 'Globally Sclerotic Glomeruli',
           },
         },
-        layout: [{
-          component: 'spatial',
-          coordinationScopes: {
-            dataset: 'A',
-            spatialImageLayer: ['A'],
-            spatialSegmentationLayer: ['A'],
+        viewCoordination: {
+          spatial: {
+            coordinationScopes: {
+              spatialImageLayer: ['A'],
+              spatialSegmentationLayer: ['A'],
+            },
+            coordinationScopesBy: {
+              spatialImageLayer: {
+                image: { A: 'A' },
+                spatialLayerVisible: { A: 'A' },
+                spatialLayerOpacity: { A: 'A' },
+                spatialImageChannel: { A: ['A', 'B'] },
+              },
+              spatialImageChannel: {
+                spatialTargetC: { A: 'A', B: 'B' },
+                spatialChannelColor: { A: 'B', B: 'C' },
+              },
+              spatialSegmentationLayer: {
+                image: { A: 'B' },
+                spatialLayerVisible: { A: 'B' },
+                spatialLayerOpacity: { A: 'B' },
+                spatialSegmentationChannel: { A: ['A', 'B', 'C'] },
+              },
+              spatialSegmentationChannel: {
+                obsType: { A: 'A', B: 'B', C: 'C' },
+                spatialTargetC: { A: 'C', B: 'D', C: 'E' },
+                spatialChannelColor: { A: 'A', B: 'A', C: 'A' },
+              },
+            },
           },
-          coordinationScopesBy: {
-            spatialImageLayer: {
-              image: { A: 'A' },
-              spatialLayerVisible: { A: 'A' },
-              spatialLayerOpacity: { A: 'A' },
-              spatialImageChannel: { A: ['A', 'B'] },
-            },
-            spatialImageChannel: {
-              spatialTargetC: { A: 'A', B: 'B' },
-              spatialChannelColor: { A: 'B', B: 'C' },
-            },
-            spatialSegmentationLayer: {
-              image: { A: 'B' },
-              spatialLayerVisible: { A: 'B' },
-              spatialLayerOpacity: { A: 'B' },
-              spatialSegmentationChannel: { A: ['A', 'B', 'C'] },
-            },
-            spatialSegmentationChannel: {
-              obsType: { A: 'A', B: 'B', C: 'C' },
-              spatialTargetC: { A: 'C', B: 'D', C: 'E' },
-              spatialChannelColor: { A: 'A', B: 'A', C: 'A' },
-            },
-          },
-          x: 0,
-          y: 0,
-          w: 1,
-          h: 1,
-        }],
-        initStrategy: 'auto',
+        },
       });
     });
 
     it('can use _meta_ complex coordination', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.16',
-        name: 'My config',
-      });
-      const dataset = config.addDataset('My dataset');
+      const config = new CmvConfig('My config');
 
       const scopes = config.addCoordinationByObject({
         spatialImageLayer: CL([
@@ -522,18 +321,15 @@ describe('src/api/VitessceConfig.js', () => {
       const metaCoordinationScope = config.addMetaCoordination();
       metaCoordinationScope.useCoordinationByObject(scopes);
 
-      const spatialView = config.addView(dataset, 'spatial');
-      const lcView = config.addView(dataset, 'layerController');
+      const spatialView = config.addView('spatial');
+      const lcView = config.addView('layerController');
       spatialView.useMetaCoordination(metaCoordinationScope);
       lcView.useMetaCoordination(metaCoordinationScope);
 
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
-        version: '1.0.16',
-        name: 'My config',
-        datasets: [{ uid: 'A', name: 'My dataset', files: [] }],
+        uid: 'My config',
         coordinationSpace: {
-          dataset: { A: 'A' },
           spatialImageLayer: { A: '__dummy__' },
           image: { A: 'S-1905-017737_bf', B: 'S-1905-017737' },
           spatialLayerVisible: { A: true, B: true },
@@ -588,38 +384,28 @@ describe('src/api/VitessceConfig.js', () => {
             },
           },
         },
-        layout: [{
-          component: 'spatial',
-          coordinationScopes: {
-            dataset: 'A',
-            metaCoordinationScopes: ['A'],
-            metaCoordinationScopesBy: ['A'],
+        viewCoordination: {
+          spatial: {
+            coordinationScopes: {
+              metaCoordinationScopes: ['A'],
+              metaCoordinationScopesBy: ['A'],
+            },
           },
-          // eslint-disable-next-line object-property-newline
-          x: 0, y: 0, w: 1, h: 1,
-        }, {
-          component: 'layerController',
-          coordinationScopes: {
-            dataset: 'A',
-            metaCoordinationScopes: ['A'],
-            metaCoordinationScopesBy: ['A'],
+          layerController: {
+            coordinationScopes: {
+              metaCoordinationScopes: ['A'],
+              metaCoordinationScopesBy: ['A'],
+            },
           },
-          // eslint-disable-next-line object-property-newline
-          x: 0, y: 0, w: 1, h: 1,
-        }],
-        initStrategy: 'auto',
+        },
       });
     });
 
     it('can use _meta_ complex coordination via the linkViewsByObject convenience function', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.16',
-        name: 'My config',
-      });
-      const dataset = config.addDataset('My dataset');
+      const config = new CmvConfig('My config');
 
-      const spatialView = config.addView(dataset, 'spatial');
-      const lcView = config.addView(dataset, 'layerController');
+      const spatialView = config.addView('spatial');
+      const lcView = config.addView('layerController');
 
       config.linkViewsByObject([spatialView, lcView], {
         spatialImageLayer: CL([
@@ -667,11 +453,8 @@ describe('src/api/VitessceConfig.js', () => {
 
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
-        version: '1.0.16',
-        name: 'My config',
-        datasets: [{ uid: 'A', name: 'My dataset', files: [] }],
+        uid: 'My config',
         coordinationSpace: {
-          dataset: { A: 'A' },
           spatialImageLayer: { A: '__dummy__' },
           image: { A: 'S-1905-017737_bf', B: 'S-1905-017737' },
           spatialLayerVisible: { A: true, B: true },
@@ -726,50 +509,40 @@ describe('src/api/VitessceConfig.js', () => {
             },
           },
         },
-        layout: [{
-          component: 'spatial',
-          coordinationScopes: {
-            dataset: 'A',
-            metaCoordinationScopes: ['A'],
-            metaCoordinationScopesBy: ['A'],
+        viewCoordination: {
+          spatial: {
+            coordinationScopes: {
+              metaCoordinationScopes: ['A'],
+              metaCoordinationScopesBy: ['A'],
+            },
           },
-          // eslint-disable-next-line object-property-newline
-          x: 0, y: 0, w: 1, h: 1,
-        }, {
-          component: 'layerController',
-          coordinationScopes: {
-            dataset: 'A',
-            metaCoordinationScopes: ['A'],
-            metaCoordinationScopesBy: ['A'],
+          layerController: {
+            coordinationScopes: {
+              metaCoordinationScopes: ['A'],
+              metaCoordinationScopesBy: ['A'],
+            },
           },
-          // eslint-disable-next-line object-property-newline
-          x: 0, y: 0, w: 1, h: 1,
-        }],
-        initStrategy: 'auto',
+        },
       });
     });
 
     it('can add a coordination scope using the link views convenience function', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.4',
-        name: 'My config',
-      });
-      const dataset = config.addDataset('My dataset');
-      const pca = config.addView(dataset, 'scatterplot', { mapping: 'PCA' });
-      const tsne = config.addView(dataset, 'scatterplot', { mapping: 't-SNE' });
+      const config = new CmvConfig('My config');
+      const pca = config.addView('pca');
+      const tsne = config.addView('tsne');
 
       config.linkViews(
         [pca, tsne],
         [
-          CoordinationType.EMBEDDING_ZOOM,
+          'embeddingZoom',
         ],
       );
 
       config.linkViews(
         [pca, tsne],
         [
-          CoordinationType.EMBEDDING_TARGET_X,
-          CoordinationType.EMBEDDING_TARGET_Y,
+          'embeddingTargetX',
+          'embeddingTargetY',
         ],
         [
           2,
@@ -780,13 +553,6 @@ describe('src/api/VitessceConfig.js', () => {
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
         coordinationSpace: {
-          dataset: {
-            A: 'A',
-          },
-          embeddingType: {
-            A: 'PCA',
-            B: 't-SNE',
-          },
           embeddingZoom: {
             A: null,
           },
@@ -797,180 +563,85 @@ describe('src/api/VitessceConfig.js', () => {
             A: 3,
           },
         },
-        datasets: [{
-          name: 'My dataset',
-          uid: 'A',
-          files: [],
-        }],
-        initStrategy: 'auto',
-        layout: [
-          {
-            component: 'scatterplot',
+        viewCoordination: {
+          pca: {
             coordinationScopes: {
-              dataset: 'A',
-              embeddingType: 'A',
               embeddingTargetX: 'A',
               embeddingTargetY: 'A',
               embeddingZoom: 'A',
             },
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
           },
-          {
-            component: 'scatterplot',
+          tsne: {
             coordinationScopes: {
-              dataset: 'A',
-              embeddingType: 'B',
               embeddingTargetX: 'A',
               embeddingTargetY: 'A',
               embeddingZoom: 'A',
             },
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
-          },
-        ],
-        name: 'My config',
-        version: '1.0.4',
-      });
-    });
-
-    it('can create a layout', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.4',
-        name: 'My config',
-      });
-      const dataset = config.addDataset('My dataset');
-      const v1 = config.addView(dataset, 'spatial');
-      const v2 = config.addView(dataset, 'scatterplot', { mapping: 'PCA' });
-      const v3 = config.addView(dataset, 'status');
-
-      config.layout(hconcat(v1, vconcat(v2, v3)));
-
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
-        coordinationSpace: {
-          dataset: {
-            A: 'A',
-          },
-          embeddingType: {
-            A: 'PCA',
           },
         },
-        datasets: [{
-          name: 'My dataset',
-          uid: 'A',
-          files: [],
-        }],
-        initStrategy: 'auto',
-        layout: [
-          {
-            component: 'spatial',
-            coordinationScopes: {
-              dataset: 'A',
-            },
-            x: 0,
-            y: 0,
-            w: 6,
-            h: 12,
-          },
-          {
-            component: 'scatterplot',
-            coordinationScopes: {
-              dataset: 'A',
-              embeddingType: 'A',
-            },
-            x: 6,
-            y: 0,
-            w: 6,
-            h: 6,
-          },
-          {
-            component: 'status',
-            coordinationScopes: {
-              dataset: 'A',
-            },
-            x: 6,
-            y: 6,
-            w: 6,
-            h: 6,
-          },
-        ],
-        name: 'My config',
-        version: '1.0.4',
+        uid: 'My config',
       });
     });
-
+    
     it('can load a view config from JSON', () => {
-      const config = new VitessceConfig({
-        schemaVersion: '1.0.4',
-        name: 'My config',
-      });
-      const dataset = config.addDataset('My dataset');
-      const v1 = config.addView(dataset, 'spatial');
-      const v2 = config.addView(dataset, 'scatterplot', { mapping: 'PCA' });
-      const v3 = config.addView(dataset, 'status');
+      const config = new CmvConfig('My config');
+      const v1 = config.addView('spatial');
+      const v2 = config.addView('scatterplot');
+      const v3 = config.addView('status');
 
-      config.layout(hconcat(v1, vconcat(v2, v3)));
+      config.linkViews(
+        [v1, v2, v3],
+        [
+          'dataset',
+        ],
+        [
+          'My dataset'
+        ]
+      );
+      config.linkViews(
+        [v2],
+        [
+          'embeddingType',
+        ],
+        [
+          'PCA'
+        ]
+      );
+
 
       const origConfigJSON = config.toJSON();
 
-      const loadedConfig = VitessceConfig.fromJSON(origConfigJSON);
+      const loadedConfig = CmvConfig.fromJSON(origConfigJSON);
       const loadedConfigJSON = loadedConfig.toJSON();
 
       expect(loadedConfigJSON).toEqual({
         coordinationSpace: {
           dataset: {
-            A: 'A',
+            A: 'My dataset',
           },
           embeddingType: {
             A: 'PCA',
           },
         },
-        datasets: [{
-          name: 'My dataset',
-          uid: 'A',
-          files: [],
-        }],
-        initStrategy: 'auto',
-        layout: [
-          {
-            component: 'spatial',
+        viewCoordination: {
+          spatial: {
             coordinationScopes: {
               dataset: 'A',
             },
-            x: 0,
-            y: 0,
-            w: 6,
-            h: 12,
           },
-          {
-            component: 'scatterplot',
+          scatterplot: {
             coordinationScopes: {
               dataset: 'A',
               embeddingType: 'A',
             },
-            x: 6,
-            y: 0,
-            w: 6,
-            h: 6,
           },
-          {
-            component: 'status',
+          status: {
             coordinationScopes: {
               dataset: 'A',
             },
-            x: 6,
-            y: 6,
-            w: 6,
-            h: 6,
           },
-        ],
-        name: 'My config',
-        version: '1.0.4',
+        },
+        uid: 'My config',
       });
     });
   });

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useViewConfigStoreApi } from './state/hooks.js';
+import { useViewConfigStoreApi } from './hooks.js';
 
 
 /**

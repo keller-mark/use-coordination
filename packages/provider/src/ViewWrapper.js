@@ -6,7 +6,7 @@ import React, {
 import {
   useViewConfigStoreApi,
   useSetViewConfig,
-} from './state/hooks.js';
+} from './hooks.js';
 
 /**
  * The wrapper for the views.

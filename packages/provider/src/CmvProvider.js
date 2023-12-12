@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useCallback } from 'react';
 import {
   ViewConfigProvider,
   createViewConfigStore,
-} from './state/hooks.js';
+} from './hooks.js';
 import ViewWrapper from './ViewWrapper.js';
 import CallbackPublisher from './CallbackPublisher.js';
 
