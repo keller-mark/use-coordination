@@ -28,7 +28,7 @@ export const useViewConfigStoreApi = useViewConfigStoreApiLocal;
  * @param {*} coordinationSpace The coordinationSpace for a config.
  * @returns {string|undefined} The coordinationScopesBy after meta-coordination.
  */
-export function getScopes(coordinationScopes: Record<string, any>, metaSpace: Record<string, any>) {
+export function getScopes(coordinationScopes: Record<string, string | string[]>, metaSpace: Record<string, Record<string, any>>) {
   let result = { ...coordinationScopes };
   // Check if there is a matching meta-scope.
   if (metaSpace) {
@@ -56,7 +56,7 @@ export function getScopes(coordinationScopes: Record<string, any>, metaSpace: Re
  * @param {*} coordinationSpace The coordinationSpace for a config.
  * @returns {string|undefined} The coordinationScopesBy after meta-coordination.
  */
-export function getScopesBy(coordinationScopes: Record<string, any>, coordinationScopesBy: Record<string, any>, metaSpaceBy: Record<string, any>) {
+export function getScopesBy(coordinationScopes: Record<string, any>, coordinationScopesBy: Record<string, any>, metaSpaceBy: Record<string, Record<string, any>>) {
   let result = { ...coordinationScopesBy };
   // Check if there is a matching meta-scope.
   if (metaSpaceBy) {
@@ -74,6 +74,72 @@ export function getScopesBy(coordinationScopes: Record<string, any>, coordinatio
     }
   }
   return result;
+}
+
+/**
+ * Get the name of the metaCoordinationScopes coordination scope
+ * for a particular non-meta coordination scope, after accounting for
+ * meta-coordination.
+ * @param {*} coordinationScopes The coordinationScopes for a view.
+ * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {string} parameter The parameter for which to get the metaScope.
+ * @returns {string|undefined} The metaCoordinationScopes coordination scope name.
+ */
+export function getMetaScope(coordinationScopes: Record<string, string | string[]>, coordinationSpace: Record<string, Record<string, any>>, parameter: string) {
+  let latestMetaScope;
+  // Check if there is a matching meta-scope.
+  if (coordinationSpace) {
+    // Determine if there is a meta-scope that would take precedence.
+    const metaScopes = coordinationScopes[META_COORDINATION_SCOPES];
+    const metaSpace = coordinationSpace[META_COORDINATION_SCOPES];
+    if (metaScopes && metaSpace) {
+      // The view.coordinationScopes.metaCoordinationScopes might be an array or a string.
+      // Convert to an array.
+      const metaScopesArr = Array.isArray(metaScopes) ? metaScopes : [metaScopes];
+      metaScopesArr.forEach((metaScope) => {
+        // Merge the original coordinationScopes with the matching meta-coordinationScopes
+        // from the coordinationSpace.
+        if (metaSpace[metaScope][parameter]) {
+          latestMetaScope = metaScope;
+        }
+      });
+    }
+  }
+  return latestMetaScope;
+}
+
+/**
+ * Get the name of the metaCoordinationScopesBy coordination scope
+ * for a particular non-meta coordination scope, after accounting for
+ * meta-coordination.
+ * @param {*} coordinationScopes The coordinationScopes for a view.
+ * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {string} byParameter The byParameter for which to get the metaScope.
+ * @param {string} parameter The parameter for which to get the metaScope.
+ * @param {string} byScope The byScope for the byParameter in which to look for the metaScope.
+ * @returns {string|undefined} The metaCoordinationScopesBy coordination scope name.
+ */
+export function getMetaScopeBy(coordinationScopes: Record<string, string | string[]>, coordinationSpace: Record<string, Record<string, any>>, byParameter: string, parameter: string, byScope: string) {
+  let latestMetaScope;
+  // Check if there is a matching meta-scope.
+  if (coordinationSpace) {
+    // Determine if there is a meta-scope that would take precedence.
+    const metaScopesBy = coordinationScopes[META_COORDINATION_SCOPES_BY];
+    const metaSpaceBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
+    if (metaSpaceBy && metaScopesBy) {
+      // The view.coordinationScopes.metaCoordinationScopes might be an array or a string.
+      // Convert to an array.
+      const metaScopesArr = Array.isArray(metaScopesBy) ? metaScopesBy : [metaScopesBy];
+      metaScopesArr.forEach((metaScope) => {
+        // Merge the original coordinationScopesBy with the matching meta-coordinationScopesBy
+        // from the coordinationSpace.
+        if (metaSpaceBy[metaScope]?.[byParameter]?.[parameter]?.[byScope]) {
+          latestMetaScope = metaScope;
+        }
+      });
+    }
+  }
+  return latestMetaScope;
 }
 
 /**
@@ -187,7 +253,7 @@ export function useInitialCoordination(parameters: string[], coordinationScopes:
   return values;
 }
 
-export function useCoordinationProps(viewUid: string) {
+function useCoordinationProps(viewUid: string) {
   const viewCoordination = useViewConfigStore((state: any) => {
     const { viewCoordination } = state.viewConfig;
     return viewCoordination;
@@ -412,7 +478,7 @@ export function useMultiCoordinationValues(parameter: string, coordinationScopes
  * setter functions.
  */
 export function useComplexCoordination(
-  parameters: string[], coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>, byType: string,
+  parameters: string[], coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, Record<string, any>>, byType: string,
 ) {
   const setCoordinationValue = useViewConfigStore((state: any) => state.setCoordinationValue);
 

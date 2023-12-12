@@ -4,5 +4,67 @@ title: Configs via JSON
 slug: /config-json
 ---
 
-## Overview
+The CMV config stores the coordination space (i.e., the state of the views) and defines which views and properties are coordinated.
+
+## Optional properties
+
+### `uid`
+
+- Type: `string`
+
+A unique ID for the config. Optional.
+
+Intended to be used in situations where `<CmvProvider/>` is used as a controlled component (i.e., a parent component is the source of truth for the config prop and likely also uses the `onConfigChange` prop).
+For example, if a change in `config.uid` is detected, the configuration will be re-validated (which might not occur on other changes to config for performance reasons). 
+
+### `coordinationSpace`
+
+- Type: `object`
+
+The coordination space stores the values associated with each coordination object.
+It may be helpful to recall that the coordination space is analogous to computer memory which stores values of variables, and the coordination scope names are analogous to references to different locations in memory.
+
+The keys of each object (at the first level) in the coordination space represent coordination types.
+The keys of each coordination type object represent coordination scope names.
+The types of values that each coordination scope can take can be as simple as a single number or as complex as an array or object, and depend on the types of values supported by its coordination type.
+
+
+
+```json
+...,
+"coordinationSpace": {
+    "embeddingZoom": {
+        "EZ1": 2,
+        "EZ2": 20
+    },
+    "embeddingType": {
+        "ET1": "UMAP",
+        "ET2": "PCA"
+    }
+},
+...
+```
+
+### `viewCoordination`
+
+```json
+...,
+"viewCoordination": {
+    "tsneView": {
+        "coordinationScopes": {
+            "embeddingType": "ET1",
+            "embeddingZoom": "EZ1"
+        }
+    },
+    "umapView": {
+        "coordinationScopes": {
+            "embeddingType": "ET2",
+            "embeddingZoom": "EZ2"
+        }
+    }
+},
+...
+```
+
+
 
