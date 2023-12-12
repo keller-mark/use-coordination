@@ -29,5 +29,5 @@ export default function ViewWrapper(props: ViewWrapperProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey]);
 
-  return children;
+  return children as JSX.Element;
 }
