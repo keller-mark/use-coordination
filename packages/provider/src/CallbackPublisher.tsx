@@ -1,26 +1,18 @@
 import { useEffect } from 'react';
 import { useViewConfigStoreApi } from './hooks.js';
-
+import { CallbackPublisherProps } from './prop-types.js';
 
 /**
  * This is a dummy component which handles
  * publishing new view configs and loaders to
  * the provided callbacks on changes.
- * @param {object} props
- * @param {function} props.onConfigChange A callback function
- * to execute on each change of the Vitessce view config.
- * @param {function} props.onLoaderChange A callback function
- * to execute on each change of the loaders object.
- * @param {boolean} props.validateOnConfigChange Whether to validate
- * against the view config schema when publishing changes.
  */
-export default function CallbackPublisher(props) {
+export default function CallbackPublisher(props: CallbackPublisherProps) {
   const {
     onConfigChange,
     validater,
     validateOnConfigChange,
   } = props;
-
 
   const viewConfigStoreApi = useViewConfigStoreApi();
 
@@ -30,7 +22,7 @@ export default function CallbackPublisher(props) {
   // Reference: https://github.com/react-spring/zustand#transient-updates-for-often-occuring-state-changes
   useEffect(() => viewConfigStoreApi.subscribe(
     // The function to run on each publish.
-    (viewConfig) => {
+    (viewConfig: any) => {
       if (validateOnConfigChange && viewConfig && validater) {
         validater(viewConfig);
       }
@@ -40,7 +32,7 @@ export default function CallbackPublisher(props) {
     },
     // The function to specify which part of the store
     // we want to subscribe to.
-    state => state.viewConfig,
+    (state: any) => state.viewConfig,
   ), [onConfigChange, validater, validateOnConfigChange, viewConfigStoreApi]);
 
   // Render nothing.

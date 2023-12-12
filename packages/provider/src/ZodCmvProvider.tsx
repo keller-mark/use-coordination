@@ -1,20 +1,22 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { isEqual } from 'lodash-es';
 import { buildConfigSchema } from '@mm-cmv/schemas';
 import { CmvProvider } from './CmvProvider.js';
 import {
   logConfig,
 } from './view-config-utils.js';
+import { ZodCmvProviderProps, CmvConfigObject } from './prop-types.js';
 
-export function ZodCmvProvider(props) {
+export function ZodCmvProvider(props: ZodCmvProviderProps) {
   const {
     config,
     onConfigChange,
     validateConfig = true,
     validateOnConfigChange = false,
     coordinationTypes: coordinationTypesProp,
-    initializer = null,
+    initializer,
     children,
+    onCreateStore,
   } = props;
 
   const coordinationTypes = useMemo(
@@ -49,7 +51,8 @@ export function ZodCmvProvider(props) {
       return config;
     }
     // Perform second round of parsing against plugin-specific config schema.
-    const parsedConfig = pluginSpecificConfigSchema.parse(config);
+    // TODO: use type from Zod infer and generics.
+    const parsedConfig = pluginSpecificConfigSchema.parse(config) as CmvConfigObject;
     logConfig(parsedConfig, 'ZodCmvProvider parsed config');
     return parsedConfig;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,7 +68,7 @@ export function ZodCmvProvider(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey, validConfig, onConfigChange]);
 
-  const validater = useCallback((viewConfig) => {
+  const validater = useCallback((viewConfig: any) => {
     // Need the try-catch here since Zustand will actually
     // just catch and ignore errors in its subscription callbacks.
     try {
@@ -83,6 +86,7 @@ export function ZodCmvProvider(props) {
       validateOnConfigChange={validateOnConfigChange}
       validater={validater}
       initializer={initializer}
+      onCreateStore={onCreateStore}
     >
       {children}
     </CmvProvider>

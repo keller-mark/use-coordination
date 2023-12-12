@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
-export class ZodErrorBoundary extends Component {
-  constructor(props) {
+export class ZodErrorBoundary extends Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: { name: any; message: any; }) {
     // Update state so the next render will show the fallback UI.
     return { hasError: true, name: error.name, message: error.message };
   }

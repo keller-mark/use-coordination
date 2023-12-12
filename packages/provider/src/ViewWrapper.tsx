@@ -1,17 +1,16 @@
-import React, {
+import {
   useEffect,
-  useCallback,
-  useMemo,
 } from 'react';
 import {
   useViewConfigStoreApi,
   useSetViewConfig,
 } from './hooks.js';
+import { ViewWrapperProps } from './prop-types.js';
 
 /**
  * The wrapper for the views.
  */
-export default function ViewWrapper(props) {
+export default function ViewWrapper(props: ViewWrapperProps) {
   const {
     configKey,
     config,

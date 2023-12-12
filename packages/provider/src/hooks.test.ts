@@ -34,16 +34,6 @@ describe('provider/hooks.js', () => {
             },
           },
         },
-        {
-          spatialSegmentationLayer: {
-            glomerulus: 'glomerulus',
-            tubule: 'tubule',
-          },
-          spatialTargetC: {
-            A: 1,
-            B: 2,
-          },
-        },
       )).toEqual('A');
     });
   });
@@ -53,7 +43,7 @@ describe('provider/hooks.js', () => {
         {
           obsType: 'A',
         },
-        null,
+        {},
       )).toEqual({
         obsType: 'A',
       });

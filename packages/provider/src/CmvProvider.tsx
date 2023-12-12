@@ -1,19 +1,21 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import {
   ViewConfigProvider,
   createViewConfigStore,
 } from './hooks.js';
 import ViewWrapper from './ViewWrapper.js';
 import CallbackPublisher from './CallbackPublisher.js';
+import { CmvProviderProps } from './prop-types.js';
 
-export function CmvProvider(props) {
+export function CmvProvider(props: CmvProviderProps) {
   const {
     config,
     onConfigChange,
     validateOnConfigChange = false,
-    validater = null,
-    initializer = null,
+    validater,
+    initializer,
     children,
+    onCreateStore,
   } = props;
 
   // If config.uid exists, then use it for hook dependencies to detect changes
@@ -43,12 +45,12 @@ export function CmvProvider(props) {
     const initializedConfig = initializer
       ? initializer(config)
       : config;
-    return createViewConfigStore(initializedConfig);
+    return createViewConfigStore(initializedConfig, onCreateStore);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, initializer]);
+  }, [configKey, initializer, onCreateStore]);
 
-  // TODO(cmv): just throw normal error. parent can use ErrorBoundary.
   return (
+    /* @ts-ignore */
     <ViewConfigProvider key={configKey} createStore={createViewConfigStoreClosure}>
         <ViewWrapper
           configKey={configKey}
