@@ -6,6 +6,60 @@ slug: /provider-components
 
 ## `<CmvProvider/>`
 
+### Required props
+
+#### `config`
+
+- Type: `object`
+
+#### `children`
+
+- Type: JSX
+
+### Optional props
+
+#### `onConfigChange`
+
+- Type: `function`
+
+A callback function for config updates.
+
+#### `validateOnConfigChange`
+
+- Type: `boolean`
+
+Whether to validate using the `validater` function when publishing changes.
+Use for debugging purposes only, as this has a performance impact.
+
+#### `validater`
+
+- Type: `function`
+
+Validation function to run when `validateOnConfigChange` is true.
+
+#### `initializer`
+
+- Type: `function`
+
+Initialization function to run during the creation of the Zustand store.
+
 ## `<ZodCmvProvider/>`
 
+Inherits all props except `validater` from `CmvProvider`.
+
+### Required props
+
+#### `coordinationTypes`
+
+- Type: `CoordinationType[]`
+
+An array of `CoordinationType` objects which contain names and Zod schemas.
+
+### Optional props
+
+#### `validateConfig`
+
+- Type: `boolean`
+
+Should the config be validated against the Zod schema?
 

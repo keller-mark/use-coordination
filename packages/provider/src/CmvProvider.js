@@ -11,7 +11,7 @@ export function CmvProvider(props) {
     config,
     onConfigChange,
     validateOnConfigChange = false,
-    validateViewConfig = null,
+    validater = null,
     initializer = null,
     children,
   } = props;
@@ -59,7 +59,7 @@ export function CmvProvider(props) {
         <CallbackPublisher
           onConfigChange={onConfigChange}
           validateOnConfigChange={validateOnConfigChange}
-          validateViewConfig={validateViewConfig}
+          validater={validater}
         />
     </ViewConfigProvider>
   );

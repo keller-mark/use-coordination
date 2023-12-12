@@ -17,7 +17,7 @@ import { useViewConfigStoreApi } from './hooks.js';
 export default function CallbackPublisher(props) {
   const {
     onConfigChange,
-    validateViewConfig,
+    validater,
     validateOnConfigChange,
   } = props;
 
@@ -31,8 +31,8 @@ export default function CallbackPublisher(props) {
   useEffect(() => viewConfigStoreApi.subscribe(
     // The function to run on each publish.
     (viewConfig) => {
-      if (validateOnConfigChange && viewConfig) {
-        validateViewConfig(viewConfig);
+      if (validateOnConfigChange && viewConfig && validater) {
+        validater(viewConfig);
       }
       if (onConfigChange && viewConfig) {
         onConfigChange(viewConfig);
@@ -41,7 +41,7 @@ export default function CallbackPublisher(props) {
     // The function to specify which part of the store
     // we want to subscribe to.
     state => state.viewConfig,
-  ), [onConfigChange, validateViewConfig, validateOnConfigChange, viewConfigStoreApi]);
+  ), [onConfigChange, validater, validateOnConfigChange, viewConfigStoreApi]);
 
   // Render nothing.
   return null;

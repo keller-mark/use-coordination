@@ -9,7 +9,6 @@ import {
 export function ZodCmvProvider(props) {
   const {
     config,
-    onWarn,
     onConfigChange,
     validateConfig = true,
     validateOnConfigChange = false,
@@ -66,7 +65,7 @@ export function ZodCmvProvider(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey, validConfig, onConfigChange]);
 
-  const validateViewConfig = useCallback((viewConfig) => {
+  const validater = useCallback((viewConfig) => {
     // Need the try-catch here since Zustand will actually
     // just catch and ignore errors in its subscription callbacks.
     try {
@@ -80,10 +79,9 @@ export function ZodCmvProvider(props) {
   return (
     <CmvProvider
       config={validConfig}
-      onWarn={onWarn}
       onConfigChange={onConfigChange}
       validateOnConfigChange={validateOnConfigChange}
-      validateViewConfig={validateViewConfig}
+      validater={validater}
       initializer={initializer}
     >
       {children}

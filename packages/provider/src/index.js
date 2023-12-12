@@ -3,7 +3,6 @@ export {
   useCoordinationScopes,
   useCoordinationScopesBy,
   useInitialCoordination,
-  useCoordinationProps,
   useCoordination,
   useComplexCoordination,
   useComplexCoordinationSecondary,

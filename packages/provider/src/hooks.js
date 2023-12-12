@@ -565,7 +565,9 @@ export function useCoordinationScopes(viewUid) {
  * @returns {object} The coordinationScopesBy after filling in with meta-coordinationScopesBy.
  */
 export function useCoordinationScopesBy(viewUid) {
+  // Note: These are the post-meta-resolving coordinationScopes values.
   const coordinationScopes = useCoordinationScopes(viewUid);
+  // Note: These are the "raw" (pre-meta-resolving) coordinationScopesBy values.
   const { coordinationScopesBy } = useCoordinationProps(viewUid);
   
 
