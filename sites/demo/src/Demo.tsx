@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Typography, Link, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { csvParse } from 'd3-dsv';
-import { CmvProviderExample } from 'mm-cmv';
+import { BaseExample } from 'mm-cmv';
 import type { CmvProviderProps } from 'mm-cmv';
 
 const StyledNavbarImage = styled('img')`
@@ -48,9 +48,9 @@ export default function Demo() {
           </Grid>
         </NavBarGrid>
       
-        <CmvProviderExample>
+        <BaseExample>
           {/* TODO */}
-        </CmvProviderExample>
+        </BaseExample>
       </Container>
     </>
   );
