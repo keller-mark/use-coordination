@@ -34,6 +34,7 @@
     "changeset-publish-dummy": "git tag v$(cat ./package.json | jq -r .version) && git push --follow-tags && node .changeset/get-release-notes.mjs && echo \"should-release=true\" >> $GITHUB_OUTPUT"
   },
   "devDependencies": {
+    "knip": "^3.7.0",
     "@pnpm/meta-updater": "^0.0.6",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",

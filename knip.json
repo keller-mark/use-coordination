@@ -1,0 +1,5 @@
+{
+  "entry": ["packages/main/all/src/index.{js,ts}"],
+  "project": ["./**/*.{js,ts}"],
+  "ignore": "vite.config.js"
+}

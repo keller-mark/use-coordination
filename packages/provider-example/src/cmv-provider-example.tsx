@@ -1,22 +1,24 @@
 import React from 'react';
 import {
   ZodCmvProvider,
+  ZodErrorBoundary,
   useCoordination,
   useCoordinationProps,
   useCoordinationScopes,
 } from '@mm-cmv/provider';
 import * as Plugins from '@mm-cmv/plugins';
 import { z } from 'zod';
+import { SelectScope, MetaSelectScope } from './example-utils.js';
 
 const MyPluginSlider = ({
-  myCustomCoordinationType, 
-  setMyCustomCoordinationType,
+  sliderValue, 
+  setSliderValue,
 }: any) => {
   function handleChange(e: any) {
-    setMyCustomCoordinationType(parseFloat(e.target.value));
+    setSliderValue(parseFloat(e.target.value));
   }
   return (
-    <input type="range" min={0} max={1} step={0.01} value={myCustomCoordinationType} onChange={handleChange} />
+    <input type="range" min={0} max={1} step={0.01} value={sliderValue} onChange={handleChange} />
   );
 }
 
@@ -29,31 +31,26 @@ const MyPluginSliderSubscriber = ({
   const coordinationScopes = useCoordinationScopes(coordinationScopesRaw);
 
   const [{
-    myCustomCoordinationType,
+    sliderValue,
   }, {
-    setMyCustomCoordinationType,
-  }] = useCoordination(
-    [
-      'myCustomCoordinationType',
-    ],
-    coordinationScopes,
-  );
+    setSliderValue,
+  }] = useCoordination(['sliderValue'], coordinationScopes);
   return (
     <MyPluginSlider
-      myCustomCoordinationType={myCustomCoordinationType}
-      setMyCustomCoordinationType={setMyCustomCoordinationType}
+      sliderValue={sliderValue}
+      setSliderValue={setSliderValue}
     />
   );
 }
 
 const pluginCoordinationTypes = [
-  new Plugins.PluginCoordinationType('myCustomCoordinationType', 0.75, z.number()),
+  new Plugins.PluginCoordinationType('sliderValue', 0.75, z.number()),
 ];
 
 const initialConfig = {
   uid: 1,
   coordinationSpace: {
-    "myCustomCoordinationType": {
+    "sliderValue": {
       "A": 0.5,
       "B": 0.75,
       "C": 0.25
@@ -62,87 +59,21 @@ const initialConfig = {
   viewCoordination: {
     slider1: {
       coordinationScopes: {
-        myCustomCoordinationType: "B",
+        sliderValue: "A",
       },
     },
     slider2: {
       coordinationScopes: {
-        myCustomCoordinationType: "A",
+        sliderValue: "B",
       },
     },
     slider3: {
       coordinationScopes: {
-        myCustomCoordinationType: "A",
+        sliderValue: "C",
       },
     },
   },
 };
-
-class ErrorBoundary extends React.Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: { message: any; name: any; }) {
-    // Update state so the next render will show the fallback UI.
-    return { hasError: true, name: error.name, message: error.message };
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <>
-          <h1>{this.state.name}</h1>
-          <pre>{this.state.message}</pre>
-        </>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-function SelectScope(props: any) {
-  const {
-    config,
-    viewUid,
-    cType = "myCustomCoordinationType",
-    onConfigChange,
-  } = props;
-
-  const allScopes = Object.keys(config.coordinationSpace[cType]);
-
-  function handleChange(event: any) {
-    const newScope = event.target.value;
-    const newConfig = {
-      ...config,
-      uid: config.uid + 1,
-      viewCoordination: {
-        ...config.viewCoordination,
-        [viewUid]: {
-          ...config.viewCoordination[viewUid],
-          coordinationScopes: {
-            ...config.viewCoordination[viewUid].coordinationScopes,
-            [cType]: newScope,
-          },
-        },
-      },
-    };
-    onConfigChange(newConfig)
-  }
-
-  return (
-    <>
-      <label>Coordination scope for {viewUid}:&nbsp;</label>
-      <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]}>
-        {allScopes.map((scope: any) => (
-          <option key={scope} value={scope}>{scope}</option>
-        ))}
-      </select>
-    </>
-  )
-}
 
 export function CmvProviderExample(props: any) {
   const [config, setConfig] = React.useState<any>(initialConfig);
@@ -154,7 +85,7 @@ export function CmvProviderExample(props: any) {
           flex-direction: row;
         }
       `}</style>
-      <ErrorBoundary>
+      <ZodErrorBoundary>
         <ZodCmvProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
@@ -176,7 +107,7 @@ export function CmvProviderExample(props: any) {
         <pre>
           {JSON.stringify(config, null, 2)}
         </pre>
-      </ErrorBoundary>
+      </ZodErrorBoundary>
     </>
   );
 }
@@ -184,20 +115,20 @@ export function CmvProviderExample(props: any) {
 const initialMetaConfig = {
   uid: 1,
   coordinationSpace: {
-    "myCustomCoordinationType": {
+    "sliderValue": {
       "A": 0.5,
       "B": 0.75,
       "C": 0.25
     },
     metaCoordinationScopes: {
       A: {
-        myCustomCoordinationType: "B",
+        sliderValue: "A",
       },
       B: {
-        myCustomCoordinationType: "A",
+        sliderValue: "B",
       },
       C: {
-        myCustomCoordinationType: "A",
+        sliderValue: "C",
       }
     }
   },
@@ -230,7 +161,7 @@ export function MetaCoordinationExample(props: any) {
           flex-direction: row;
         }
       `}</style>
-      <ErrorBoundary>
+      <ZodErrorBoundary>
         <ZodCmvProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
@@ -238,21 +169,21 @@ export function MetaCoordinationExample(props: any) {
         >
           <div className="slider-container">
             <MyPluginSliderSubscriber viewUid="slider1" />
-            <SelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
+            <MetaSelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
           </div>
           <div className="slider-container">
             <MyPluginSliderSubscriber viewUid="slider2" />
-            <SelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
+            <MetaSelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
           </div>
           <div className="slider-container">
             <MyPluginSliderSubscriber viewUid="slider3" />
-            <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
+            <MetaSelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
           </div>
         </ZodCmvProvider>
         <pre>
           {JSON.stringify(config, null, 2)}
         </pre>
-      </ErrorBoundary>
+      </ZodErrorBoundary>
     </>
   );
 }

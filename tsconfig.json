@@ -21,7 +21,6 @@
   },
   "references": [
     { "path": "packages/config" },
-    { "path": "packages/constants" },
     { "path": "packages/constants-internal" },
     { "path": "packages/plugins" },
     { "path": "packages/utils" },
