@@ -8,7 +8,7 @@ import {
   useMultiCoordinationScopesNonNull,
   useComplexCoordination,
 } from '@mm-cmv/provider';
-import * as Plugins from '@mm-cmv/plugins';
+import { CoordinationType } from '@mm-cmv/schemas';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
 
@@ -126,8 +126,8 @@ const ColorfulSliderInputContainer = ({
 }
 
 const pluginCoordinationTypes = [
-  new Plugins.PluginCoordinationType('channel', '__dummy__', z.literal('__dummy__')),
-  new Plugins.PluginCoordinationType('channelValue', 0, z.number()),
+  new CoordinationType('channel', '__dummy__', z.literal('__dummy__')),
+  new CoordinationType('channelValue', 0, z.number()),
 ];
 
 

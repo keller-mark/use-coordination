@@ -1,22 +1,20 @@
 import { z } from 'zod';
 import { fromEntries } from '@mm-cmv/utils';
-import { CoordinationType } from '@mm-cmv/constants-internal';
-import {
-  PluginCoordinationType,
-} from '@mm-cmv/plugins';
+import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@mm-cmv/constants-internal';
+import { CoordinationType } from './coordination-type.js';
 import {
   componentCoordinationScopes,
   componentCoordinationScopesBy,
 } from './shared.js';
 
 const baseCoordinationTypes = [
-  new PluginCoordinationType(
-    CoordinationType.META_COORDINATION_SCOPES,
+  new CoordinationType(
+    META_COORDINATION_SCOPES,
     null,
     z.record(z.any()).nullable(),
   ),
-  new PluginCoordinationType(
-    CoordinationType.META_COORDINATION_SCOPES_BY,
+  new CoordinationType(
+    META_COORDINATION_SCOPES_BY,
     null,
     z.record(z.any()).nullable(),
   ),
@@ -32,7 +30,7 @@ const baseCoordinationTypes = [
  * @returns The Zod schema.
  */
 export function buildConfigSchema<
-  T3 extends PluginCoordinationType<z.ZodTypeAny>,
+  T3 extends CoordinationType<z.ZodTypeAny>,
 >(
   pluginCoordinationTypes: Array<T3>,
 ) {

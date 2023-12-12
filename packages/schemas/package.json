@@ -27,7 +27,6 @@
   "dependencies": {
     "@types/lodash": "^4.14.191",
     "@types/lodash-es": "^4.17.7",
-    "@mm-cmv/plugins": "workspace:*",
     "@mm-cmv/utils": "workspace:*",
     "@mm-cmv/constants-internal": "workspace:*",
     "lodash-es": "^4.17.21",

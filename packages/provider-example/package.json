@@ -26,7 +26,6 @@
   "dependencies": {
     "@mm-cmv/utils": "workspace:*",
     "@mm-cmv/provider": "workspace:*",
-    "@mm-cmv/plugins": "workspace:*",
     "@mm-cmv/schemas": "workspace:*",
     "@mui/material": "^5.14.10",
     "@mui/icons-material": "^5.14.11",

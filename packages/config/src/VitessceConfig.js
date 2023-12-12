@@ -1,6 +1,11 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { CoordinationType } from '@mm-cmv/constants-internal';
+import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@mm-cmv/constants-internal';
 import { fromEntries, getNextScope } from '@mm-cmv/utils';
+
+const CoordinationType = {
+  DATASET: 'dataset',
+  EMBEDDING_TYPE: 'embeddingType',
+};
 
 /**
  * Class representing a file within a Vitessce config dataset.
@@ -310,12 +315,12 @@ export class VitessceConfigView {
     if (!this.view.coordinationScopes) {
       this.view.coordinationScopes = {};
     }
-    this.view.coordinationScopes[CoordinationType.META_COORDINATION_SCOPES] = [
-      ...(this.view.coordinationScopes[CoordinationType.META_COORDINATION_SCOPES] || []),
+    this.view.coordinationScopes[META_COORDINATION_SCOPES] = [
+      ...(this.view.coordinationScopes[META_COORDINATION_SCOPES] || []),
       metaScope.metaScope.cScope,
     ];
-    this.view.coordinationScopes[CoordinationType.META_COORDINATION_SCOPES_BY] = [
-      ...(this.view.coordinationScopes[CoordinationType.META_COORDINATION_SCOPES_BY] || []),
+    this.view.coordinationScopes[META_COORDINATION_SCOPES_BY] = [
+      ...(this.view.coordinationScopes[META_COORDINATION_SCOPES_BY] || []),
       metaScope.metaByScope.cScope,
     ];
     return this;
@@ -461,11 +466,11 @@ export class VitessceConfigMetaCoordinationScope {
    */
   constructor(metaScope, metaByScope) {
     this.metaScope = new VitessceConfigCoordinationScope(
-      CoordinationType.META_COORDINATION_SCOPES,
+      META_COORDINATION_SCOPES,
       metaScope,
     );
     this.metaByScope = new VitessceConfigCoordinationScope(
-      CoordinationType.META_COORDINATION_SCOPES_BY,
+      META_COORDINATION_SCOPES_BY,
       metaByScope,
     );
   }
@@ -658,29 +663,29 @@ export class VitessceConfig {
    */
   addMetaCoordination() {
     const prevMetaScopes = (
-      this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES]
-        ? Object.keys(this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES])
+      this.config.coordinationSpace[META_COORDINATION_SCOPES]
+        ? Object.keys(this.config.coordinationSpace[META_COORDINATION_SCOPES])
         : []
     );
     const prevMetaByScopes = (
-      this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES_BY]
-        ? Object.keys(this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES_BY])
+      this.config.coordinationSpace[META_COORDINATION_SCOPES_BY]
+        ? Object.keys(this.config.coordinationSpace[META_COORDINATION_SCOPES_BY])
         : []
     );
     const metaContainer = new VitessceConfigMetaCoordinationScope(
       getNextScope(prevMetaScopes),
       getNextScope(prevMetaByScopes),
     );
-    if (!this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES]) {
-      this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES] = {};
+    if (!this.config.coordinationSpace[META_COORDINATION_SCOPES]) {
+      this.config.coordinationSpace[META_COORDINATION_SCOPES] = {};
     }
-    if (!this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES_BY]) {
-      this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES_BY] = {};
+    if (!this.config.coordinationSpace[META_COORDINATION_SCOPES_BY]) {
+      this.config.coordinationSpace[META_COORDINATION_SCOPES_BY] = {};
     }
     // eslint-disable-next-line max-len
-    this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES][metaContainer.metaScope.cScope] = metaContainer.metaScope;
+    this.config.coordinationSpace[META_COORDINATION_SCOPES][metaContainer.metaScope.cScope] = metaContainer.metaScope;
     // eslint-disable-next-line max-len
-    this.config.coordinationSpace[CoordinationType.META_COORDINATION_SCOPES_BY][metaContainer.metaByScope.cScope] = metaContainer.metaByScope;
+    this.config.coordinationSpace[META_COORDINATION_SCOPES_BY][metaContainer.metaByScope.cScope] = metaContainer.metaByScope;
     return metaContainer;
   }
 

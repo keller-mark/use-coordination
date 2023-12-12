@@ -228,30 +228,11 @@ importers:
         specifier: ^4.3.0
         version: 4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
 
-  packages/plugins:
-    dependencies:
-      zod:
-        specifier: ^3.21.4
-        version: 3.21.4
-    devDependencies:
-      '@types/react':
-        specifier: ^18.2.43
-        version: 18.2.43
-      vite:
-        specifier: ^4.3.0
-        version: 4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
-      vitest:
-        specifier: ^0.32.2
-        version: 0.32.2(@vitest/ui@0.16.0)(jsdom@20.0.3)(sass@1.62.1)(terser@5.17.6)
-
   packages/provider:
     dependencies:
       '@mm-cmv/constants-internal':
         specifier: workspace:*
         version: link:../constants-internal
-      '@mm-cmv/plugins':
-        specifier: workspace:*
-        version: link:../plugins
       '@mm-cmv/schemas':
         specifier: workspace:*
         version: link:../schemas
@@ -292,9 +273,6 @@ importers:
       '@emotion/styled':
         specifier: ^11.11.0
         version: 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.43)(react@18.2.0)
-      '@mm-cmv/plugins':
-        specifier: workspace:*
-        version: link:../plugins
       '@mm-cmv/provider':
         specifier: workspace:*
         version: link:../provider
@@ -332,9 +310,6 @@ importers:
       '@mm-cmv/constants-internal':
         specifier: workspace:*
         version: link:../constants-internal
-      '@mm-cmv/plugins':
-        specifier: workspace:*
-        version: link:../plugins
       '@mm-cmv/utils':
         specifier: workspace:*
         version: link:../utils

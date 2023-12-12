@@ -1,11 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { CoordinationType } from '@mm-cmv/constants-internal';
 import {
   VitessceConfig,
   hconcat,
   vconcat,
   CL,
 } from './VitessceConfig.js';
+
+const CoordinationType = {
+  EMBEDDING_ZOOM: 'embeddingZoom',
+  EMBEDDING_TARGET_X: 'embeddingTargetX',
+  EMBEDDING_TARGET_Y: 'embeddingTargetY',
+};
 
 describe('src/api/VitessceConfig.js', () => {
   describe('VitessceConfig', () => {

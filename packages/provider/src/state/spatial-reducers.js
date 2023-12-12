@@ -1,6 +1,8 @@
 /* eslint-disable max-len */
 import { getNextScope } from '@mm-cmv/utils';
-import { CoordinationType } from '@mm-cmv/constants-internal';
+import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@mm-cmv/constants-internal';
+
+const CoordinationType = {};
 
 /**
  * Get the name of the metaCoordinationScopes coordination scope
@@ -16,8 +18,8 @@ export function getMetaScope(coordinationScopes, coordinationSpace, parameter) {
   // Check if there is a matching meta-scope.
   if (coordinationSpace) {
     // Determine if there is a meta-scope that would take precedence.
-    const metaScopes = coordinationScopes[CoordinationType.META_COORDINATION_SCOPES];
-    const metaSpace = coordinationSpace[CoordinationType.META_COORDINATION_SCOPES];
+    const metaScopes = coordinationScopes[META_COORDINATION_SCOPES];
+    const metaSpace = coordinationSpace[META_COORDINATION_SCOPES];
     if (metaScopes && metaSpace) {
       // The view.coordinationScopes.metaCoordinationScopes might be an array or a string.
       // Convert to an array.
@@ -50,8 +52,8 @@ export function getMetaScopeBy(coordinationScopes, coordinationSpace, byParamete
   // Check if there is a matching meta-scope.
   if (coordinationSpace) {
     // Determine if there is a meta-scope that would take precedence.
-    const metaScopesBy = coordinationScopes[CoordinationType.META_COORDINATION_SCOPES_BY];
-    const metaSpaceBy = coordinationSpace[CoordinationType.META_COORDINATION_SCOPES_BY];
+    const metaScopesBy = coordinationScopes[META_COORDINATION_SCOPES_BY];
+    const metaSpaceBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
     if (metaSpaceBy && metaScopesBy) {
       // The view.coordinationScopes.metaCoordinationScopes might be an array or a string.
       // Convert to an array.
@@ -70,8 +72,8 @@ export function getMetaScopeBy(coordinationScopes, coordinationSpace, byParamete
 
 
 export function removeImageChannelInMetaCoordinationScopesHelper(coordinationScopesRaw, layerScope, channelScope, coordinationSpace) {
-  const metaCoordinationScopes = coordinationSpace[CoordinationType.META_COORDINATION_SCOPES];
-  const metaCoordinationScopesBy = coordinationSpace[CoordinationType.META_COORDINATION_SCOPES_BY];
+  const metaCoordinationScopes = coordinationSpace[META_COORDINATION_SCOPES];
+  const metaCoordinationScopesBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
 
   let newMetaCoordinationScopes = metaCoordinationScopes;
   let newMetaCoordinationScopesBy = metaCoordinationScopesBy;
@@ -126,14 +128,14 @@ export function removeImageChannelInMetaCoordinationScopesHelper(coordinationSco
 
   return {
     ...coordinationSpace,
-    [CoordinationType.META_COORDINATION_SCOPES]: newMetaCoordinationScopes,
-    [CoordinationType.META_COORDINATION_SCOPES_BY]: newMetaCoordinationScopesBy,
+    [META_COORDINATION_SCOPES]: newMetaCoordinationScopes,
+    [META_COORDINATION_SCOPES_BY]: newMetaCoordinationScopesBy,
   };
 }
 
 export function addImageChannelInMetaCoordinationScopesHelper(coordinationScopesRaw, layerScope, coordinationSpace) {
-  const metaCoordinationScopes = coordinationSpace[CoordinationType.META_COORDINATION_SCOPES];
-  const metaCoordinationScopesBy = coordinationSpace[CoordinationType.META_COORDINATION_SCOPES_BY];
+  const metaCoordinationScopes = coordinationSpace[META_COORDINATION_SCOPES];
+  const metaCoordinationScopesBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
 
   let newMetaCoordinationScopes = metaCoordinationScopes;
   let newMetaCoordinationScopesBy = metaCoordinationScopesBy;
@@ -285,7 +287,7 @@ export function addImageChannelInMetaCoordinationScopesHelper(coordinationScopes
 
   return {
     ...newCoordinationSpace,
-    [CoordinationType.META_COORDINATION_SCOPES]: newMetaCoordinationScopes,
-    [CoordinationType.META_COORDINATION_SCOPES_BY]: newMetaCoordinationScopesBy,
+    [META_COORDINATION_SCOPES]: newMetaCoordinationScopes,
+    [META_COORDINATION_SCOPES_BY]: newMetaCoordinationScopesBy,
   };
 }

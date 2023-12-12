@@ -5,7 +5,7 @@ import {
   useCoordination,
   useCoordinationScopes,
 } from '@mm-cmv/provider';
-import * as Plugins from '@mm-cmv/plugins';
+import { CoordinationType } from '@mm-cmv/schemas';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
 
@@ -72,8 +72,8 @@ const ColorfulSliderInputContainer = ({
 }
 
 const pluginCoordinationTypes = [
-  new Plugins.PluginCoordinationType('value', 0.75, z.number()),
-  new Plugins.PluginCoordinationType('color', [0, 0, 0], z.array(z.number()).length(3)),
+  new CoordinationType('value', 0.75, z.number()),
+  new CoordinationType('color', [0, 0, 0], z.array(z.number()).length(3)),
 ];
 
 

@@ -16,6 +16,4 @@ export {
 export {
   MetaMultiLevelExample,
 } from './meta-multi-level-example.js';
-export type {
-  CmvProviderProps,
-} from './types.js';
+

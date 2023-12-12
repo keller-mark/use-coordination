@@ -1,4 +1,2 @@
-export {
-  CoordinationType,
-} from './constants.js';
-export { default as META_VERSION } from './version.json';
+export const META_COORDINATION_SCOPES = 'metaCoordinationScopes';
+export const META_COORDINATION_SCOPES_BY = 'metaCoordinationScopesBy';

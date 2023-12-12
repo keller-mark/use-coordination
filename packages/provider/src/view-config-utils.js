@@ -2,12 +2,9 @@
 /* eslint-disable camelcase */
 import { cloneDeep } from 'lodash-es';
 import { fromEntries, getNextScope } from '@mm-cmv/utils';
-import {
-  META_VERSION,
-} from '@mm-cmv/constants-internal';
 
 export function logConfig(config, name) {
-  console.groupCollapsed(`🚄 mmCMV (${META_VERSION.version}) ${name}`);
+  console.groupCollapsed(`🚄 mmCMV ${name}`);
   console.info(`data:,${JSON.stringify(config)}`);
   console.info(JSON.stringify(config, null, 2));
   console.groupEnd();
@@ -68,55 +65,6 @@ function coordinateComponentsTogether(config, coordinationType, scopeValue, view
           } : {}),
       },
     })),
-  };
-  return newConfig;
-}
-
-/**
- * Give each component a different scope name for this coordination type.
- * @param {object} config A view config object.
- * @param {string} coordinationType A coordination type,
- * for example 'spatialZoom' or 'dataset'.
- * @param {*} scopeValue The initial value for the coordination scope,
- * to set in the coordination space.
- * @returns {object} The new view config.
- */
-function coordinateComponentsIndependent(config, coordinationType, scopeValue, viewTypes) {
-  const componentCoordinationTypes = fromEntries(
-    viewTypes.map(vt => ([vt.name, vt.coordinationTypes])),
-  );
-  const newConfig = {
-    ...config,
-    layout: [...config.layout],
-  };
-  const newScopes = {};
-  newConfig.layout.forEach((component, i) => {
-    // Only set the coordination scope if this component uses this coordination type,
-    // and the component is missing a coordination scope for this coordination type.
-    if (componentCoordinationTypes[component.component].includes(coordinationType)
-      && !component.coordinationScopes?.[coordinationType]
-    ) {
-      const scopeName = getNextScope([
-        ...getExistingScopesForCoordinationType(config, coordinationType),
-        ...Object.keys(newScopes),
-      ]);
-      newScopes[scopeName] = scopeValue;
-      newConfig.layout[i] = {
-        ...component,
-        coordinationScopes: {
-          ...component.coordinationScopes,
-          [coordinationType]: scopeName,
-        },
-      };
-    }
-  });
-  newConfig.coordinationSpace = {
-    ...newConfig.coordinationSpace,
-    [coordinationType]: {
-      ...newConfig.coordinationSpace[coordinationType],
-      // Add the new scope name and value to the coordination space.
-      ...newScopes,
-    },
   };
   return newConfig;
 }

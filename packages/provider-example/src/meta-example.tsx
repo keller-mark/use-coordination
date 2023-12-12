@@ -5,7 +5,7 @@ import {
   useCoordination,
   useCoordinationScopes,
 } from '@mm-cmv/provider';
-import * as Plugins from '@mm-cmv/plugins';
+import { CoordinationType } from '@mm-cmv/schemas';
 import { z } from 'zod';
 import { SelectScope, MetaSelectScope } from './example-utils.js';
 
@@ -42,7 +42,7 @@ const SliderInputContainer = ({
 }
 
 const pluginCoordinationTypes = [
-  new Plugins.PluginCoordinationType('sliderValue', 0.75, z.number()),
+  new CoordinationType('sliderValue', 0.75, z.number()),
 ];
 
 const initialMetaConfig = {
