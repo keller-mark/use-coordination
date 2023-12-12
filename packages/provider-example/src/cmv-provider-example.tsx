@@ -10,7 +10,7 @@ import * as Plugins from '@mm-cmv/plugins';
 import { z } from 'zod';
 import { SelectScope, MetaSelectScope } from './example-utils.js';
 
-const MyPluginSlider = ({
+const SliderInput = ({
   sliderValue, 
   setSliderValue,
 }: any) => {
@@ -22,7 +22,7 @@ const MyPluginSlider = ({
   );
 }
 
-const MyPluginSliderSubscriber = ({
+const SliderInputContainer = ({
   viewUid,
 }: any) => {
 
@@ -36,12 +36,47 @@ const MyPluginSliderSubscriber = ({
     setSliderValue,
   }] = useCoordination(['sliderValue'], coordinationScopes);
   return (
-    <MyPluginSlider
+    <SliderInput
       sliderValue={sliderValue}
       setSliderValue={setSliderValue}
     />
   );
 }
+
+const NumericInput = ({
+  sliderValue, 
+  setSliderValue,
+}: any) => {
+  function handleChange(e: any) {
+    setSliderValue(parseFloat(e.target.value));
+  }
+  return (
+    <input type="number" min={0} max={1} step={0.01} value={sliderValue} onChange={handleChange} />
+  );
+}
+
+const NumericInputContainer = ({
+  viewUid,
+}: any) => {
+
+  const coordinationScopesRaw = useCoordinationProps(viewUid);
+  // Support meta-coordination.
+  const coordinationScopes = useCoordinationScopes(coordinationScopesRaw);
+
+  const [{
+    sliderValue,
+  }, {
+    setSliderValue,
+  }] = useCoordination(['sliderValue'], coordinationScopes);
+  return (
+    <NumericInput
+    sliderValue={sliderValue}
+      setSliderValue={setSliderValue}
+    />
+  );
+}
+
+
 
 const pluginCoordinationTypes = [
   new Plugins.PluginCoordinationType('sliderValue', 0.75, z.number()),
@@ -92,16 +127,91 @@ export function CmvProviderExample(props: any) {
           onConfigChange={setConfig}
         >
           <div className="slider-container">
-            <MyPluginSliderSubscriber viewUid="slider1" />
+            <SliderInputContainer viewUid="slider1" />
             <SelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
           </div>
           <div className="slider-container">
-            <MyPluginSliderSubscriber viewUid="slider2" />
+            <SliderInputContainer viewUid="slider2" />
             <SelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
           </div>
           <div className="slider-container">
-            <MyPluginSliderSubscriber viewUid="slider3" />
+            <SliderInputContainer viewUid="slider3" />
             <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
+          </div>
+        </ZodCmvProvider>
+        <pre>
+          {JSON.stringify(config, null, 2)}
+        </pre>
+      </ZodErrorBoundary>
+    </>
+  );
+}
+
+const initialConfig2 = {
+  uid: 1,
+  coordinationSpace: {
+    "sliderValue": {
+      "A": 0.5,
+      "B": 0.75,
+      "C": 0.25,
+      "D": 0.1,
+    }
+  },
+  viewCoordination: {
+    view1: {
+      coordinationScopes: {
+        sliderValue: "A",
+      },
+    },
+    view2: {
+      coordinationScopes: {
+        sliderValue: "A",
+      },
+    },
+    view3: {
+      coordinationScopes: {
+        sliderValue: "B",
+      },
+    },
+    view4: {
+      coordinationScopes: {
+        sliderValue: "B",
+      },
+    },
+  },
+};
+
+export function MultiViewTypeExample(props: any) {
+  const [config, setConfig] = React.useState<any>(initialConfig2);
+  return (
+    <>
+      <style>{`
+        .slider-container {
+          display: flex;
+          flex-direction: row;
+        }
+      `}</style>
+      <ZodErrorBoundary>
+        <ZodCmvProvider
+          config={config}
+          coordinationTypes={pluginCoordinationTypes}
+          onConfigChange={setConfig}
+        >
+          <div className="slider-container">
+            <SliderInputContainer viewUid="view1" />
+            <SelectScope config={config} viewUid="view1" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <NumericInputContainer viewUid="view2" />
+            <SelectScope config={config} viewUid="view2" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <SliderInputContainer viewUid="view3" />
+            <SelectScope config={config} viewUid="view3" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <NumericInputContainer viewUid="view4" />
+            <SelectScope config={config} viewUid="view4" onConfigChange={setConfig} />
           </div>
         </ZodCmvProvider>
         <pre>
@@ -168,15 +278,15 @@ export function MetaCoordinationExample(props: any) {
           onConfigChange={setConfig}
         >
           <div className="slider-container">
-            <MyPluginSliderSubscriber viewUid="slider1" />
+            <SliderInputContainer viewUid="slider1" />
             <MetaSelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
           </div>
           <div className="slider-container">
-            <MyPluginSliderSubscriber viewUid="slider2" />
+            <SliderInputContainer viewUid="slider2" />
             <MetaSelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
           </div>
           <div className="slider-container">
-            <MyPluginSliderSubscriber viewUid="slider3" />
+            <SliderInputContainer viewUid="slider3" />
             <MetaSelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
           </div>
         </ZodCmvProvider>
@@ -187,3 +297,4 @@ export function MetaCoordinationExample(props: any) {
     </>
   );
 }
+
