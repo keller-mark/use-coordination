@@ -1,6 +1,6 @@
 {
   "name": "@mm-cmv/utils",
-  "version": "1.0.11",
+  "version": "3.3.1",
   "description": "",
   "type": "module",
   "main": "dist-tsc/index.js",
