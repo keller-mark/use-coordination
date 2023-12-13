@@ -41,13 +41,13 @@ describe('src/api/CmvConfig.js', () => {
       const pca = config.addView('pca');
       const tsne = config.addView('tsne');
 
-      const [ezScope, etxScope, etyScope] = config.addCoordination(
+      const [ezScope, etxScope, etyScope] = config.addCoordination([
         'embeddingZoom',
         'embeddingTargetX',
         'embeddingTargetY',
-      );
-      pca.useCoordination(ezScope, etxScope, etyScope);
-      tsne.useCoordination(ezScope, etxScope, etyScope);
+      ]);
+      pca.useCoordination([ezScope, etxScope, etyScope]);
+      tsne.useCoordination([ezScope, etxScope, etyScope]);
 
       ezScope.setValue(10);
       etxScope.setValue(11);
@@ -160,9 +160,9 @@ describe('src/api/CmvConfig.js', () => {
 
       // Coordinate all segmentation channels on the same color,
       // to test out the use of a coordination scope instance as a value.
-      const [colorScope] = config.addCoordination(
+      const [colorScope] = config.addCoordination([
         'spatialChannelColor',
-      );
+      ]);
       colorScope.setValue([255, 0, 0]);
 
       const scopes = config.addCoordinationByObject({

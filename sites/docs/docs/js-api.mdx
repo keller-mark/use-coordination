@@ -80,12 +80,12 @@ config.linkViews(
 ```
 
 
-### `addCoordination(...cTypes)`
+### `addCoordination(cTypes)`
 
 Add scope(s) for new coordination type(s) to the config. See also `CmvConfig.linkViews()`.
 
 #### Parameters:
-- `...cTypes` (variable number of `string`) - A variable number of coordination types. 
+- `cTypes` (`string[]`) - A variable number of coordination types. 
 
 #### Returns:
 - Type: `CmvConfigCoordinationScope[]`
@@ -99,13 +99,13 @@ import { CmvConfig } from '@mm-cmv/config';;
 const config = new CmvConfig("my-config");
 const v1 = config.addView("v1");
 const v2 = config.addView("v2");
-const [zoomScope, xScope, yScope] = config.addCoordination(
+const [zoomScope, xScope, yScope] = config.addCoordination([
     "spatialZoom",
     "spatialTargetX",
     "spatialTargetY",
-);
-config.useCoordination(zoomScope, xScope, yScope);
-config.useCoordination(zoomScope, xScope, yScope);
+]);
+config.useCoordination([zoomScope, xScope, yScope]);
+config.useCoordination([zoomScope, xScope, yScope]);
 zoomScope.setValue(2);
 xScope.setValue(0);
 yScope.setValue(0);
@@ -261,13 +261,13 @@ const config = CmvConfig.fromJSON(myConfig);
 
 This class is not meant to be instantiated directly, but instances will be created and returned by the `CmvConfig.addView()` method.
 
-### `useCoordination(...cScopes)`
+### `useCoordination(cScopes)`
 
 Attach coordination scopes to this view instance.
 All views using the same coordination scope for a particular coordination type will effectively be linked together.
 
 #### Parameters:
-- `...cScopes` (variable number of `CmvConfigCoordinationScope`) - A variable number of coordination scope instances.
+- `cScopes` (`CmvConfigCoordinationScope[]`) - A variable number of coordination scope instances.
 
 #### Returns:
 - Type: `CmvConfigView`
@@ -324,12 +324,12 @@ Class to represent a pair of `metaCoordinationScopes` and `metaCoordinationScope
 
 This class is not meant to be instantiated directly, but instances will be created and returned by the `CmvConfig.addMetaCoordination()` method.
 
-### `useCoordination(...cScopes)`
+### `useCoordination(cScopes)`
 
 Attach coordination scopes to this meta-scopes instance.
 
 #### Parameters:
-- `...cScopes` (variable number of `CmvConfigCoordinationScope`) - A variable number of coordination scope instances.
+- `cScopes` (`CmvConfigCoordinationScope[]`) - A variable number of coordination scope instances.
 
 #### Returns:
 - Type: `CmvConfigMetaCoordinationScope`

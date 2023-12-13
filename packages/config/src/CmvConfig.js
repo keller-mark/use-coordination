@@ -158,11 +158,11 @@ export class CmvConfigView {
 
   /**
    * Attach coordination scopes to this view.
-   * @param  {...CmvConfigCoordinationScope} args A variable number of
+   * @param  {CmvConfigCoordinationScope[]} cScopes A variable number of
    * coordination scope instances.
    * @returns {CmvConfigView} This, to allow chaining.
    */
-  useCoordination(...args) {
+  useCoordination(cScopes) {
     const cScopes = args;
     if (!this.view.coordinationScopes) {
       this.view.coordinationScopes = {};
@@ -299,12 +299,11 @@ export class CmvConfigMetaCoordinationScope {
 
   /**
    * Attach coordination scopes to this meta scope.
-   * @param  {...CmvConfigCoordinationScope} args A variable number of
+   * @param  {CmvConfigCoordinationScope[]} cScopes A variable number of
    * coordination scope instances.
    * @returns {CmvConfigMetaCoordinationScope} This, to allow chaining.
    */
-  useCoordination(...args) {
-    const cScopes = args;
+  useCoordination(cScopes) {
     const metaScopesVal = this.metaScope.cValue;
     cScopes.forEach((cScope) => {
       metaScopesVal[cScope.cType] = cScope.cScope;
@@ -380,11 +379,10 @@ export class CmvConfig {
   /**
    * Get an array of new coordination scope instances corresponding to coordination types
    * of interest.
-   * @param {...string} args A variable number of coordination type names.
+   * @param {string[]} cTypes A variable number of coordination type names.
    * @returns {CmvConfigCoordinationScope[]} An array of coordination scope instances.
    */
-  addCoordination(...args) {
-    const cTypes = args;
+  addCoordination(cTypes) {
     const result = [];
     cTypes.forEach((cType) => {
       const prevScopes = (
@@ -537,7 +535,7 @@ export class CmvConfig {
             result[cType] = nextLevelOrInitialValue.getCached();
           } else if (Array.isArray(nextLevel)) {
             const processedLevel = nextLevel.map((nextEl) => {
-              const [dummyScope] = this.addCoordination(cType);
+              const [dummyScope] = this.addCoordination([cType]);
               // TODO: set a better initial value for dummy cases.
               dummyScope.setValue('__dummy__');
               return {
@@ -549,7 +547,7 @@ export class CmvConfig {
             result[cType] = processedLevel;
           } else {
             const nextEl = nextLevel;
-            const [dummyScope] = this.addCoordination(cType);
+            const [dummyScope] = this.addCoordination([cType]);
             // TODO: set a better initial value for dummy cases.
             dummyScope.setValue('__dummy__');
             const processedLevel = {
@@ -565,7 +563,7 @@ export class CmvConfig {
           if (initialValue instanceof CmvConfigCoordinationScope) {
             result[cType] = { scope: initialValue };
           } else {
-            const [scope] = this.addCoordination(cType);
+            const [scope] = this.addCoordination([cType]);
             scope.setValue(initialValue);
             result[cType] = { scope };
           }
@@ -587,7 +585,7 @@ export class CmvConfig {
    * @returns {CmvConfig} This, to allow chaining.
    */
   linkViews(views, cTypes, cValues = null) {
-    const cScopes = this.addCoordination(...cTypes);
+    const cScopes = this.addCoordination(cTypes);
     views.forEach((view) => {
       cScopes.forEach((cScope) => {
         view.useCoordination(cScope);
