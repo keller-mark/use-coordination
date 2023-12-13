@@ -20,7 +20,7 @@ export function ZodCmvProvider(props: ZodCmvProviderProps) {
   } = props;
 
   const coordinationTypes = useMemo(
-    () => (coordinationTypesProp || []),
+    () => (coordinationTypesProp || {}),
     [coordinationTypesProp],
   );
 

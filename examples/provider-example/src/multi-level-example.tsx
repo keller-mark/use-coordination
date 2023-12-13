@@ -5,7 +5,6 @@ import {
   useCoordination,
   useCoordinationScopesL1,
   useCoordinationL1,
-  CoordinationType,
 } from '@mm-cmv/all';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
@@ -104,11 +103,10 @@ const ColorfulSliderInputContainer = ({
   );
 }
 
-const pluginCoordinationTypes = [
-  new CoordinationType('channel', '__dummy__', z.literal('__dummy__')),
-  new CoordinationType('channelValue', 0, z.number()),
-];
-
+const pluginCoordinationTypes = {
+  channel: z.literal('__dummy__'),
+  channelValue: z.number(),
+};
 
 const initialConfig = {
   key: 1,

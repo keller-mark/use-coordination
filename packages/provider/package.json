@@ -29,7 +29,8 @@
     "@mm-cmv/schemas": "workspace:*",
     "@mm-cmv/utils": "workspace:*",
     "lodash-es": "^4.17.21",
-    "zustand": "^3.5.10"
+    "zustand": "^3.5.10",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",

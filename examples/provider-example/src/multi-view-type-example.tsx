@@ -3,7 +3,6 @@ import {
   ZodCmvProvider,
   ZodErrorBoundary,
   useCoordination,
-  CoordinationType,
 } from '@mm-cmv/all';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
@@ -66,10 +65,9 @@ const NumericInputContainer = ({
 
 
 
-const pluginCoordinationTypes = [
-  new CoordinationType('value', 0.75, z.number()),
-];
-
+const pluginCoordinationTypes = {
+  value: z.number(),
+}
 
 const initialConfig2 = {
   key: 1,
