@@ -5,8 +5,8 @@ import {
   useCoordination,
   useCoordinationScopesL1,
   useCoordinationL1,
-} from '@mm-cmv/provider';
-import { CoordinationType } from '@mm-cmv/schemas';
+  CoordinationType,
+} from '@mm-cmv/all';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
 

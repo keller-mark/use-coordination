@@ -28,12 +28,12 @@
   },
   "dependencies": {
     "@mm-cmv/provider": "workspace:*",
-    "@mm-cmv/provider-example": "workspace:*",
-    "@mm-cmv/utils": "workspace:*"
+    "@mm-cmv/schemas": "workspace:*",
+    "@mm-cmv/config": "workspace:*",
+    "@mm-cmv/utils": "workspace:*",
+    "@mm-cmv/constants-internal": "workspace:*"
   },
   "devDependencies": {
-    "react": "^18.0.0",
-    "@types/react": "^18.2.43",
     "vitest": "^0.23.4"
   },
   "peerDependencies": {
