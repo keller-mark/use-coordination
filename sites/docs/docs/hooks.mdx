@@ -6,38 +6,6 @@ slug: /view-hooks
 
 ## Basic coordination
 
-### `useCoordinationScopes`
-
-Given a view UID, returns the "computed" (i.e., after accounting for meta-coordination)
-value for `coordinationScopes`.
-
-#### Parameters:
-
-- `viewUid` (`string`) - The unique ID for a particular view in the config.
-
-#### Returns:
-
-- Type: `Record<string, string | string[]>`
-
-The keys of the returned object are coordination types.
-The values are one or more coordination scope names.
-
-
-### `useCoordinationScopesBy`
-
-Given a view UID, returns the "computed" (i.e., after accounting for meta-coordination)
-value for `coordinationScopesBy`.
-
-#### Parameters:
-
-- `viewUid` (`string`) - The unique ID for a particular view in the config.
-
-#### Returns:
-
-- Type: `Record<string, any>`
-
-The keys of the returned object are coordination types.
-
 ### `useCoordination`
 
 This hook returns both the
@@ -47,8 +15,8 @@ It is intended to be used in conjunction with `useCoordinationScopes`.
 
 #### Parameters:
 
+- `viewUid` (`string`) - The unique identifier for a view.
 - `coordinationTypes` (`string[]`) - Array of coordination types.
-- `coordinationScopes` (`Record<string, string | string[]>`) - Mapping of coordination types to coordination scope names.
 
 #### Returns:
 
@@ -58,11 +26,10 @@ Returns a tuple `[values, setters]` where the keys of `values` are the input `co
 The keys of `setters` are the keys of `coordinationTypes` with the prefix `set`.
 
 ```js
-const coordinationScopes = useCoordinationScopes(viewUid);
 const [
     { someValue },
     { setSomeValue }
-] = useCoordination(['someValue'], coordinationScopes);
+] = useCoordination(viewUid, ["someValue"]);
 ```
 
 ### `useInitialCoordination`
@@ -72,8 +39,8 @@ This can be used to do things such as reset values to their initial state.
 
 #### Parameters:
 
+- `viewUid` (`string`) - The unique identifier for a view.
 - `coordinationTypes` (`string[]`) - Array of coordination types.
-- `coordinationScopes` (`Record<string, string | string[]>`) - Mapping of coordination types to coordination scope names.
 
 #### Returns:
 
@@ -81,19 +48,22 @@ This can be used to do things such as reset values to their initial state.
 
 Returns `values` where the keys are the input `coordinationTypes`.
 
+```js
+const { someValue } = useInitialCoordination(viewUid, ["someValue"]);
+```
+
 ## Multi-level coordination (First level)
 
-### `useComplexCoordination`
+### `useCoordinationL1`
 
 Use coordination values and coordination setter functions corresponding to
 {coordinationType}-specific coordination scopes for each coordination type.
 
 #### Parameters:
 
-- `coordinationTypes` (`string[]`) - An array of coordination types supported by a view.
-- `coordinationScopes` (`Record<string, string | string[]>`) - The coordination scope mapping object for a view.
-- `coordinationScopesBy` (`Record<string, any>`) - The per-coordinationType coordination scope mapping object for a view.
-- `byType` (`string`) - The {coordinationType} to use for per-{coordinationType} coordination scope mappings.
+- `viewUid` (`string`) - The unique identifier for a view.
+- `primaryType` (`string`) - The {coordinationType} to use for per-{coordinationType} coordination scope mappings.
+- `secondaryTypes` (`string[]`) - An array of coordination types supported by a view.
 
 #### Returns:
 
@@ -105,25 +75,18 @@ and `cSetters` is a mapping from coordination scope name to `{ setCoordinationTy
 setter functions. The keys of `cValues` and `cSetters` are the coordination scopes for the `byType` coordination type.
 
 ```js
-const coordinationScopes = useCoordinationScopes(viewUid);
-const coordinationScopesBy = useCoordinationScopesBy(viewUid);
-
-const channelCoordination = useComplexCoordination(
-    ["channelValue"],
-    coordinationScopes,
-    coordinationScopesBy,
-    "channel",
-);
+const channelCoordination = useCoordinationL1(viewUid, "channel", ["channelValue"])
 ```
 
-### `useMultiCoordinationScopes`
+### `useCoordinationScopesL1`
 
 Get the ordered list of coordination scopes for a particular coordination type.
+Scopes are filtered out if their value in the coordination space is null.
 
 #### Parameters:
 
+- `viewUid` (`string`) - The unique identifier for a view.
 - `coordinationType` (`string`) - A single coordination type for a view.
-- `coordinationScopes` (`Record<string, string | string[]>`) - The coordination scope mapping object for a view.
 
 #### Returns:
 
@@ -132,37 +95,7 @@ Get the ordered list of coordination scopes for a particular coordination type.
 The coordination scopes mapped to the specified coordination type for a view.
 
 ```js
-const coordinationScopes = useCoordinationScopes(viewUid);
- 
-const channelScopes = useMultiCoordinationScopes(
-    "channel",
-    coordinationScopes,
-);
-```
-
-### `useMultiCoordinationScopesNonNull`
-
-Get the ordered list of coordination scopes for a particular coordination type,
-but scopes are filtered out if their value in the coordination space is null. 
-
-#### Parameters:
-
-- `coordinationType` (`string`) - A single coordination type for a view.
-- `coordinationScopes` (`Record<string, string | string[]>`) - The coordination scope mapping object for a view.
-
-#### Returns:
-
-- Type: `string[]`
-
-A subset of the coordination scopes mapped to the specified coordination type for a view, with filtering applied based on values in the coordination space.
-
-```js
-const coordinationScopes = useCoordinationScopes(viewUid);
- 
-const channelScopes = useMultiCoordinationScopesNonNull(
-    "channel",
-    coordinationScopes,
-);
+const channelScopes = useCoordinationScopesL1(viewUid, "channel");
 ```
 
 ## Multi-level coordination (Second level)
@@ -173,18 +106,17 @@ where each layer has its own array of image channels.
 
 These hooks will automatically fall back to the values in the first level of the hierarchy when values are not present in the second level of the hierarchy.
 
-### `useComplexCoordinationSecondary`
+### `useCoordinationL2`
 
 Use coordination values and coordination setter functions corresponding to
 two levels of coordination hierarchy.
 
 #### Parameters:
 
-- `coordinationTypes` (`string[]`) - An array of coordination types supported by a view.
-- `coordinationScopes` (`Record<string, string | string[]>`) - The coordination scope mapping object for a view.
-- `coordinationScopesBy` (`Record<string, any>`) - The per-coordinationType coordination scope mapping object for a view.
+- `viewUid` (`string`) - The unique identifier for a view.
 - `primaryType` (`string`) - The first-level coordination type, such as spatialImageLayer.
 - `secondaryType` (`string`) - The second-level coordination type, such as spatialImageChannel.
+- `tertiaryTypes` (`string[]`) - An array of coordination types supported by a view.
 
 #### Returns:
 
@@ -196,38 +128,35 @@ and `nestedSetters` is a mapping from the primary scope names to `{ [secondarySc
 setter functions.
 
 ```js
-const imageLayerCoordination = useComplexCoordination(
+const imageLayerCoordination = useCoordinationL1(
+    viewUid, "imageLayer",
     [
         "imageChannel",
         "spatialLayerVisible",
         "spatialLayerOpacity",
         "spatialLayerColormap",
     ],
-    coordinationScopes,
-    coordinationScopesBy,
-    "imageLayer",
 );
-const imageChannelCoordination = useComplexCoordinationSecondary(
+const imageChannelCoordination = useCoordinationL2(
+    viewUid, "imageLayer", "imageChannel",
     [
         "spatialTargetC",
         "spatialChannelVisible",
         "spatialChannelColor",
     ],
-    coordinationScopes,
-    coordinationScopesBy,
-    "imageLayer",
-    "imageChannel",
 );
 ```
 
-### `useMultiCoordinationScopesSecondary`
+### `useCoordinationScopesL2`
+
+Filters out primary and secondary scopes from the results if their value in the coordination space is `null`.
+
 
 #### Parameters:
 
-- `secondaryType` (`string`)
+- `viewUid` (`string`) - The unique identifier for a view.
 - `primaryType` (`string`)
-- `coordinationScopes` (`Record<string, string | string[]>`)
-- `coordinationScopesBy` (`Record<string, any>`)
+- `secondaryType` (`string`)
 
 #### Returns:
 
@@ -238,34 +167,49 @@ const imageChannelCoordination = useComplexCoordinationSecondary(
 `primaryToSecondaryScopesArr` is a mapping from each of the primary scopes to a list of secondary scopes `{ [primaryScope]: secondaryScopesArr }`.
 
 ```js
-const [imageLayerScopes, imageChannelScopesByLayer] = useMultiCoordinationScopesSecondary(
-    "imageChannel",
-    "imageLayer",
-    coordinationScopes,
-    coordinationScopesBy,
+const [imageLayerScopes, imageChannelScopesByLayer] = useCoordinationScopesL2(
+    viewUid, "imageLayer", "imageChannel"
 );
 ```
 
-### `useMultiCoordinationScopesSecondaryNonNull`
+## Advanced usage
 
-The same as `useMultiCoordinationScopesSecondary`, but filters out primary and secondary scopes from the results if their value in the coordination space is null.
+### `useRawViewMapping`
 
-#### Parameters:
-
-- `secondaryType` (`string`)
-- `primaryType` (`string`)
-- `coordinationScopes` (`Record<string, string | string[]>`)
-- `coordinationScopesBy` (`Record<string, any>`)
-
-#### Returns:
-
-- Type: `[string[], Record<string, string[]>]`
+This hook can be used to get the "raw" (i.e., pre-meta-coordination) coordination scope mapping object for a view.
 
 ```js
-const [imageLayerScopes, imageChannelScopesByLayer] = useMultiCoordinationScopesSecondaryNonNull(
-    "imageChannel",
-    "imageLayer",
-    coordinationScopes,
-    coordinationScopesBy,
-);
+const [coordinationScopes, coordinationScopesBy] = useRawViewMapping(viewUid);
 ```
+
+### `useViewMapping`
+
+This hook can be used to get the "computed" (i.e., post-meta-coordination) coordination scope mapping object for a view.
+
+
+```js
+const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
+```
+
+### Underscore-prefixed hooks
+
+Many of the above hooks internally call `useViewMapping` to get the coordination scope mapping information based on the `viewUid`.
+This is convenient, but using multiple hooks that call `useViewMapping` in the same view can be inefficient, as it results in redundant lookup (and meta-coordination resolution) operations.
+We provide a set of underscore-prefixed hooks that take the result of `useViewMapping` as input.
+
+```js
+const [coordinationScopes] = useViewMapping(viewUid);
+const [
+    { someValue },
+    { setSomeValue }
+] = _useCoordination(coordinationScopes, ["someValue"]);
+```
+
+The full list of underscore-prefixed hooks:
+
+- `_useCoordination(coordinationScopes, coordinationTypes)`
+- `_useInitialCoordination(coordinationScopes, coordinationTypes)`
+- `_useCoordinationL1(coordinationScopes, coordinationScopesBy, primaryType, secondaryTypes)`
+- `_useCoordinationL2(coordinationScopes, coordinationScopesBy, primaryType, secondaryType, tertiaryTypes)`
+- `_useCoordinationScopesL1(coordinationScopes, coordinationType)`
+- `_useCoordinationScopesL2(coordinationScopes, coordinationScopesBy, primaryType, secondaryType)`

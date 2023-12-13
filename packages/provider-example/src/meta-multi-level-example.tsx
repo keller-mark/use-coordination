@@ -3,8 +3,8 @@ import {
   ZodCmvProvider,
   ZodErrorBoundary,
   useCoordination,
-  useMultiCoordinationScopesNonNull,
-  useComplexCoordination,
+  useCoordinationScopesL1,
+  useCoordinationL1,
 } from '@mm-cmv/provider';
 import { CoordinationType } from '@mm-cmv/schemas';
 import { z } from 'zod';
@@ -93,8 +93,8 @@ const ColorfulSliderInputContainer = ({
 }: any) => {
 
   // Support meta-coordination.
-  const channelScopes = useMultiCoordinationScopesNonNull(viewUid, "channel");
-  const channelCoordination = useComplexCoordination(viewUid, "channel", [
+  const channelScopes = useCoordinationScopesL1(viewUid, "channel");
+  const channelCoordination = useCoordinationL1(viewUid, "channel", [
     "channelValue"
   ]);
 

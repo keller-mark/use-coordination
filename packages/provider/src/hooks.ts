@@ -390,19 +390,19 @@ export function useCoordination(viewUid: string, parameters: string[]) {
   return _useCoordination(coordinationScopes, parameters);
 }
 
-export function _useMultiCoordinationScopes(coordinationScopes: Record<string, string | string[]>, parameter: string) {
+export function _useCoordinationScopesL1All(coordinationScopes: Record<string, string | string[]>, parameter: string) {
   return useMemo(() => {
     const scopes = coordinationScopes[parameter];
     return Array.isArray(scopes) ? scopes : [scopes];
   }, [parameter, coordinationScopes]);
 }
 
-export function useMultiCoordinationScopes(viewUid: string, parameter: string) {
+export function useCoordinationScopesL1All(viewUid: string, parameter: string) {
   const [coordinationScopes] = useViewMapping(viewUid);
-  return _useMultiCoordinationScopes(coordinationScopes, parameter);
+  return _useCoordinationScopesL1All(coordinationScopes, parameter);
 }
 
-export function _useMultiCoordinationScopesNonNull(coordinationScopes: Record<string, string | string[]>, parameter: string) {
+export function _useCoordinationScopesL1(coordinationScopes: Record<string, string | string[]>, parameter: string) {
   const scopes = getParameterScope(coordinationScopes, parameter);
 
   // Return array of coordination scopes,
@@ -425,12 +425,12 @@ export function _useMultiCoordinationScopesNonNull(coordinationScopes: Record<st
   return nonNullScopes;
 }
 
-export function useMultiCoordinationScopesNonNull(viewUid: string, parameter: string) {
+export function useCoordinationScopesL1(viewUid: string, parameter: string) {
   const [coordinationScopes] = useViewMapping(viewUid);
-  return _useMultiCoordinationScopesNonNull(coordinationScopes, parameter);
+  return _useCoordinationScopesL1(coordinationScopes, parameter);
 }
 
-export function _useMultiCoordinationScopesSecondary(
+export function _useCoordinationScopesL2All(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
   byType: string, parameter: string,
 ) {
@@ -461,12 +461,12 @@ export function _useMultiCoordinationScopesSecondary(
   }, [parameter, byType, coordinationScopes, coordinationScopesBy]);
 }
 
-export function useMultiCoordinationScopesSecondary(viewUid: string, byType: string, parameter: string) {
+export function useCoordinationScopesL2All(viewUid: string, byType: string, parameter: string) {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
-  return _useMultiCoordinationScopesSecondary(coordinationScopes, coordinationScopesBy, byType, parameter);
+  return _useCoordinationScopesL2All(coordinationScopes, coordinationScopesBy, byType, parameter);
 }
 
-export function _useMultiCoordinationScopesSecondaryNonNull(
+export function _useCoordinationScopesL2(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
   byType: string, parameter: string,
 ) {
@@ -535,9 +535,9 @@ export function _useMultiCoordinationScopesSecondaryNonNull(
   }, [parameter, byType, scopes, coordinationScopes, coordinationScopesBy, parameterSpace, byTypeSpace]);
 }
 
-export function useMultiCoordinationScopesSecondaryNonNull(viewUid: string, byType: string, parameter: string) {
+export function useCoordinationScopesL2(viewUid: string, byType: string, parameter: string) {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
-  return _useMultiCoordinationScopesSecondaryNonNull(coordinationScopes, coordinationScopesBy, byType, parameter);
+  return _useCoordinationScopesL2(coordinationScopes, coordinationScopesBy, byType, parameter);
 }
 
 export function _useMultiCoordinationValues(coordinationScopes: Record<string, string | string[]>, parameter: string) {
@@ -580,7 +580,7 @@ export function useMultiCoordinationValues(viewUid: string, parameter: string) {
  * and cSetters is a mapping from coordination scope name to { setCoordinationType }
  * setter functions.
  */
-export function _useComplexCoordination(
+export function _useCoordinationL1(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, Record<string, any>>,
   byType: string, parameters: string[],
 ) {
@@ -656,9 +656,9 @@ export function _useComplexCoordination(
   return [values, setters];
 }
 
-export function useComplexCoordination(viewUid: string, byType: string, parameters: string[]) {
+export function useCoordinationL1(viewUid: string, byType: string, parameters: string[]) {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
-  return _useComplexCoordination(coordinationScopes, coordinationScopesBy, byType, parameters);
+  return _useCoordinationL1(coordinationScopes, coordinationScopesBy, byType, parameters);
 }
 
 /**
@@ -667,9 +667,9 @@ export function useComplexCoordination(viewUid: string, byType: string, paramete
  * @param {object} coordinationScopesBy The coordinationScopesBy object from the view definition.
  * @param {string} primaryType The first-level coordination type, such as spatialImageLayer.
  * @param {string} secondaryType The second-level coordination type, such as spatialImageChannel.
- * @returns The results of useComplexCoordination.
+ * @returns The results of useCoordinationL1.
  */
-export function _useComplexCoordinationSecondary(
+export function _useCoordinationL2(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
   primaryType: string, secondaryType: string, parameters: string[], 
 ) {
@@ -691,7 +691,7 @@ export function _useComplexCoordinationSecondary(
     // Finally, fall back to empty array.
     return { [secondaryType]: [] };
   }, [coordinationScopesBy, primaryType, secondaryType]);
-  const [flatValues, flatSetters] = _useComplexCoordination(
+  const [flatValues, flatSetters] = _useCoordinationL1(
     coordinationScopesFake as Record<string, string | string[]>, coordinationScopesBy, secondaryType, parameters,
   );
   const nestedValues = useMemo(() => {
@@ -756,9 +756,9 @@ export function _useComplexCoordinationSecondary(
   return [nestedValues, nestedSetters];
 }
 
-export function useComplexCoordinationSecondary(viewUid: string, primaryType: string, secondaryType: string, parameters: string[]) {
+export function useCoordinationL2(viewUid: string, primaryType: string, secondaryType: string, parameters: string[]) {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
-  return _useComplexCoordinationSecondary(coordinationScopes, coordinationScopesBy, primaryType, secondaryType, parameters);
+  return _useCoordinationL2(coordinationScopes, coordinationScopesBy, primaryType, secondaryType, parameters);
 }
 
 /**
