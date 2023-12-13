@@ -1,4 +1,11 @@
 
+## 3.3.3
+
+### Patch Changes
+
+- Improve API again. (`@mm-cmv/provider-example`, `@mm-cmv/provider`, `@mm-cmv/schemas`, `@mm-cmv/config`) ([#20](https://github.com/keller-mark/mm-cmv/pull/20))
+
+
 ## 3.3.2
 
 ### Patch Changes
