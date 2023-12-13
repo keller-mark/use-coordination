@@ -1,4 +1,11 @@
 
+## 3.3.2
+
+### Patch Changes
+
+- Move examples. (`@mm-cmv/provider-example`) ([#17](https://github.com/keller-mark/mm-cmv/pull/17))
+
+
 ## 3.3.1
 
 ### Patch Changes
