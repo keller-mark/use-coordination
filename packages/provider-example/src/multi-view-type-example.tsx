@@ -3,7 +3,6 @@ import {
   ZodCmvProvider,
   ZodErrorBoundary,
   useCoordination,
-  useCoordinationScopes,
 } from '@mm-cmv/provider';
 import { CoordinationType } from '@mm-cmv/schemas';
 import { z } from 'zod';
@@ -24,14 +23,11 @@ const SliderInput = ({
 const SliderInputContainer = ({
   viewUid,
 }: any) => {
-  // Support meta-coordination.
-  const coordinationScopes = useCoordinationScopes(viewUid);
-
   const [{
     value,
   }, {
     setValue,
-  }] = useCoordination(['value'], coordinationScopes);
+  }] = useCoordination(viewUid, ['value']);
   return (
     <SliderInput
       value={value}
@@ -55,14 +51,11 @@ const NumericInput = ({
 const NumericInputContainer = ({
   viewUid,
 }: any) => {
-  // Support meta-coordination.
-  const coordinationScopes = useCoordinationScopes(viewUid);
-
   const [{
     value,
   }, {
     setValue,
-  }] = useCoordination(['value'], coordinationScopes);
+  }] = useCoordination(viewUid, ['value']);
   return (
     <NumericInput
     value={value}
@@ -79,7 +72,7 @@ const pluginCoordinationTypes = [
 
 
 const initialConfig2 = {
-  uid: 1,
+  key: 1,
   coordinationSpace: {
     "value": {
       "A": 0.5,

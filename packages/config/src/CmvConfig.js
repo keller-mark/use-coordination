@@ -349,9 +349,9 @@ export class CmvConfig {
    * @param {string} params.name A name for the config. Optional.
    * @param {string|undefined} params.description A description for the config. Optional.
    */
-  constructor(uid) {
+  constructor(key) {
     this.config = {
-      uid,
+      key,
       coordinationSpace: {},
       viewCoordination: {},
     };
@@ -665,8 +665,8 @@ export class CmvConfig {
    * the config parameter.
    */
   static fromJSON(config) {
-    const { uid } = config;
-    const vc = new CmvConfig(uid);
+    const { key } = config;
+    const vc = new CmvConfig(key);
     Object.keys(config.coordinationSpace).forEach((cType) => {
       const cObj = config.coordinationSpace[cType];
       vc.config.coordinationSpace[cType] = {};

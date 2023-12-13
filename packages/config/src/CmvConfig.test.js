@@ -13,7 +13,7 @@ describe('src/api/CmvConfig.js', () => {
       expect(configJSON).toEqual({
         coordinationSpace: {},
         viewCoordination: {},
-        uid: 'My config',
+        key: 'My config',
       });
     });
 
@@ -33,7 +33,7 @@ describe('src/api/CmvConfig.js', () => {
 
           },
         },
-        uid: 'My config',
+        key: 'My config',
       });
     });
     it('can add a coordination scope', () => {
@@ -83,7 +83,7 @@ describe('src/api/CmvConfig.js', () => {
             },
           },
         },
-        uid: 'My config',
+        key: 'My config',
       });
     });
 
@@ -214,7 +214,7 @@ describe('src/api/CmvConfig.js', () => {
 
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
-        uid: 'My config',
+        key: 'My config',
         coordinationSpace: {
           spatialImageLayer: { A: '__dummy__' },
           image: { A: 'S-1905-017737_bf', B: 'S-1905-017737' },
@@ -328,7 +328,7 @@ describe('src/api/CmvConfig.js', () => {
 
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
-        uid: 'My config',
+        key: 'My config',
         coordinationSpace: {
           spatialImageLayer: { A: '__dummy__' },
           image: { A: 'S-1905-017737_bf', B: 'S-1905-017737' },
@@ -453,7 +453,7 @@ describe('src/api/CmvConfig.js', () => {
 
       const configJSON = config.toJSON();
       expect(configJSON).toEqual({
-        uid: 'My config',
+        key: 'My config',
         coordinationSpace: {
           spatialImageLayer: { A: '__dummy__' },
           image: { A: 'S-1905-017737_bf', B: 'S-1905-017737' },
@@ -579,7 +579,7 @@ describe('src/api/CmvConfig.js', () => {
             },
           },
         },
-        uid: 'My config',
+        key: 'My config',
       });
     });
     
@@ -641,7 +641,7 @@ describe('src/api/CmvConfig.js', () => {
             },
           },
         },
-        uid: 'My config',
+        key: 'My config',
       });
     });
   });

@@ -15,7 +15,7 @@ export function SelectScope(props: any) {
     const newScope = event.target.value;
     const newConfig = {
       ...config,
-      uid: config.uid + 1,
+      key: config.key + 1,
       viewCoordination: {
         ...config.viewCoordination,
         [viewUid]: {
@@ -60,7 +60,7 @@ export function MetaSelectScope(props: any) {
       const newScope = event.target.value;
       const newConfig = {
         ...config,
-        uid: config.uid + 1,
+        key: config.key + 1,
         coordinationSpace: {
           ...config.coordinationSpace,
           "metaCoordinationScopes": {
@@ -80,7 +80,7 @@ export function MetaSelectScope(props: any) {
       const newScope = event.target.value;
       const newConfig = {
         ...config,
-        uid: config.uid + 1,
+        key: config.key + 1,
         viewCoordination: {
             ...config.viewCoordination,
           [viewUid]: {

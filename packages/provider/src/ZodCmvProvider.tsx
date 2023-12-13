@@ -24,12 +24,12 @@ export function ZodCmvProvider(props: ZodCmvProviderProps) {
     [coordinationTypesProp],
   );
 
-  // If config.uid exists, then use it for hook dependencies to detect changes
+  // If config.key exists, then use it for hook dependencies to detect changes
   // (controlled component case). If not, then use the config object itself
   // and assume the un-controlled component case.
   const configKey = useMemo(() => {
-    if (config?.uid) {
-      return config.uid;
+    if (config?.key) {
+      return config.key;
     }
     // Stringify the config object so it can be used as a key
     // Otherwise, the key will be [object Object]

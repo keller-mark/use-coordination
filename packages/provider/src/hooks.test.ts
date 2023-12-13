@@ -10,19 +10,16 @@ describe('provider/hooks.js', () => {
   describe('getParameterScope', () => {
     it('works', () => {
       expect(getParameterScope(
-        'obsType',
         {
           obsType: 'A',
         },
+        'obsType',
       )).toEqual('A');
     });
   });
   describe('getParameterScopeBy', () => {
     it('works', () => {
       expect(getParameterScopeBy(
-        'spatialTargetC',
-        'spatialSegmentationLayer',
-        'glomerulus',
         {
           spatialSegmentationLayer: ['glomerulus', 'tubule'],
         },
@@ -34,16 +31,19 @@ describe('provider/hooks.js', () => {
             },
           },
         },
+        'spatialSegmentationLayer',
+        'glomerulus',
+        'spatialTargetC',
       )).toEqual('A');
     });
   });
   describe('getScopes', () => {
     it('works without metaCoordinationScopes', () => {
       expect(getScopes(
+        {},
         {
           obsType: 'A',
         },
-        {},
       )).toEqual({
         obsType: 'A',
       });
@@ -51,14 +51,14 @@ describe('provider/hooks.js', () => {
     it('works with one metaCoordinationScopes', () => {
       expect(getScopes(
         {
-          // meta match should take precedence
-          metaCoordinationScopes: 'metaA',
-          obsType: 'A',
-        },
-        {
           metaA: {
             obsType: 'B',
           },
+        },
+        {
+          // meta match should take precedence
+          metaCoordinationScopes: 'metaA',
+          obsType: 'A',
         },
       )).toEqual({
         // meta match should take precedence
@@ -69,17 +69,17 @@ describe('provider/hooks.js', () => {
     it('works with multiple metaCoordinationScopes', () => {
       expect(getScopes(
         {
-          // first meta match should take precedence
-          metaCoordinationScopes: ['metaA', 'metaB'],
-          obsType: 'A',
-        },
-        {
           metaA: {
             featureType: 'D',
           },
           metaB: {
             obsType: 'C',
           },
+        },
+        {
+          // first meta match should take precedence
+          metaCoordinationScopes: ['metaA', 'metaB'],
+          obsType: 'A',
         },
       )).toEqual({
         // first meta match should take precedence
@@ -93,6 +93,16 @@ describe('provider/hooks.js', () => {
     it('works with one metaCoordinationScopesBy', () => {
       expect(getScopesBy(
         {
+          metaA: {
+            spatialSegmentationLayer: {
+              spatialTargetC: {
+                glomerulus: 'A',
+                tubule: 'B',
+              },
+            },
+          },
+        },
+        {
           metaCoordinationScopesBy: 'metaA',
           spatialSegmentationLayer: ['abc', 'def'],
         },
@@ -101,16 +111,6 @@ describe('provider/hooks.js', () => {
             spatialTargetC: {
               glomerulus: 'ghi',
               tubule: 'jkl',
-            },
-          },
-        },
-        {
-          metaA: {
-            spatialSegmentationLayer: {
-              spatialTargetC: {
-                glomerulus: 'A',
-                tubule: 'B',
-              },
             },
           },
         },
@@ -126,18 +126,6 @@ describe('provider/hooks.js', () => {
     it('works with multiple metaCoordinationScopes', () => {
       expect(getScopesBy(
         {
-          metaCoordinationScopesBy: ['metaA', 'metaB'],
-          spatialSegmentationLayer: ['abc', 'def'],
-        },
-        {
-          spatialSegmentationLayer: {
-            spatialTargetC: {
-              glomerulus: 'ghi',
-              tubule: 'jkl',
-            },
-          },
-        },
-        {
           metaA: {
             spatialSegmentationLayer: {
               spatialLayerOpacity: {
@@ -152,6 +140,18 @@ describe('provider/hooks.js', () => {
                 glomerulus: 'A',
                 tubule: 'B',
               },
+            },
+          },
+        },
+        {
+          metaCoordinationScopesBy: ['metaA', 'metaB'],
+          spatialSegmentationLayer: ['abc', 'def'],
+        },
+        {
+          spatialSegmentationLayer: {
+            spatialTargetC: {
+              glomerulus: 'ghi',
+              tubule: 'jkl',
             },
           },
         },

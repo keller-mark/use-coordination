@@ -2,7 +2,7 @@ import { CoordinationType } from '@mm-cmv/schemas';
 import { ReactNode } from 'react';
 
 export type CmvConfigObject = {
-    uid?: string | number;
+    key?: string | number;
     coordinationSpace?: {
         [coordinationTypeName: string]: {
             [coordinationScopeName: string]: any;

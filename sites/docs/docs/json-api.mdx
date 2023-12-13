@@ -8,14 +8,14 @@ The CMV config stores the coordination space (i.e., the state of the views) and 
 
 ## Optional properties
 
-### `uid`
+### `key`
 
 - Type: `string`
 
 A unique ID for the config. Optional.
 
 Intended to be used in situations where `<CmvProvider/>` is used as a controlled component (i.e., a parent component is the source of truth for the config prop and likely also uses the `onConfigChange` prop).
-For example, if a change in `config.uid` is detected, the configuration will be re-validated (which might not occur on other changes to config for performance reasons). 
+For example, if a change in `config.key` is detected, the configuration will be re-validated (which might not occur on other changes to config for performance reasons). 
 
 ### `coordinationSpace`
 

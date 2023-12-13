@@ -21,6 +21,18 @@ export const ViewConfigProvider = ViewConfigProviderLocal;
 export const useViewConfigStore = useViewConfigStoreLocal;
 export const useViewConfigStoreApi = useViewConfigStoreApiLocal;
 
+// Guidelines for parameter ordering:
+// - viewUid
+// - coordinationSpace (or part of it)
+// - coordinationScopes
+// - coordinationScopesBy
+// - coarser coordination type(s)
+// - finer coordination type(s)
+
+// Functions that begin with underscore are intended to accept
+// coordinationScopes and coordinationScopesBy as arguments
+// for improved performance (so no need to recompute internally).
+
 /**
  * Get the "computed" coordinationScopes after accounting for
  * meta-coordination.
@@ -28,7 +40,7 @@ export const useViewConfigStoreApi = useViewConfigStoreApiLocal;
  * @param {*} coordinationSpace The coordinationSpace for a config.
  * @returns {string|undefined} The coordinationScopesBy after meta-coordination.
  */
-export function getScopes(coordinationScopes: Record<string, string | string[]>, metaSpace: Record<string, Record<string, any>>) {
+export function getScopes(metaSpace: Record<string, Record<string, any>>, coordinationScopes: Record<string, string | string[]>) {
   let result = { ...coordinationScopes };
   // Check if there is a matching meta-scope.
   if (metaSpace) {
@@ -56,7 +68,7 @@ export function getScopes(coordinationScopes: Record<string, string | string[]>,
  * @param {*} coordinationSpace The coordinationSpace for a config.
  * @returns {string|undefined} The coordinationScopesBy after meta-coordination.
  */
-export function getScopesBy(coordinationScopes: Record<string, any>, coordinationScopesBy: Record<string, any>, metaSpaceBy: Record<string, Record<string, any>>) {
+export function getScopesBy(metaSpaceBy: Record<string, Record<string, any>>, coordinationScopes: Record<string, any>, coordinationScopesBy: Record<string, any>) {
   let result = { ...coordinationScopesBy };
   // Check if there is a matching meta-scope.
   if (metaSpaceBy) {
@@ -80,12 +92,12 @@ export function getScopesBy(coordinationScopes: Record<string, any>, coordinatio
  * Get the name of the metaCoordinationScopes coordination scope
  * for a particular non-meta coordination scope, after accounting for
  * meta-coordination.
- * @param {*} coordinationScopes The coordinationScopes for a view.
  * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {*} coordinationScopes The coordinationScopes for a view.
  * @param {string} parameter The parameter for which to get the metaScope.
  * @returns {string|undefined} The metaCoordinationScopes coordination scope name.
  */
-export function getMetaScope(coordinationScopes: Record<string, string | string[]>, coordinationSpace: Record<string, Record<string, any>>, parameter: string) {
+export function getMetaScope(coordinationSpace: Record<string, Record<string, any>>, coordinationScopes: Record<string, string | string[]>, parameter: string) {
   let latestMetaScope;
   // Check if there is a matching meta-scope.
   if (coordinationSpace) {
@@ -112,14 +124,14 @@ export function getMetaScope(coordinationScopes: Record<string, string | string[
  * Get the name of the metaCoordinationScopesBy coordination scope
  * for a particular non-meta coordination scope, after accounting for
  * meta-coordination.
- * @param {*} coordinationScopes The coordinationScopes for a view.
  * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {*} coordinationScopes The coordinationScopes for a view.
  * @param {string} byParameter The byParameter for which to get the metaScope.
  * @param {string} parameter The parameter for which to get the metaScope.
  * @param {string} byScope The byScope for the byParameter in which to look for the metaScope.
  * @returns {string|undefined} The metaCoordinationScopesBy coordination scope name.
  */
-export function getMetaScopeBy(coordinationScopes: Record<string, string | string[]>, coordinationSpace: Record<string, Record<string, any>>, byParameter: string, parameter: string, byScope: string) {
+export function getMetaScopeBy(coordinationSpace: Record<string, Record<string, any>>, coordinationScopes: Record<string, string | string[]>, byParameter: string, parameter: string, byScope: string) {
   let latestMetaScope;
   // Check if there is a matching meta-scope.
   if (coordinationSpace) {
@@ -148,7 +160,7 @@ export function getMetaScopeBy(coordinationScopes: Record<string, string | strin
  * @param {*} coordinationScopes The coordinationScopes for a view.
  * @returns {string|undefined} The coordination scope that matches.
  */
-export function getParameterScope(parameter: string, coordinationScopes: Record<string, string | string[]>) {
+export function getParameterScope(coordinationScopes: Record<string, string | string[]>, parameter: string) {
   return coordinationScopes[parameter];
 }
 
@@ -160,7 +172,8 @@ export function getParameterScope(parameter: string, coordinationScopes: Record<
  * @returns {string|undefined} The coordination scope that matches.
  */
 export function getParameterScopeBy(
-  parameter: string, byType: string, typeScope: string, coordinationScopes: Record<string, any>, coordinationScopesBy: Record<string, any>,
+  coordinationScopes: Record<string, any>, coordinationScopesBy: Record<string, any>,
+  byType: string, typeScope: string, parameter: string,
 ) {
   const parameterScopeGlobal = coordinationScopes[parameter];
   // Set parameterScope to the non-meta-value first.
@@ -203,14 +216,14 @@ export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateSt
     const { coordinationSpace } = state.viewConfig;
     let scope;
     if (!byType) {
-      scope = getParameterScope(parameter, coordinationScopes);
+      scope = getParameterScope(coordinationScopes, parameter);
     } else {
       scope = getParameterScopeBy(
-        parameter, byType, typeScope, coordinationScopes, coordinationScopesBy,
+        coordinationScopes, coordinationScopesBy, byType, typeScope,  parameter,
       );
       if (!scope) {
         // Fall back to using the view-level scope.
-        scope = getParameterScope(parameter, coordinationScopes);
+        scope = getParameterScope(coordinationScopes, parameter);
       }
     }
     return {
@@ -230,16 +243,75 @@ export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateSt
 }));
 
 /**
+ * Get the coordination information for a view.
+ * @param {string} viewUid The view of interest
+ * @returns {[coordinationScopes, coordinationScopesBy]}
+ */
+export function useRawViewMapping(viewUid: string) {
+  const viewCoordination = useViewConfigStore((state: any) => {
+    const { viewCoordination } = state.viewConfig;
+    return viewCoordination;
+  }, shallow);
+
+  return useMemo(() => {
+    return [
+      viewCoordination?.[viewUid]?.coordinationScopes,
+      viewCoordination?.[viewUid]?.coordinationScopesBy,
+    ];
+  }, [viewCoordination, viewUid])
+}
+
+/**
+ * Get the coordination information for a view,
+ * after accounting for meta-coordination.
+ * @param {string} viewUid The view of interest
+ * @returns {[coordinationScopes, coordinationScopesBy]}
+ */
+export function useViewMapping(viewUid: string) {
+  const [coordinationScopesRaw, coordinationScopesByRaw] = useRawViewMapping(viewUid);
+
+  const metaSpace = useViewConfigStore((state: any) => {
+    const { coordinationSpace } = state.viewConfig;
+    return coordinationSpace?.[META_COORDINATION_SCOPES];
+  }, shallow);
+
+  const coordinationScopes = useMemo(() => {
+    const scopes = getScopes(
+      metaSpace,
+      coordinationScopesRaw,
+    );
+    // Prevent infinite loop, delete metaCoordinationScopes now that they are computed.
+    delete scopes[META_COORDINATION_SCOPES];
+    return scopes;
+  }, [coordinationScopesRaw, metaSpace]);
+
+  const metaSpaceBy = useViewConfigStore((state: any) => {
+    const { coordinationSpace } = state.viewConfig;
+    return coordinationSpace?.[META_COORDINATION_SCOPES_BY];
+  }, shallow);
+  const coordinationScopesBy = useMemo(() => {
+    const scopesBy = getScopesBy(
+      metaSpaceBy,
+      coordinationScopes,
+      coordinationScopesByRaw,
+    );
+    return scopesBy;
+  }, [coordinationScopes, coordinationScopesByRaw, metaSpaceBy]);
+
+  return [coordinationScopes, coordinationScopesBy];
+}
+
+/**
  * This hook uses the same logic as for the `values` part of
  * the useCoordination hook, with the difference that it
  * gets its values from the _initial_ view config rather
  * than the current view config.
- * @param {string[]} parameters Array of coordination types.
  * @param {object} coordinationScopes Mapping of coordination types
+ * @param {string[]} parameters Array of coordination types.
  * to scope names.
  * @returns {object} Object containing all coordination values.
  */
-export function useInitialCoordination(parameters: string[], coordinationScopes: Record<string, any>) {
+export function _useInitialCoordination(coordinationScopes: Record<string, any>, parameters: string[]) {
   const values = useViewConfigStore((state: any) => {
     const { coordinationSpace } = state.initialViewConfig;
     return fromEntries(parameters.map((parameter) => {
@@ -253,19 +325,18 @@ export function useInitialCoordination(parameters: string[], coordinationScopes:
   return values;
 }
 
-function useCoordinationProps(viewUid: string) {
-  const viewCoordination = useViewConfigStore((state: any) => {
-    const { viewCoordination } = state.viewConfig;
-    return viewCoordination;
-  }, shallow);
-
-  return useMemo(() => {
-    return {
-      coordinationScopes: viewCoordination?.[viewUid]?.coordinationScopes,
-      coordinationScopesBy: viewCoordination?.[viewUid]?.coordinationScopesBy,
-    };
-  }, [viewCoordination, viewUid])
+/**
+ * Convenience version of _useInitialCoordination.
+ * Does an internal lookup of coordinationScopes via useViewMapping.
+ * @param viewUid 
+ * @param parameters 
+ * @returns 
+ */
+export function useInitialCoordination(viewUid: string, parameters: string[]) {
+  const [coordinationScopes] = useViewMapping(viewUid);
+  return _useInitialCoordination(coordinationScopes, parameters);
 }
+
 
 /**
  * The useCoordination hook returns both the
@@ -274,23 +345,23 @@ function useCoordinationProps(viewUid: string) {
  * This hook is intended to be used within the ___Subscriber
  * components to allow them to "hook into" only those coordination
  * objects and setter functions of relevance.
- * @param {string[]} parameters Array of coordination types.
  * @param {object} coordinationScopes Mapping of coordination types
  * to scope names.
+ * @param {string[]} parameters Array of coordination types.
  * @returns {array} Returns a tuple [values, setters]
  * where values is an object containing all coordination values,
  * and setters is an object containing all coordination setter
  * functions for the values in `values`, named with a "set"
  * prefix.
  */
-export function useCoordination(parameters: string[], coordinationScopes: Record<string, string | string[]>) {
+export function _useCoordination(coordinationScopes: Record<string, string | string[]>, parameters: string[]) {
   const setCoordinationValue = useViewConfigStore((state: any) => state.setCoordinationValue);
 
   const values = useViewConfigStore((state: any) => {
     const { coordinationSpace } = state.viewConfig;
     return fromEntries(parameters.map((parameter) => {
       if (coordinationSpace) {
-        const parameterScope = getParameterScope(parameter, coordinationScopes);
+        const parameterScope = getParameterScope(coordinationScopes, parameter);
         if (coordinationSpace && coordinationSpace[parameter] && !Array.isArray(parameterScope)) {
           const value = coordinationSpace[parameter][parameterScope];
           return [parameter, value];
@@ -314,15 +385,25 @@ export function useCoordination(parameters: string[], coordinationScopes: Record
   return [values, setters];
 }
 
-export function useMultiCoordinationScopes(parameter: string, coordinationScopes: Record<string, string | string[]>) {
+export function useCoordination(viewUid: string, parameters: string[]) {
+  const [coordinationScopes] = useViewMapping(viewUid);
+  return _useCoordination(coordinationScopes, parameters);
+}
+
+export function _useCoordinationScopesL1All(coordinationScopes: Record<string, string | string[]>, parameter: string) {
   return useMemo(() => {
     const scopes = coordinationScopes[parameter];
     return Array.isArray(scopes) ? scopes : [scopes];
   }, [parameter, coordinationScopes]);
 }
 
-export function useMultiCoordinationScopesNonNull(parameter: string, coordinationScopes: Record<string, string | string[]>) {
-  const scopes = getParameterScope(parameter, coordinationScopes);
+export function useCoordinationScopesL1All(viewUid: string, parameter: string) {
+  const [coordinationScopes] = useViewMapping(viewUid);
+  return _useCoordinationScopesL1All(coordinationScopes, parameter);
+}
+
+export function _useCoordinationScopesL1(coordinationScopes: Record<string, string | string[]>, parameter: string) {
+  const scopes = getParameterScope(coordinationScopes, parameter);
 
   // Return array of coordination scopes,
   // but filter out any whose value is null / falsey.
@@ -344,11 +425,17 @@ export function useMultiCoordinationScopesNonNull(parameter: string, coordinatio
   return nonNullScopes;
 }
 
-export function useMultiCoordinationScopesSecondary(
-  parameter: string, byType: string, coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
+export function useCoordinationScopesL1(viewUid: string, parameter: string) {
+  const [coordinationScopes] = useViewMapping(viewUid);
+  return _useCoordinationScopesL1(coordinationScopes, parameter);
+}
+
+export function _useCoordinationScopesL2All(
+  coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
+  byType: string, parameter: string,
 ) {
   return useMemo(() => {
-    const scopes = getParameterScope(byType, coordinationScopes);
+    const scopes = getParameterScope(coordinationScopes, byType);
     if (scopes && coordinationScopesBy?.[byType]?.[parameter]) {
       const scopesArr = Array.isArray(scopes) ? scopes : [scopes];
       return [scopesArr, fromEntries(scopesArr.map((scope) => {
@@ -374,10 +461,16 @@ export function useMultiCoordinationScopesSecondary(
   }, [parameter, byType, coordinationScopes, coordinationScopesBy]);
 }
 
-export function useMultiCoordinationScopesSecondaryNonNull(
-  parameter: string, byType: string, coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
+export function useCoordinationScopesL2All(viewUid: string, byType: string, parameter: string) {
+  const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
+  return _useCoordinationScopesL2All(coordinationScopes, coordinationScopesBy, byType, parameter);
+}
+
+export function _useCoordinationScopesL2(
+  coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
+  byType: string, parameter: string,
 ) {
-  const scopes = getParameterScope(byType, coordinationScopes);
+  const scopes = getParameterScope(coordinationScopes, byType);
 
   const parameterSpace = useViewConfigStore((state: any) => {
     const { coordinationSpace } = state.viewConfig;
@@ -442,8 +535,13 @@ export function useMultiCoordinationScopesSecondaryNonNull(
   }, [parameter, byType, scopes, coordinationScopes, coordinationScopesBy, parameterSpace, byTypeSpace]);
 }
 
-export function useMultiCoordinationValues(parameter: string, coordinationScopes: Record<string, string | string[]>) {
-  const scopes = getParameterScope(parameter, coordinationScopes);
+export function useCoordinationScopesL2(viewUid: string, byType: string, parameter: string) {
+  const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
+  return _useCoordinationScopesL2(coordinationScopes, coordinationScopesBy, byType, parameter);
+}
+
+export function _useMultiCoordinationValues(coordinationScopes: Record<string, string | string[]>, parameter: string) {
+  const scopes = getParameterScope(coordinationScopes, parameter);
 
   // Mapping from dataset coordination scope name to dataset uid
   const vals = useViewConfigStore((state: any) => {
@@ -463,6 +561,11 @@ export function useMultiCoordinationValues(parameter: string, coordinationScopes
   return vals;
 }
 
+export function useMultiCoordinationValues(viewUid: string, parameter: string) {
+  const [coordinationScopes] = useViewMapping(viewUid);
+  return _useMultiCoordinationValues(coordinationScopes, parameter);
+}
+
 /**
  * Use coordination values and coordination setter functions corresponding to
  * {coordinationType}-specific coordination scopes for each coordination type.
@@ -477,8 +580,9 @@ export function useMultiCoordinationValues(parameter: string, coordinationScopes
  * and cSetters is a mapping from coordination scope name to { setCoordinationType }
  * setter functions.
  */
-export function useComplexCoordination(
-  parameters: string[], coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, Record<string, any>>, byType: string,
+export function _useCoordinationL1(
+  coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, Record<string, any>>,
+  byType: string, parameters: string[],
 ) {
   const setCoordinationValue = useViewConfigStore((state: any) => state.setCoordinationValue);
 
@@ -488,7 +592,7 @@ export function useComplexCoordination(
   }, shallow);
 
   const values = useMemo(() => {
-    const typeScopes = getParameterScope(byType, coordinationScopes);
+    const typeScopes = getParameterScope(coordinationScopes, byType);
     if (typeScopes) {
       // Convert a single scope to an array of scopes to be consistent.
       const typeScopesArr = Array.isArray(typeScopes) ? typeScopes : [typeScopes];
@@ -497,18 +601,18 @@ export function useComplexCoordination(
           if (parameterSpaces[i]) {
             const parameterSpace = parameterSpaces[i];
             const parameterScope = getParameterScopeBy(
-              parameter,
-              byType,
-              datasetScope,
               coordinationScopes,
               coordinationScopesBy,
+              byType,
+              datasetScope,
+              parameter,
             );
             if (parameterScope) {
               const value = parameterSpace[parameterScope];
               return [parameter, value];
             }
             // Fall back to global scope for this parameter.
-            const globalParameterScope = getParameterScope(parameter, coordinationScopes);
+            const globalParameterScope = getParameterScope(coordinationScopes, parameter);
             if(!Array.isArray(globalParameterScope)) {
               const globalValue = parameterSpace[globalParameterScope];
               return [parameter, globalValue];
@@ -524,7 +628,7 @@ export function useComplexCoordination(
   }, [byType, coordinationScopes, coordinationScopesBy, parameterSpaces]);
 
   const setters = useMemo(() => {
-    const typeScopes = getParameterScope(byType, coordinationScopes);
+    const typeScopes = getParameterScope(coordinationScopes, byType);
     if (typeScopes) {
       // Convert a single scope to an array of scopes to be consistent.
       const typeScopesArr = Array.isArray(typeScopes) ? typeScopes : [typeScopes];
@@ -552,58 +656,9 @@ export function useComplexCoordination(
   return [values, setters];
 }
 
-/**
- * Get the "computed" (i.e., after accounting for meta-coordination)
- * value for coordinationScopes.
- * @param {object} coordinationScopes The original coordinationScopes passed to the view.
- * @returns {object} The coordinationScopes after filling in with meta-coordinationScopes.
- */
-export function useCoordinationScopes(viewUid: string) {
-  const { coordinationScopes } = useCoordinationProps(viewUid);
-
-  const metaSpace = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
-    return coordinationSpace?.[META_COORDINATION_SCOPES];
-  }, shallow);
-  const vals = useMemo(() => {
-    const scopes = getScopes(
-      coordinationScopes,
-      metaSpace,
-    );
-    // Prevent infinite loop, delete metaCoordinationScopes now that they are computed.
-    delete scopes[META_COORDINATION_SCOPES];
-    return scopes;
-  }, [coordinationScopes, metaSpace]);
-  return vals;
-}
-
-/**
- * Get the "computed" (i.e., after accounting for meta-coordination)
- * value for coordinationScopesBy.
- * @param {object} coordinationScopes The original coordinationScopes passed to the view.
- * @param {object} coordinationScopesBy The original coordinationScopesBy passed to the view.
- * @returns {object} The coordinationScopesBy after filling in with meta-coordinationScopesBy.
- */
-export function useCoordinationScopesBy(viewUid: string) {
-  // Note: These are the post-meta-resolving coordinationScopes values.
-  const coordinationScopes = useCoordinationScopes(viewUid);
-  // Note: These are the "raw" (pre-meta-resolving) coordinationScopesBy values.
-  const { coordinationScopesBy } = useCoordinationProps(viewUid);
-  
-
-  const metaSpaceBy = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
-    return coordinationSpace?.[META_COORDINATION_SCOPES_BY];
-  }, shallow);
-  const vals = useMemo(() => {
-    const scopesBy = getScopesBy(
-      coordinationScopes,
-      coordinationScopesBy,
-      metaSpaceBy,
-    );
-    return scopesBy;
-  }, [coordinationScopes, coordinationScopesBy, metaSpaceBy]);
-  return vals;
+export function useCoordinationL1(viewUid: string, byType: string, parameters: string[]) {
+  const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
+  return _useCoordinationL1(coordinationScopes, coordinationScopesBy, byType, parameters);
 }
 
 /**
@@ -612,10 +667,11 @@ export function useCoordinationScopesBy(viewUid: string) {
  * @param {object} coordinationScopesBy The coordinationScopesBy object from the view definition.
  * @param {string} primaryType The first-level coordination type, such as spatialImageLayer.
  * @param {string} secondaryType The second-level coordination type, such as spatialImageChannel.
- * @returns The results of useComplexCoordination.
+ * @returns The results of useCoordinationL1.
  */
-export function useComplexCoordinationSecondary(
-  parameters: string[], coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>, primaryType: string, secondaryType: string,
+export function _useCoordinationL2(
+  coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
+  primaryType: string, secondaryType: string, parameters: string[], 
 ) {
   const coordinationScopesFake = useMemo(() => {
     if (coordinationScopesBy?.[primaryType]?.[secondaryType]) {
@@ -635,8 +691,8 @@ export function useComplexCoordinationSecondary(
     // Finally, fall back to empty array.
     return { [secondaryType]: [] };
   }, [coordinationScopesBy, primaryType, secondaryType]);
-  const [flatValues, flatSetters] = useComplexCoordination(
-    parameters, coordinationScopesFake as Record<string, string | string[]>, coordinationScopesBy, secondaryType,
+  const [flatValues, flatSetters] = _useCoordinationL1(
+    coordinationScopesFake as Record<string, string | string[]>, coordinationScopesBy, secondaryType, parameters,
   );
   const nestedValues = useMemo(() => {
     // Re-nest
@@ -698,6 +754,11 @@ export function useComplexCoordinationSecondary(
   }, [flatSetters]);
 
   return [nestedValues, nestedSetters];
+}
+
+export function useCoordinationL2(viewUid: string, primaryType: string, secondaryType: string, parameters: string[]) {
+  const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
+  return _useCoordinationL2(coordinationScopes, coordinationScopesBy, primaryType, secondaryType, parameters);
 }
 
 /**

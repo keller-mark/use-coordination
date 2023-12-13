@@ -3,10 +3,8 @@ import {
   ZodCmvProvider,
   ZodErrorBoundary,
   useCoordination,
-  useCoordinationScopes,
-  useCoordinationScopesBy,
-  useMultiCoordinationScopesNonNull,
-  useComplexCoordination,
+  useCoordinationScopesL1,
+  useCoordinationL1,
 } from '@mm-cmv/provider';
 import { CoordinationType } from '@mm-cmv/schemas';
 import { z } from 'zod';
@@ -34,13 +32,12 @@ const SliderInputContainer = ({
 }: any) => {
 
   // Support meta-coordination.
-  const coordinationScopes = useCoordinationScopes(viewUid);
 
   const [{
     channelValue,
   }, {
     setChannelValue,
-  }] = useCoordination(['channelValue'], coordinationScopes);
+  }] = useCoordination(viewUid, ['channelValue']);
   return (
     <SliderInput
       sliderValue={channelValue}
@@ -97,26 +94,8 @@ const ColorfulSliderInput = ({
 const ColorfulSliderInputContainer = ({
   viewUid,
 }: any) => {
-
-  // Support meta-coordination.
-  const coordinationScopes = useCoordinationScopes(viewUid);
-  const coordinationScopesBy = useCoordinationScopesBy(viewUid);
-
-  const channelScopes = useMultiCoordinationScopesNonNull(
-    "channel",
-    coordinationScopes,
-  );
-  
-  const channelCoordination = useComplexCoordination(
-    [
-      "channelValue"
-    ],
-    coordinationScopes,
-    coordinationScopesBy,
-    "channel",
-  );
-
-
+  const channelScopes = useCoordinationScopesL1(viewUid, "channel");
+  const channelCoordination = useCoordinationL1(viewUid, "channel", ["channelValue"]);
   return (
     <ColorfulSliderInput
       channelScopes={channelScopes}
@@ -132,7 +111,7 @@ const pluginCoordinationTypes = [
 
 
 const initialConfig = {
-  uid: 1,
+  key: 1,
   coordinationSpace: {
     "channel": {
       "R": "__dummy__",
