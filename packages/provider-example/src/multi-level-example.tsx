@@ -111,7 +111,7 @@ const pluginCoordinationTypes = [
 
 
 const initialConfig = {
-  uid: 1,
+  key: 1,
   coordinationSpace: {
     "channel": {
       "R": "__dummy__",

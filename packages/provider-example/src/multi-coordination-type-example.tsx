@@ -78,7 +78,7 @@ const pluginCoordinationTypes = [
 
 
 const initialConfig = {
-  uid: 1,
+  key: 1,
   coordinationSpace: {
     "value": {
       "A": 0.5,

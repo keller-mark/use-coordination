@@ -41,7 +41,7 @@ const pluginCoordinationTypes = [
 ];
 
 const initialMetaConfig = {
-  uid: 1,
+  key: 1,
   coordinationSpace: {
     "sliderValue": {
       "A": 0.5,

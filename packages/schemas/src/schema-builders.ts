@@ -35,7 +35,7 @@ export function buildConfigSchema<
   pluginCoordinationTypes: Array<T3>,
 ) {
   return z.object({
-    uid: z.union([z.string(), z.number()]).optional(),
+    key: z.union([z.string(), z.number()]).optional(),
     // Merge with coordination type schemas.
     coordinationSpace: z.object(
       // Wrap each value schema in z.record()
