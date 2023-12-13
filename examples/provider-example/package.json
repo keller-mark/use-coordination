@@ -24,9 +24,7 @@
     "test": "pnpm exec vitest --run -r ../../ --dir ."
   },
   "dependencies": {
-    "@mm-cmv/utils": "workspace:*",
-    "@mm-cmv/provider": "workspace:*",
-    "@mm-cmv/schemas": "workspace:*",
+    "@mm-cmv/all": "workspace:*",
     "@mui/material": "^5.14.10",
     "@mui/icons-material": "^5.14.11",
     "@mui/x-data-grid": "^6.16.0",

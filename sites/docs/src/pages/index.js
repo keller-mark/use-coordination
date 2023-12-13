@@ -8,7 +8,7 @@ import {
   MetaCoordinationExample,
   MultiLevelExample,
   MetaMultiLevelExample,
-} from '@mm-cmv/all';
+} from '@mm-cmv/provider-example';
 
 const logoUrl = '';
 const siteConfig = {};

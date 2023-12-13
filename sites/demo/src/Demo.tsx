@@ -2,7 +2,7 @@ import React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { styled } from '@mui/material/styles';
 import { Typography, Container, Unstable_Grid2 as Grid } from '@mui/material';
-import { BaseExample } from 'mm-cmv';
+import { BaseExample } from '@mm-cmv/provider-example';
 
 
 const NavBarGrid = styled(Grid)`

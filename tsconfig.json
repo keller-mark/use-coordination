@@ -25,7 +25,7 @@
     { "path": "packages/utils" },
     { "path": "packages/schemas" },
     { "path": "packages/provider" },
-    { "path": "packages/provider-example" },
+    { "path": "examples/provider-example" },
     { "path": "packages/main/all" },
     { "path": "packages/main/dev" },
     { "path": "packages/main/prod" }
