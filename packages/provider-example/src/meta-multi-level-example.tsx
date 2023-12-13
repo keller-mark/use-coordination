@@ -3,8 +3,6 @@ import {
   ZodCmvProvider,
   ZodErrorBoundary,
   useCoordination,
-  useCoordinationScopes,
-  useCoordinationScopesBy,
   useMultiCoordinationScopesNonNull,
   useComplexCoordination,
 } from '@mm-cmv/provider';
@@ -32,15 +30,11 @@ const SliderInput = ({
 const SliderInputContainer = ({
   viewUid,
 }: any) => {
-
-  // Support meta-coordination.
-  const coordinationScopes = useCoordinationScopes(viewUid);
-
   const [{
     channelValue,
   }, {
     setChannelValue,
-  }] = useCoordination(['channelValue'], coordinationScopes);
+  }] = useCoordination(viewUid, ['channelValue']);
   return (
     <SliderInput
       sliderValue={channelValue}
@@ -99,22 +93,10 @@ const ColorfulSliderInputContainer = ({
 }: any) => {
 
   // Support meta-coordination.
-  const coordinationScopes = useCoordinationScopes(viewUid);
-  const coordinationScopesBy = useCoordinationScopesBy(viewUid);
-
-  const channelScopes = useMultiCoordinationScopesNonNull(
-    "channel",
-    coordinationScopes,
-  );
-  
-  const channelCoordination = useComplexCoordination(
-    [
-      "channelValue"
-    ],
-    coordinationScopes,
-    coordinationScopesBy,
-    "channel",
-  );
+  const channelScopes = useMultiCoordinationScopesNonNull(viewUid, "channel");
+  const channelCoordination = useComplexCoordination(viewUid, "channel", [
+    "channelValue"
+  ]);
 
 
   return (

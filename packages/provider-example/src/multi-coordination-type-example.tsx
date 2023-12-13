@@ -2,8 +2,8 @@ import React from 'react';
 import {
   ZodCmvProvider,
   ZodErrorBoundary,
-  useCoordination,
-  useCoordinationScopes,
+  useViewMapping,
+  _useCoordination,
 } from '@mm-cmv/provider';
 import { CoordinationType } from '@mm-cmv/schemas';
 import { z } from 'zod';
@@ -52,7 +52,7 @@ const ColorfulSliderInputContainer = ({
   viewUid,
 }: any) => {
   // Support meta-coordination.
-  const coordinationScopes = useCoordinationScopes(viewUid);
+  const [coordinationScopes] = useViewMapping(viewUid);
 
   const [{
     value,
@@ -60,7 +60,7 @@ const ColorfulSliderInputContainer = ({
   }, {
     setValue,
     setColor,
-  }] = useCoordination(['value', 'color'], coordinationScopes);
+  }] = _useCoordination(coordinationScopes, ['value', 'color']);
   return (
     <ColorfulSliderInput
       value={value}
