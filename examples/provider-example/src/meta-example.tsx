@@ -3,7 +3,6 @@ import {
   ZodCmvProvider,
   ZodErrorBoundary,
   useCoordination,
-  CoordinationType,
 } from '@mm-cmv/all';
 import { z } from 'zod';
 import { SelectScope, MetaSelectScope } from './example-utils.js';
@@ -36,9 +35,9 @@ const SliderInputContainer = ({
   );
 }
 
-const pluginCoordinationTypes = [
-  new CoordinationType('sliderValue', 0.75, z.number()),
-];
+const pluginCoordinationTypes = {
+  sliderValue: z.number(),
+};
 
 const initialMetaConfig = {
   key: 1,

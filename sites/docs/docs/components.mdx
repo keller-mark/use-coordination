@@ -59,9 +59,9 @@ Inherits all props except `validater` from `CmvProvider`.
 
 #### `coordinationTypes`
 
-- Type: `CoordinationType[]`
+- Type: `Record<string, z.ZodTypeAny>`
 
-An array of `CoordinationType` objects which contain names and Zod schemas.
+Mapping from coordination type names to Zod schemas.
 
 ### Optional props
 
@@ -70,4 +70,9 @@ An array of `CoordinationType` objects which contain names and Zod schemas.
 - Type: `boolean`
 
 Should the config be validated against the Zod schema?
+
+## `<ZodErrorBoundary/>`
+
+Wrap `<ZodCmvProvider/>` in this error boundary to catch validation errors.
+Alternatively, implement your own [ErrorBoundary](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary).
 

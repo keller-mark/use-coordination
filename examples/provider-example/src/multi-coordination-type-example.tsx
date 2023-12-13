@@ -4,7 +4,6 @@ import {
   ZodErrorBoundary,
   useViewMapping,
   _useCoordination,
-  CoordinationType,
 } from '@mm-cmv/all';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
@@ -71,10 +70,10 @@ const ColorfulSliderInputContainer = ({
   );
 }
 
-const pluginCoordinationTypes = [
-  new CoordinationType('value', 0.75, z.number()),
-  new CoordinationType('color', [0, 0, 0], z.array(z.number()).length(3)),
-];
+const pluginCoordinationTypes = {
+  value: z.number(),
+  color: z.array(z.number()).length(3),
+};
 
 
 const initialConfig = {

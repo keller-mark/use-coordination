@@ -1,5 +1,5 @@
-import { CoordinationType } from '@mm-cmv/schemas';
 import { ReactNode } from 'react';
+import { z } from 'zod';
 
 export type CmvConfigObject = {
     key?: string | number;
@@ -46,7 +46,7 @@ export type ZodCmvProviderProps = {
     initializer?: InitializerFunction;
     validateOnConfigChange?: boolean;
     validateConfig?: boolean;
-    coordinationTypes: CoordinationType<any>[];
+    coordinationTypes: Record<string, z.ZodTypeAny>;
     children: ReactNode;
     onCreateStore?: OnCreateStoreFunction;
 };
