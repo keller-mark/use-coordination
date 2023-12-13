@@ -43,6 +43,14 @@ Validation function to run when `validateOnConfigChange` is true.
 
 Initialization function to run during the creation of the Zustand store.
 
+#### `onCreateStore`
+
+- Type: `function`
+
+A function to enable access to the Zustand store on its creation.
+This return value will be passed to the Zustand store creation function.
+The function will be passed the `set` parameter from `create`.
+
 ## `<ZodCmvProvider/>`
 
 Inherits all props except `validater` from `CmvProvider`.

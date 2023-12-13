@@ -4,4 +4,358 @@ title: Configs via JS API
 slug: /config-js
 ---
 
-## Overview
+The CMV config defines how different views are coordinated.
+Ultimately, this configuration must be a JSON object when it is passed to the Provider component `config` prop.
+
+Writing large JSON objects by hand can be difficult and prevents from using variables for more easily maintainable string constants, so we have developed object-oriented APIs to simplify this process.
+
+## `CmvConfig`
+
+`CmvConfig` is a class representing a CMV config.
+To begin creating a config with the API, you will need to instantiate a `CmvConfig` object.
+The methods of this object (and the objects its methods return) allow you to manipulate the underlying configuration.
+When you are ready to render the CMV provider, you can use the `.toJSON()` method to translate the `CmvConfig` object to a plain JSON object.
+
+
+### `constructor(key)`
+
+Construct a CMV config object.
+
+
+#### Parameters:
+- `key` (`string`) - A unique key for the config. Required.
+
+```js {3}
+import { CmvConfig } from '@mm-cmv/config';
+
+const config = new CmvConfig("my-config");
+```
+
+### `addView(viewUid)`
+
+Add a view to the config.
+
+#### Parameters:
+- `viewUid` (`string`) - A unique identifier for the view.
+
+#### Returns:
+- Type: `CmvConfigView`
+
+Returns the instance for the new view.
+
+```js {4-5}
+import { CmvConfig } from '@mm-cmv/config';
+
+const config = new CmvConfig("my-config");
+const v1 = config.addView('v1');
+const v2 = config.addView('v2');
+```
+
+
+### `linkViews(views, cTypes, cValues)`
+
+A convenience function for setting up new coordination scopes across a set of views.
+
+#### Parameters:
+- `views` (`CmvConfigView[]`) - An array of view objects to coordinate together.
+- `cTypes` (`string[]`) - The coordination types on which to coordinate the views.
+- `cValues` (`array`) - Initial values for each coordination type. Should have the same length as the `cTypes` array. Optional.
+
+#### Returns:
+- Type: `CmvConfig`
+
+Returns `this` to allow chaining.
+
+```js {6-10}
+import { CmvConfig } from '@mm-cmv/config';;
+
+const config = new CmvConfig("my-config");
+const v1 = config.addView('v1');
+const v2 = config.addView('v2');
+config.linkViews(
+    [v1, v2],
+    ["spatialZoom", "spatialTargetX", "spatialTargetY"],
+    [2, 0, 0]
+);
+```
+
+
+### `addCoordination(...cTypes)`
+
+Add scope(s) for new coordination type(s) to the config. See also `CmvConfig.linkViews()`.
+
+#### Parameters:
+- `...cTypes` (variable number of `string`) - A variable number of coordination types. 
+
+#### Returns:
+- Type: `CmvConfigCoordinationScope[]`
+
+Returns the instances for the new scope objects corresponding to each coordination type.
+These can be linked to views via the `CmvConfigView.useCoordination()` method.
+
+```js {6-10}
+import { CmvConfig } from '@mm-cmv/config';;
+
+const config = new CmvConfig("my-config");
+const v1 = config.addView("v1");
+const v2 = config.addView("v2");
+const [zoomScope, xScope, yScope] = config.addCoordination(
+    "spatialZoom",
+    "spatialTargetX",
+    "spatialTargetY",
+);
+config.useCoordination(zoomScope, xScope, yScope);
+config.useCoordination(zoomScope, xScope, yScope);
+zoomScope.setValue(2);
+xScope.setValue(0);
+yScope.setValue(0);
+```
+
+### `addCoordinationByObject(obj)`
+
+Set up the initial values for multi-level coordination in the coordination space.
+Get a reference to these values to pass to the `useCoordinationByObject` method
+of either view or meta coordination scope instances.
+
+#### Parameters:
+- `obj` (`object`) - A (potentially nested) object with coordination types as keys
+and values being either the initial coordination value, a `CmvConfigCoordinationScope`
+instance, or a `CoordinationLevel` instance.
+The `CL` function takes an array of objects as its argument, and returns a `CoordinationLevel`
+instance, to support nesting.
+
+#### Returns:
+- Type: `object`
+
+A (potentially nested) object with coordination types as keys and values
+being either `{ scope }`, `{ scope, children }`, or an array of these. Not intended to be
+manipulated before being passed to a `useCoordinationByObject` function.
+
+```js {4-21}
+import { CmvConfig, CoordinationLevel as CL } from '@mm-cmv/config';;
+
+const config = new CmvConfig("my-config");
+const imageScopes = config.addCoordinationByObject({
+    imageLayer: CL([
+        {
+            spatialLayerOpacity: 1,
+            spatialLayerVisible: true,
+            photometricInterpretation: 'BlackIsZero',
+            imageChannel: CL([
+                {
+                    spatialTargetC: 0,
+                    spatialChannelColor: [255, 0, 0],
+                    spatialChannelVisible: true,
+                    spatialChannelOpacity: 1.0,
+                    spatialChannelWindow: null,
+                },
+            ]),
+        },
+    ]),
+});
+
+const metaCoordinationScope = config.addMetaCoordination();
+metaCoordinationScope.useCoordinationByObject(imageScopes);
+
+const v1 = config.addView("v1");
+const v2 = config.addView("v2");
+v1.useMetaCoordination(metaCoordinationScope);
+v2.useMetaCoordination(metaCoordinationScope);
+```
+
+### `linkViewsByObject(views, obj, meta=true)`
+
+Convenience function to simultaneously set up the initial values for multi-level coordination in the coordination space
+and link an array of views on the resulting coordination scopes.
+
+#### Parameters:
+- `views` (`CmvConfigView[]`) - Array of one or more view instances.
+- `obj` (`object`) - A (potentially nested) object with coordination types as keys
+and values being either the initial coordination value, a `CmvConfigCoordinationScope`
+instance, or a `CoordinationLevel` instance.
+The `CL` function takes an array of objects as its argument, and returns a `CoordinationLevel`
+instance, to support nesting.
+Internally, this will be passed to `CmvConfig.addCoordinationByObject`.
+- `meta` (`boolean`) - Whether or not to use meta-coordination. Optional. By default, `true`.
+
+#### Returns:
+- Type: `CmvConfig`
+
+Returns `this` to allow chaining.
+
+```js {7-15}
+import { CmvConfig, CoordinationLevel as CL } from '@mm-cmv/config';;
+
+const config = new CmvConfig("my-config");
+const v1 = config.addView("v1");
+const v2 = config.addView("v2");
+
+config.linkViewsByObject([v1, v2], {
+    imageLayer: CL([
+        {
+            spatialLayerOpacity: 1,
+            spatialLayerVisible: true,
+            photometricInterpretation: 'RGB',
+        },
+    ]),
+});
+```
+
+
+
+### `addMetaCoordination()`
+
+Add a meta-coordination scope to the config.
+
+
+#### Returns:
+- Type: `CmvConfigMetaCoordinationScope`
+
+Returns an instance for the new meta-scope object.
+This can be linked to views via the `CmvConfigView.useMetaCoordination()` method.
+See above code snippet for `addCoordinationByObject` method for an example.
+
+
+
+### `toJSON()`
+
+Convert the view config instance to a JSON object.
+
+#### Returns:
+- Type: `object`
+
+Returns the config instance as a JSON object.
+
+```js {5}
+import { CmvConfig } from '@mm-cmv/config';;
+
+const config = new CmvConfig("my-config");
+const v1 = config.addView("v1");
+const configJson = config.toJSON();
+```
+
+
+### `static fromJSON(config)`
+
+Static method to construct a config instance from an existing JSON config.
+
+#### Parameters:
+- `config` (`object`) - A view config as a JSON object.
+
+#### Returns:
+- Type: `CmvConfig`
+
+Returns the config instance.
+
+```js {4}
+import { CmvConfig } from '@mm-cmv/config';;
+import myConfig from './my-config.json';
+
+const config = CmvConfig.fromJSON(myConfig);
+```
+
+
+## `CmvConfigView`
+
+`CmvConfigView` is a class used to represent a view in the config.
+
+This class is not meant to be instantiated directly, but instances will be created and returned by the `CmvConfig.addView()` method.
+
+### `useCoordination(...cScopes)`
+
+Attach coordination scopes to this view instance.
+All views using the same coordination scope for a particular coordination type will effectively be linked together.
+
+#### Parameters:
+- `...cScopes` (variable number of `CmvConfigCoordinationScope`) - A variable number of coordination scope instances.
+
+#### Returns:
+- Type: `CmvConfigView`
+
+Returns `this` to allow chaining.
+
+
+### `useCoordinationByObject(obj)`
+
+Attach potentially multi-level coordination scopes to this view.
+
+#### Parameters:
+- `obj` (`object`) - A value returned by `CmvConfig.addCoordinationByObject`. Not intended to be a manually-constructed object.
+
+#### Returns:
+- Type: `CmvConfigView`
+
+Returns `this` to allow chaining.
+
+
+### `useMetaCoordination(metaScope)`
+
+Attach coordination scopes to this view instance. All views using the same coordination scope for a particular coordination type will effectively be linked together.
+
+#### Parameters:
+- `metaScope` (`CmvConfigMetaCoordinationScope`) - A meta coordination scope instance, such as the return value of `CmvConfig.addMetaCoordination`.
+
+#### Returns:
+- Type: `CmvConfigView`
+
+Returns `this` to allow chaining.
+
+
+## `CmvConfigCoordinationScope`
+
+Class representing a coordination scope in the coordination space.
+
+### `setValue(cValue)`
+
+Set the coordination value of the coordination scope.
+
+#### Parameters:
+- `cValue` (`any`) - The value to set.
+
+#### Returns:
+- Type: `CmvConfigCoordinationScope`
+
+Returns `this` to allow chaining.
+
+
+## `CmvConfigMetaCoordinationScope`
+
+Class to represent a pair of `metaCoordinationScopes` and `metaCoordinationScopesBy` coordination scopes in the coordination space.
+
+This class is not meant to be instantiated directly, but instances will be created and returned by the `CmvConfig.addMetaCoordination()` method.
+
+### `useCoordination(...cScopes)`
+
+Attach coordination scopes to this meta-scopes instance.
+
+#### Parameters:
+- `...cScopes` (variable number of `CmvConfigCoordinationScope`) - A variable number of coordination scope instances.
+
+#### Returns:
+- Type: `CmvConfigMetaCoordinationScope`
+
+Returns `this` to allow chaining.
+
+
+### `useCoordinationByObject(obj)`
+
+Attach potentially multi-level coordination scopes to this meta-scopes instance.
+
+#### Parameters:
+- `obj` (`object`) - A value returned by `CmvConfig.addCoordinationByObject`. Not intended to be a manually-constructed object.
+
+#### Returns:
+- Type: `CmvConfigMetaCoordinationScope`
+
+Returns `this` to allow chaining.
+
+
+## `CoordinationLevel`
+
+Function to enable configuration of multi-level coordination.
+Acts as a flag to indicate that values in the object passed to `CmvConfig.addCoordinationByObject()` are a new level of coordination objects (as opposed to a coordination value for the coordination type key).
+Alias the import as `CL` for brevity.
+
+```js
+import { CoordinationLevel as CL } from '@mm-cmv/config';;
+```
