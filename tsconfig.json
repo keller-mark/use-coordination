@@ -25,10 +25,10 @@
     { "path": "packages/utils" },
     { "path": "packages/schemas" },
     { "path": "packages/provider" },
-    { "path": "examples/provider-example" },
     { "path": "packages/main/all" },
     { "path": "packages/main/dev" },
-    { "path": "packages/main/prod" }
+    { "path": "packages/main/prod" },
+    { "path": "examples/provider-example" }
   ],
   "files": []
 }
