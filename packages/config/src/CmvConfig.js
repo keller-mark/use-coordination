@@ -163,7 +163,6 @@ export class CmvConfigView {
    * @returns {CmvConfigView} This, to allow chaining.
    */
   useCoordination(cScopes) {
-    const cScopes = args;
     if (!this.view.coordinationScopes) {
       this.view.coordinationScopes = {};
     }
@@ -588,7 +587,7 @@ export class CmvConfig {
     const cScopes = this.addCoordination(cTypes);
     views.forEach((view) => {
       cScopes.forEach((cScope) => {
-        view.useCoordination(cScope);
+        view.useCoordination([cScope]);
       });
     });
     if (Array.isArray(cValues) && cValues.length === cTypes.length) {
