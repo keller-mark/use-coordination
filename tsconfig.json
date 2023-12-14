@@ -28,7 +28,8 @@
     { "path": "packages/main/all" },
     { "path": "packages/main/dev" },
     { "path": "packages/main/prod" },
-    { "path": "examples/provider-example" }
+    { "path": "examples/basic" },
+    { "path": "examples/plots" }
   ],
   "files": []
 }

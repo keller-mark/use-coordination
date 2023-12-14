@@ -10,14 +10,14 @@
 
 ### Patch Changes
 
-- Improve API again. (`@use-coordination/provider-example`, `@use-coordination/provider`, `@use-coordination/schemas`, `@use-coordination/config`) ([#20](https://github.com/keller-mark/use-coordination/pull/20))
+- Improve API again. (`@use-coordination/basic-example`, `@use-coordination/provider`, `@use-coordination/schemas`, `@use-coordination/config`) ([#20](https://github.com/keller-mark/use-coordination/pull/20))
 
 
 ## 3.3.2
 
 ### Patch Changes
 
-- Move examples. (`@use-coordination/provider-example`) ([#17](https://github.com/keller-mark/use-coordination/pull/17))
+- Move examples. (`@use-coordination/basic-example`) ([#17](https://github.com/keller-mark/use-coordination/pull/17))
 
 
 ## 3.3.1

@@ -14,7 +14,8 @@
   "dependencies": {
     "use-coordination": "workspace:*",
     "@use-coordination/all": "workspace:*",
-    "@use-coordination/provider-example": "workspace:*",
+    "@use-coordination/basic-example": "workspace:*",
+    "@use-coordination/plots-example": "workspace:*",
     "@docusaurus/core": "2.0.0-beta.21",
     "@docusaurus/preset-classic": "2.0.0-beta.21",
     "@docusaurus/theme-live-codeblock": "2.0.0-beta.21",

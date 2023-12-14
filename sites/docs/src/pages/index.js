@@ -8,7 +8,7 @@ import {
   MetaCoordinationExample,
   MultiLevelExample,
   MetaMultiLevelExample,
-} from '@use-coordination/provider-example';
+} from '@use-coordination/basic-example';
 
 const logoUrl = '';
 const siteConfig = {};
