@@ -12,7 +12,7 @@ const BUMP_TYPE = {
 };
 
 
-const mainPackage = 'mm-cmv';
+const mainPackage = 'use-coordination';
 
 // Get all .md files in the .changeset directory.
 fs.readdirSync('.changeset').forEach(file => {

@@ -12,9 +12,9 @@
     "clear": "docusaurus clear"
   },
   "dependencies": {
-    "mm-cmv": "workspace:*",
-    "@mm-cmv/all": "workspace:*",
-    "@mm-cmv/provider-example": "workspace:*",
+    "use-coordination": "workspace:*",
+    "@use-coordination/all": "workspace:*",
+    "@use-coordination/provider-example": "workspace:*",
     "@docusaurus/core": "2.0.0-beta.21",
     "@docusaurus/preset-classic": "2.0.0-beta.21",
     "@docusaurus/theme-live-codeblock": "2.0.0-beta.21",

@@ -1,5 +1,5 @@
 {
-  "name": "@mm-cmv/config",
+  "name": "@use-coordination/config",
   "version": "3.3.3",
   "author": "Mark Keller",
   "license": "MIT",
@@ -25,8 +25,8 @@
     "test": "pnpm exec vitest --run"
   },
   "dependencies": {
-    "@mm-cmv/constants-internal": "workspace:*",
-    "@mm-cmv/utils": "workspace:*"
+    "@use-coordination/constants-internal": "workspace:*",
+    "@use-coordination/utils": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^0.23.4"

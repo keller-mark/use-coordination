@@ -1,3 +1,3 @@
-# mm-cmv
+# use-coordination
 
-This package is the main `mm-cmv` package on NPM.
+This package is the main `use-coordination` package on NPM.

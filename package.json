@@ -1,11 +1,11 @@
 {
-  "name": "@mm-cmv/root",
+  "name": "@use-coordination/root",
   "private": true,
   "version": "3.3.3",
   "description": "",
   "author": "Mark Keller",
-  "homepage": "https://keller-mark.github.io/mm-cmv/",
-  "repository": "https://github.com/keller-mark/mm-cmv/",
+  "homepage": "https://keller-mark.github.io/use-coordination/",
+  "repository": "https://github.com/keller-mark/use-coordination/",
   "scripts": {
     "start": "pnpm -r --parallel start",
     "start-demo": "pnpm -r --parallel --filter=!docs start",

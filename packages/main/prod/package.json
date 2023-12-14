@@ -1,5 +1,5 @@
 {
-  "name": "mm-cmv",
+  "name": "use-coordination",
   "version": "3.3.3",
   "author": "",
   "description": "",
@@ -27,7 +27,7 @@
     "build-lib:dev": "cross-env APP_ENV=development vite build --mode lib"
   },
   "dependencies": {
-    "@mm-cmv/all": "workspace:*"
+    "@use-coordination/all": "workspace:*"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.0",
