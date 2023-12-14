@@ -8,8 +8,6 @@ export {
   getParameterScope,
   getParameterScopeBy,
   useRawViewMapping,
-  useViewConfigStore,
-  useViewConfigStoreApi,
   
   // Normal usage
   useViewMapping,

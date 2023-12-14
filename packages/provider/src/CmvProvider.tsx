@@ -1,11 +1,23 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useRef, useContext, createContext } from 'react';
+import { useStore } from 'zustand';
 import {
-  ViewConfigProvider,
   createViewConfigStore,
 } from './hooks.js';
-import ViewWrapper from './ViewWrapper.js';
 import CallbackPublisher from './CallbackPublisher.js';
 import { CmvProviderProps } from './prop-types.js';
+
+const CmvContext = createContext<any>(null);
+
+export function useCmvStore(selector: any) {
+  const store = useContext(CmvContext)
+  if (!store) throw new Error('Missing BearContext.Provider in the tree')
+  return useStore(store, selector);
+}
+
+export function useCmvStoreApi() {
+  return useContext(CmvContext);
+}
+
 
 export function CmvProvider(props: CmvProviderProps) {
   const {
@@ -18,51 +30,21 @@ export function CmvProvider(props: CmvProviderProps) {
     onCreateStore,
   } = props;
 
-  // If config.key exists, then use it for hook dependencies to detect changes
-  // (controlled component case). If not, then use the config object itself
-  // and assume the un-controlled component case.
-  const configKey = useMemo(() => {
-    if (config?.key) {
-      return config.key;
-    }
-    // Stringify the config object so it can be used as a key
-    // Otherwise, the key will be [object Object]
-    return JSON.stringify(config);
-  }, [config]);
-
-
-  // Emit the upgraded/initialized view config
-  // to onConfigChange if necessary.
-  useEffect(() => {
-    if (onConfigChange) {
-      onConfigChange(config);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, onConfigChange]);
-
-  // Initialize the view config and loaders in the global state.
-  const createViewConfigStoreClosure = useCallback(() => {
-    const initializedConfig = initializer
-      ? initializer(config)
-      : config;
-    return createViewConfigStore(initializedConfig, onCreateStore);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, initializer, onCreateStore]);
+  const storeRef = useRef<any>();
+  if(!storeRef.current) {
+    storeRef.current = createViewConfigStore(config, onCreateStore);
+  }
 
   return (
     /* @ts-ignore */
-    <ViewConfigProvider key={configKey} createStore={createViewConfigStoreClosure}>
-        <ViewWrapper
-          configKey={configKey}
-          config={config}
-        >
-          {children}
-        </ViewWrapper>
-        <CallbackPublisher
+    <CmvContext.Provider value={storeRef.current}>
+      {children}
+      <CallbackPublisher
           onConfigChange={onConfigChange}
+          config={config}
           validateOnConfigChange={validateOnConfigChange}
           validater={validater}
         />
-    </ViewConfigProvider>
+    </CmvContext.Provider>
   );
 }

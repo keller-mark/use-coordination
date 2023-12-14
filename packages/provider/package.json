@@ -29,7 +29,7 @@
     "@use-coordination/schemas": "workspace:*",
     "@use-coordination/utils": "workspace:*",
     "lodash-es": "^4.17.21",
-    "zustand": "^3.5.10",
+    "zustand": "^4.4.7",
     "zod": "^3.21.4"
   },
   "devDependencies": {

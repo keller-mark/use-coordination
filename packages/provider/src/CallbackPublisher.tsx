@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
-import { useViewConfigStoreApi } from './hooks.js';
+import { useEffect, useMemo } from 'react';
+import { useCmvStoreApi } from './CmvProvider.js';
 import { CallbackPublisherProps } from './prop-types.js';
+import { useSetViewConfig } from './hooks.js';
+import { cloneDeep } from 'lodash-es';
 
 /**
  * This is a dummy component which handles
@@ -9,32 +11,50 @@ import { CallbackPublisherProps } from './prop-types.js';
  */
 export default function CallbackPublisher(props: CallbackPublisherProps) {
   const {
+    config,
     onConfigChange,
     validater,
     validateOnConfigChange,
   } = props;
 
-  const viewConfigStoreApi = useViewConfigStoreApi();
+  const storeApi = useCmvStoreApi();
+  const setViewConfig = useSetViewConfig(storeApi);
 
-  // View config updates are often-occurring, so
-  // we want to use the "transient update" approach
-  // to subscribe to view config changes.
-  // Reference: https://github.com/react-spring/zustand#transient-updates-for-often-occuring-state-changes
-  useEffect(() => viewConfigStoreApi.subscribe(
-    // The function to run on each publish.
+  // If config.key exists, then use it for hook dependencies to detect changes
+  // (controlled component case). If not, then use the config object itself
+  // and assume the un-controlled component case.
+  const configKey = useMemo(() => {
+    if (config?.key) {
+      return config.key;
+    }
+    // Stringify the config object so it can be used as a key
+    // Otherwise, the key will be [object Object]
+    return JSON.stringify(config);
+  }, [config]);
+
+  useEffect(() => {
+    const validConfig = validater ? validater(config) : config;
+    // If the configKey changed, then set a new initial config value.
+    storeApi.setState({
+      initialConfig: cloneDeep(validConfig),
+    });
+  }, [configKey]);
+
+  useEffect(() => {
+    // If the configKey changed, then set a new initial config value.
+    const validConfig = validateOnConfigChange && validater ? validater(config) : config;
+    setViewConfig(validConfig);
+  }, [config, setViewConfig]);
+
+  useEffect(() => storeApi.subscribe(
+    (state: any) => state.viewConfig,
     (viewConfig: any) => {
-      if (validateOnConfigChange && viewConfig && validater) {
-        validater(viewConfig);
-      }
-      if (onConfigChange && viewConfig) {
+      if (onConfigChange) {
         onConfigChange(viewConfig);
       }
     },
-    // The function to specify which part of the store
-    // we want to subscribe to.
-    (state: any) => state.viewConfig,
-  ), [onConfigChange, validater, validateOnConfigChange, viewConfigStoreApi]);
-
+  ), [onConfigChange]);
+ 
   // Render nothing.
   return null;
 }

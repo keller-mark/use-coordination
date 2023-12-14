@@ -8,9 +8,11 @@ import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
 
 const SliderInput = ({
+  viewUid,
   sliderValue, 
   setSliderValue,
 }: any) => {
+  console.log(viewUid, sliderValue);
   function handleChange(e: any) {
     setSliderValue(parseFloat(e.target.value));
   }
@@ -29,6 +31,7 @@ const SliderInputContainer = ({
   }] = useCoordination(viewUid, ['sliderValue']);
   return (
     <SliderInput
+      viewUid={viewUid}
       sliderValue={sliderValue}
       setSliderValue={setSliderValue}
     />

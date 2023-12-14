@@ -52,6 +52,7 @@ export type ZodCmvProviderProps = {
 };
 
 export type CallbackPublisherProps = {
+    config: CmvConfigObject;
     onConfigChange?: OnConfigChangeFunction;
     validater?: ValidaterFunction;
     validateOnConfigChange?: boolean;
