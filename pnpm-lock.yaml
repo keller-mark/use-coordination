@@ -134,7 +134,7 @@ importers:
       '@emotion/styled':
         specifier: ^11.11.0
         version: 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.43)(react@18.2.0)
-      '@mm-cmv/all':
+      '@use-coordination/all':
         specifier: workspace:*
         version: link:../../packages/main/all
       '@mui/icons-material':
@@ -162,10 +162,10 @@ importers:
 
   packages/config:
     dependencies:
-      '@mm-cmv/constants-internal':
+      '@use-coordination/constants-internal':
         specifier: workspace:*
         version: link:../constants-internal
-      '@mm-cmv/utils':
+      '@use-coordination/utils':
         specifier: workspace:*
         version: link:../utils
     devDependencies:
@@ -184,7 +184,7 @@ importers:
 
   packages/json-schema:
     dependencies:
-      '@mm-cmv/schemas':
+      '@use-coordination/schemas':
         specifier: workspace:*
         version: link:../schemas
       zod-to-json-schema:
@@ -193,19 +193,19 @@ importers:
 
   packages/main/all:
     dependencies:
-      '@mm-cmv/config':
+      '@use-coordination/config':
         specifier: workspace:*
         version: link:../../config
-      '@mm-cmv/constants-internal':
+      '@use-coordination/constants-internal':
         specifier: workspace:*
         version: link:../../constants-internal
-      '@mm-cmv/provider':
+      '@use-coordination/provider':
         specifier: workspace:*
         version: link:../../provider
-      '@mm-cmv/schemas':
+      '@use-coordination/schemas':
         specifier: workspace:*
         version: link:../../schemas
-      '@mm-cmv/utils':
+      '@use-coordination/utils':
         specifier: workspace:*
         version: link:../../utils
       react:
@@ -218,7 +218,7 @@ importers:
 
   packages/main/dev:
     dependencies:
-      '@mm-cmv/all':
+      '@use-coordination/all':
         specifier: workspace:*
         version: link:../all
       react:
@@ -243,7 +243,7 @@ importers:
 
   packages/main/prod:
     dependencies:
-      '@mm-cmv/all':
+      '@use-coordination/all':
         specifier: workspace:*
         version: link:../all
       react:
@@ -271,13 +271,13 @@ importers:
 
   packages/provider:
     dependencies:
-      '@mm-cmv/constants-internal':
+      '@use-coordination/constants-internal':
         specifier: workspace:*
         version: link:../constants-internal
-      '@mm-cmv/schemas':
+      '@use-coordination/schemas':
         specifier: workspace:*
         version: link:../schemas
-      '@mm-cmv/utils':
+      '@use-coordination/utils':
         specifier: workspace:*
         version: link:../utils
       lodash-es:
@@ -314,10 +314,10 @@ importers:
 
   packages/schemas:
     dependencies:
-      '@mm-cmv/constants-internal':
+      '@use-coordination/constants-internal':
         specifier: workspace:*
         version: link:../constants-internal
-      '@mm-cmv/utils':
+      '@use-coordination/utils':
         specifier: workspace:*
         version: link:../utils
       '@types/lodash':
@@ -356,7 +356,7 @@ importers:
       '@emotion/styled':
         specifier: ^11.11.0
         version: 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.43)(react@18.2.0)
-      '@mm-cmv/provider-example':
+      '@use-coordination/provider-example':
         specifier: workspace:*
         version: link:../../examples/provider-example
       '@mui/material':
@@ -399,10 +399,10 @@ importers:
       '@mdx-js/react':
         specifier: ^1.6.21
         version: 1.6.22(react@18.2.0)
-      '@mm-cmv/all':
+      '@use-coordination/all':
         specifier: workspace:*
         version: link:../../packages/main/all
-      '@mm-cmv/provider-example':
+      '@use-coordination/provider-example':
         specifier: workspace:*
         version: link:../../examples/provider-example
       copy-text-to-clipboard:
@@ -411,7 +411,7 @@ importers:
       docusaurus-plugin-sass:
         specifier: ^0.2.1
         version: 0.2.2(@docusaurus/core@2.0.0-beta.21)(sass@1.62.1)(webpack@5.73.0)
-      mm-cmv:
+      use-coordination:
         specifier: workspace:*
         version: link:../../packages/main/prod
       prism-react-renderer:

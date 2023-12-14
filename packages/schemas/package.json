@@ -1,5 +1,5 @@
 {
-  "name": "@mm-cmv/schemas",
+  "name": "@use-coordination/schemas",
   "version": "3.3.3",
   "author": "Mark Keller",
   "license": "MIT",
@@ -27,8 +27,8 @@
   "dependencies": {
     "@types/lodash": "^4.14.191",
     "@types/lodash-es": "^4.17.7",
-    "@mm-cmv/utils": "workspace:*",
-    "@mm-cmv/constants-internal": "workspace:*",
+    "@use-coordination/utils": "workspace:*",
+    "@use-coordination/constants-internal": "workspace:*",
     "lodash-es": "^4.17.21",
     "zod": "^3.21.4"
   },

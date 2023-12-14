@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import { isEqual } from 'lodash-es';
-import { buildConfigSchema } from '@mm-cmv/schemas';
+import { buildConfigSchema } from '@use-coordination/schemas';
 import { CmvProvider } from './CmvProvider.js';
 import {
   logConfig,

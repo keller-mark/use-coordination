@@ -33,7 +33,7 @@ jobs:
       - run: pnpm run build
       - run: pnpm run changeset-status
       - name: Create Release Pull Request or Publish to NPM
-        if: github.repository == 'keller-mark/mm-cmv'
+        if: github.repository == 'keller-mark/use-coordination'
         id: changesets
         uses: changesets/action@v1
         with:

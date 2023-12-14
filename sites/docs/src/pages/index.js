@@ -8,7 +8,7 @@ import {
   MetaCoordinationExample,
   MultiLevelExample,
   MetaMultiLevelExample,
-} from '@mm-cmv/provider-example';
+} from '@use-coordination/provider-example';
 
 const logoUrl = '';
 const siteConfig = {};
@@ -16,11 +16,11 @@ const siteConfig = {};
 export default function Index() {
   return (
     <Layout
-      description="mmCMV is a library for coordinated multiple views in React-based visualization systems."
+      description="use-coordination is a library for coordinated multiple views in React-based visualization systems."
     >
       <header className={'hero hero--primary'}>
         <div className={'container'}>
-          <h1>mmCMV</h1>
+          <h1>use-coordination</h1>
           <p className="hero__subtitle">Multi&#8211;level and meta&#8211; coordinated multiple views</p>
         </div>
       </header>
@@ -28,7 +28,7 @@ export default function Index() {
         <section style={{ margin: '20px'}}>
           <h3>Installation</h3>
           <pre>
-            npm install mm-cmv
+            npm install use-coordination
           </pre>
           <h3>Demo</h3>
           
