@@ -1,6 +1,6 @@
 {
   "name": "@use-coordination/provider-example",
-  "version": "3.3.3",
+  "version": "0.0.1",
   "description": "",
   "type": "module",
   "main": "dist-tsc/index.js",
