@@ -1,4 +1,11 @@
 
+## 0.0.2
+
+### Patch Changes
+
+- First deploy from gh. (`use-coordination`) ([#27](https://github.com/keller-mark/use-coordination/pull/27))
+
+
 ## 3.3.3
 
 ### Patch Changes
