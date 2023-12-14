@@ -1,4 +1,11 @@
 
+## 0.0.3
+
+### Patch Changes
+
+- Try again. (`use-coordination`) ([#29](https://github.com/keller-mark/use-coordination/pull/29))
+
+
 ## 0.0.2
 
 ### Patch Changes
