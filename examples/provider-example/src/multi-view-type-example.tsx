@@ -3,7 +3,7 @@ import {
   ZodCmvProvider,
   ZodErrorBoundary,
   useCoordination,
-} from '@mm-cmv/all';
+} from '@use-coordination/all';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
 

@@ -1,4 +1,4 @@
-# mmCMV
+# use-coordination
 
 A library for coordinated multiple views in React-based visualization systems.
 
@@ -6,7 +6,7 @@ A library for coordinated multiple views in React-based visualization systems.
 ## Usage
 
 ```sh
-npm install mm-cmv
+npm install use-coordination
 ```
 
 ## Development

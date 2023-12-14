@@ -4,7 +4,7 @@ import {
   ZodErrorBoundary,
   useViewMapping,
   _useCoordination,
-} from '@mm-cmv/all';
+} from '@use-coordination/all';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@mm-cmv/provider",
+  "name": "@use-coordination/provider",
   "version": "3.3.2",
   "author": "Mark Keller",
   "license": "MIT",
@@ -25,9 +25,9 @@
     "test": "pnpm exec vitest --run"
   },
   "dependencies": {
-    "@mm-cmv/constants-internal": "workspace:*",
-    "@mm-cmv/schemas": "workspace:*",
-    "@mm-cmv/utils": "workspace:*",
+    "@use-coordination/constants-internal": "workspace:*",
+    "@use-coordination/schemas": "workspace:*",
+    "@use-coordination/utils": "workspace:*",
     "lodash-es": "^4.17.21",
     "zustand": "^3.5.10",
     "zod": "^3.21.4"

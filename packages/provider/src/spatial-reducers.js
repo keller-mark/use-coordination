@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-import { getNextScope } from '@mm-cmv/utils';
-import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@mm-cmv/constants-internal';
+import { getNextScope } from '@use-coordination/utils';
+import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 
 const CoordinationType = {};
 

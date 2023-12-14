@@ -1,15 +1,15 @@
 const path = require('path');
 module.exports = {
-  title: 'mmCMV',
+  title: 'use-coordination',
   tagline: 'Example repo',
   url: 'https://keller-mark.github.io',
-  baseUrl: '/mm-cmv/',
+  baseUrl: '/use-coordination/',
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   trailingSlash: true,
   organizationName: 'keller-mark', // Usually your GitHub org/user name.
-  projectName: 'mm-cmv', // Usually your repo name.
+  projectName: 'use-coordination', // Usually your repo name.
   themes: [],
   themeConfig: {
     colorMode: {
@@ -18,7 +18,7 @@ module.exports = {
       disableSwitch: false,
     },
     navbar: {
-      title: 'mmCMV',
+      title: 'use-coordination',
       items: [
         {
           type: 'doc',
@@ -27,7 +27,7 @@ module.exports = {
           position: 'left',
         },
         {
-          href: 'https://github.com/keller-mark/mm-cmv',
+          href: 'https://github.com/keller-mark/use-coordination',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
@@ -41,7 +41,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/keller-mark/mm-cmv/edit/main/sites/docs/',
+          editUrl: 'https://github.com/keller-mark/use-coordination/edit/main/sites/docs/',
         },
         blog: {
           showReadingTime: true,

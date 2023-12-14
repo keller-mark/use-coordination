@@ -1,5 +1,5 @@
 {
-  "name": "@mm-cmv/json-schema",
+  "name": "@use-coordination/json-schema",
   "version": "3.3.2",
   "author": "Mark Keller",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "build-json-schema": "node scripts/convert-schemas.mjs"
   },
   "dependencies": {
-    "@mm-cmv/schemas": "workspace:*",
+    "@use-coordination/schemas": "workspace:*",
     "zod-to-json-schema": "^3.20.4"
   }
 }

@@ -1,6 +1,6 @@
-This directory contains NodeJS scripts for converting the Zod schemas from `@mm-cmv/schemas` (located in `packages/schemas/`) to JSON schema.
+This directory contains NodeJS scripts for converting the Zod schemas from `@use-coordination/schemas` (located in `packages/schemas/`) to JSON schema.
 
-These JSON schemas are not intended to be used at runtime within any mmCMV JS sub-package.
+These JSON schemas are not intended to be used at runtime within any use-coordination JS sub-package.
 Instead, they are intended to be uploaded to NPM/CDN where they can be accessed from Python or R to perform validation in the absence of JavaScript.
 
 

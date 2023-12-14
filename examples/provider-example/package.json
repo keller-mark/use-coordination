@@ -1,5 +1,5 @@
 {
-  "name": "@mm-cmv/provider-example",
+  "name": "@use-coordination/provider-example",
   "version": "3.3.2",
   "description": "",
   "type": "module",
@@ -24,7 +24,7 @@
     "test": "pnpm exec vitest --run -r ../../ --dir ."
   },
   "dependencies": {
-    "@mm-cmv/all": "workspace:*",
+    "@use-coordination/all": "workspace:*",
     "@mui/material": "^5.14.10",
     "@mui/icons-material": "^5.14.11",
     "@mui/x-data-grid": "^6.16.0",

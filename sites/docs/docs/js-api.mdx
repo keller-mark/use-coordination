@@ -26,7 +26,7 @@ Construct a CMV config object.
 - `key` (`string`) - A unique key for the config. Required.
 
 ```js {3}
-import { CmvConfig } from '@mm-cmv/config';
+import { CmvConfig } from '@use-coordination/config';
 
 const config = new CmvConfig("my-config");
 ```
@@ -44,7 +44,7 @@ Add a view to the config.
 Returns the instance for the new view.
 
 ```js {4-5}
-import { CmvConfig } from '@mm-cmv/config';
+import { CmvConfig } from '@use-coordination/config';
 
 const config = new CmvConfig("my-config");
 const v1 = config.addView('v1');
@@ -67,7 +67,7 @@ A convenience function for setting up new coordination scopes across a set of vi
 Returns `this` to allow chaining.
 
 ```js {6-10}
-import { CmvConfig } from '@mm-cmv/config';;
+import { CmvConfig } from '@use-coordination/config';;
 
 const config = new CmvConfig("my-config");
 const v1 = config.addView('v1');
@@ -94,7 +94,7 @@ Returns the instances for the new scope objects corresponding to each coordinati
 These can be linked to views via the `CmvConfigView.useCoordination()` method.
 
 ```js {6-10}
-import { CmvConfig } from '@mm-cmv/config';;
+import { CmvConfig } from '@use-coordination/config';;
 
 const config = new CmvConfig("my-config");
 const v1 = config.addView("v1");
@@ -132,7 +132,7 @@ being either `{ scope }`, `{ scope, children }`, or an array of these. Not inten
 manipulated before being passed to a `useCoordinationByObject` function.
 
 ```js {4-21}
-import { CmvConfig, CoordinationLevel as CL } from '@mm-cmv/config';;
+import { CmvConfig, CoordinationLevel as CL } from '@use-coordination/config';;
 
 const config = new CmvConfig("my-config");
 const imageScopes = config.addCoordinationByObject({
@@ -184,7 +184,7 @@ Internally, this will be passed to `CmvConfig.addCoordinationByObject`.
 Returns `this` to allow chaining.
 
 ```js {7-15}
-import { CmvConfig, CoordinationLevel as CL } from '@mm-cmv/config';;
+import { CmvConfig, CoordinationLevel as CL } from '@use-coordination/config';;
 
 const config = new CmvConfig("my-config");
 const v1 = config.addView("v1");
@@ -227,7 +227,7 @@ Convert the view config instance to a JSON object.
 Returns the config instance as a JSON object.
 
 ```js {5}
-import { CmvConfig } from '@mm-cmv/config';;
+import { CmvConfig } from '@use-coordination/config';;
 
 const config = new CmvConfig("my-config");
 const v1 = config.addView("v1");
@@ -248,7 +248,7 @@ Static method to construct a config instance from an existing JSON config.
 Returns the config instance.
 
 ```js {4}
-import { CmvConfig } from '@mm-cmv/config';;
+import { CmvConfig } from '@use-coordination/config';;
 import myConfig from './my-config.json';
 
 const config = CmvConfig.fromJSON(myConfig);
@@ -357,5 +357,5 @@ Acts as a flag to indicate that values in the object passed to `CmvConfig.addCoo
 Alias the import as `CL` for brevity.
 
 ```js
-import { CoordinationLevel as CL } from '@mm-cmv/config';;
+import { CoordinationLevel as CL } from '@use-coordination/config';;
 ```

@@ -1,5 +1,5 @@
 {
-  "name": "@mm-cmv/all",
+  "name": "@use-coordination/all",
   "version": "3.3.2",
   "author": "",
   "description": "",
@@ -27,11 +27,11 @@
     "test": "pnpm exec vitest --run -r ../../../ --dir ."
   },
   "dependencies": {
-    "@mm-cmv/provider": "workspace:*",
-    "@mm-cmv/schemas": "workspace:*",
-    "@mm-cmv/config": "workspace:*",
-    "@mm-cmv/utils": "workspace:*",
-    "@mm-cmv/constants-internal": "workspace:*"
+    "@use-coordination/provider": "workspace:*",
+    "@use-coordination/schemas": "workspace:*",
+    "@use-coordination/config": "workspace:*",
+    "@use-coordination/utils": "workspace:*",
+    "@use-coordination/constants-internal": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^0.23.4"

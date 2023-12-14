@@ -5,8 +5,8 @@ import create from 'zustand';
 import createContext from 'zustand/context';
 import shallow from 'zustand/shallow';
 import { merge, cloneDeep } from 'lodash-es';
-import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@mm-cmv/constants-internal';
-import { fromEntries, capitalize } from '@mm-cmv/utils';
+import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
+import { fromEntries, capitalize } from '@use-coordination/utils';
 import { CmvConfigObject } from './prop-types.js';
 
 // Reference: https://github.com/pmndrs/zustand#react-context

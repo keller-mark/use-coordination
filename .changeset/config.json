@@ -2,9 +2,9 @@
   "$schema": "https://unpkg.com/@changesets/config@2.3.0/schema.json",
   "changelog": [
     "./changesets-changelog.js",
-    { "repo": "keller-mark/mm-cmv" }
+    { "repo": "keller-mark/use-coordination" }
   ],
-  "fixed": [["mm-cmv", "@mm-cmv/*"]],
+  "fixed": [["use-coordination", "@use-coordination/*"]],
   "commit": false,
   "access": "public",
   "baseBranch": "main",

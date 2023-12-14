@@ -1,8 +1,8 @@
 ---
-"@mm-cmv/provider-example": patch
-"@mm-cmv/provider": patch
-"@mm-cmv/schemas": patch
-"@mm-cmv/config": patch
+"@use-coordination/provider-example": patch
+"@use-coordination/provider": patch
+"@use-coordination/schemas": patch
+"@use-coordination/config": patch
 ---
 
 Improve API again.
