@@ -15,3 +15,7 @@ RELEASE_NOTES.md
 *.tsbuildinfo
 stats.html
 packages/*/coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/

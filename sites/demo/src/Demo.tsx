@@ -1,18 +1,193 @@
-import React from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { styled } from '@mui/material/styles';
 import { Typography, Container, Unstable_Grid2 as Grid } from '@mui/material';
-import { BaseExample } from '@use-coordination/provider-example';
+import { z } from 'zod';
+import {
+  ZodCmvProvider,
+  ZodErrorBoundary,
+  useCoordination,
+} from '@use-coordination/all';
 
+let initializationCounter = 0;
 
 const NavBarGrid = styled(Grid)`
   border-bottom: 1px solid gray;
 ` as typeof Grid;
 
+function SelectScope(props: any) {
+  const {
+    config,
+    viewUid,
+    cType = "sliderValue",
+    onConfigChange,
+    showType = false,
+  } = props;
+
+  const allScopes = Object.keys(config.coordinationSpace[cType]);
+
+  function handleChange(event: any) {
+    const newScope = event.target.value;
+    const newConfig = {
+      ...config,
+      key: config.key + 1,
+      viewCoordination: {
+        ...config.viewCoordination,
+        [viewUid]: {
+          ...config.viewCoordination[viewUid],
+          coordinationScopes: {
+            ...config.viewCoordination[viewUid].coordinationScopes,
+            [cType]: newScope,
+          },
+        },
+      },
+    };
+    onConfigChange(newConfig)
+  }
+
+  return (
+    <>
+      <label>{showType ? cType : "Coordination"} scope for {viewUid}:&nbsp;</label>
+      <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]}>
+        {allScopes.map((scope: any) => (
+          <option key={scope} value={scope}>{scope}</option>
+        ))}
+      </select>
+    </>
+  )
+}
+
+const SliderInput = ({
+  sliderValue, 
+  setSliderValue,
+}: any) => {
+  const onIncrement = useCallback(() => {
+    setSliderValue(sliderValue + 1);
+  }, [sliderValue, setSliderValue]);
+  const onDecrement = useCallback(() => {
+    setSliderValue(sliderValue - 1);
+  }, [sliderValue, setSliderValue]);
+
+  const renderCounter  = useRef(0);
+  renderCounter.current = renderCounter.current + 1;
+
+  const initCounter = useMemo(() => {
+    initializationCounter = initializationCounter + 1;
+    return initializationCounter;
+  }, []);
+
+  return (
+    <>
+      <span>innerInitId: {initCounter}&nbsp;</span>
+      <span>numInnerRenders: {renderCounter.current}&nbsp;</span>
+      <span>value: {sliderValue}</span>
+      <button onClick={onIncrement}>increment</button>
+      <button onClick={onDecrement}>decrement</button>
+    </>
+  );
+}
+
+const SliderInputContainer = ({
+  viewUid,
+}: any) => {
+  const [{
+    sliderValue,
+  }, {
+    setSliderValue,
+  }] = useCoordination(viewUid, ['sliderValue']);
+
+  const renderCounter  = useRef(0);
+  renderCounter.current = renderCounter.current + 1;
+
+  const initCounter = useMemo(() => {
+    initializationCounter = initializationCounter + 1;
+    return initializationCounter;
+  }, []);
 
 
+  return (
+    <>
+      <span>view: {viewUid}&nbsp;</span>
+      <span>outerInitId: {initCounter}&nbsp;</span>
+      <span>numOuterRenders: {renderCounter.current}&nbsp;</span>
+      <SliderInput
+        viewUid={viewUid}
+        sliderValue={sliderValue}
+        setSliderValue={setSliderValue}
+      />
+    </>
+  );
+}
 
 
+const pluginCoordinationTypes = {
+  sliderValue: z.number(),
+};
+
+const initialConfig = {
+  key: 1,
+  coordinationSpace: {
+    "sliderValue": {
+      "A": 1,
+      "B": 20,
+      "C": 300
+    }
+  },
+  viewCoordination: {
+    slider1: {
+      coordinationScopes: {
+        sliderValue: "A",
+      },
+    },
+    slider2: {
+      coordinationScopes: {
+        sliderValue: "B",
+      },
+    },
+    slider3: {
+      coordinationScopes: {
+        sliderValue: "C",
+      },
+    },
+  },
+};
+
+function BaseExample() {
+  const [config, setConfig] = React.useState<any>(initialConfig);
+  return (
+    <>
+      <style>{`
+        .slider-container {
+          display: flex;
+          flex-direction: row;
+        }
+      `}</style>
+      <ZodErrorBoundary>
+        <ZodCmvProvider
+          config={config}
+          coordinationTypes={pluginCoordinationTypes}
+          onConfigChange={setConfig}
+        >
+          <div className="slider-container">
+            <SliderInputContainer viewUid="slider1" />
+            <SelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <SliderInputContainer viewUid="slider2" />
+            <SelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
+          </div>
+          <div className="slider-container">
+            <SliderInputContainer viewUid="slider3" />
+            <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
+          </div>
+        </ZodCmvProvider>
+        <pre>
+          {JSON.stringify(config, null, 2)}
+        </pre>
+      </ZodErrorBoundary>
+    </>
+  );
+}
 
 export default function Demo() {
 
