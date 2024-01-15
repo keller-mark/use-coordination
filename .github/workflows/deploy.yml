@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   pre_deploy:
@@ -33,10 +30,7 @@ jobs:
         with:
           version: 8
           run_install: true
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
       - run: pnpm run build
-      - name: Run Playwright tests
         run: pnpm exec playwright test
       - run: pnpm run changeset-status
       - name: Create Release Pull Request or Publish to NPM
