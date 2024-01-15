@@ -1,5 +1,5 @@
 # Adapted from https://github.com/actions/starter-workflows/blob/e9e00b017736d3b3811cedf1ee2e8ceb3c48e3dd/ci/npm-publish.yml
-name: Deploy
+name: Test
 on:
   push:
     branches:
