@@ -9,7 +9,7 @@ import {
   useCoordination,
 } from '@use-coordination/all';
 
-let initializationCounter = 0;
+const initializationCounters = {};
 
 const NavBarGrid = styled(Grid)`
   border-bottom: 1px solid gray;
@@ -48,7 +48,7 @@ function SelectScope(props: any) {
   return (
     <>
       <label>{showType ? cType : "Coordination"} scope for {viewUid}:&nbsp;</label>
-      <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]}>
+      <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]} title={`select-${viewUid}`}>
         {allScopes.map((scope: any) => (
           <option key={scope} value={scope}>{scope}</option>
         ))}
@@ -58,6 +58,7 @@ function SelectScope(props: any) {
 }
 
 const SliderInput = ({
+  viewUid,
   sliderValue, 
   setSliderValue,
 }: any) => {
@@ -72,17 +73,20 @@ const SliderInput = ({
   renderCounter.current = renderCounter.current + 1;
 
   const initCounter = useMemo(() => {
-    initializationCounter = initializationCounter + 1;
-    return initializationCounter;
-  }, []);
+    const initKey = `SliderInput-${viewUid}`;
+    if(initializationCounters[initKey]) {
+      initializationCounters[initKey] += 1;
+    } else {
+      initializationCounters[initKey] = 1;
+    }
+    return initializationCounters[initKey];
+  }, [viewUid]);
 
   return (
     <>
-      <span>innerInitId: {initCounter}&nbsp;</span>
-      <span>numInnerRenders: {renderCounter.current}&nbsp;</span>
-      <span>value: {sliderValue}</span>
-      <button onClick={onIncrement}>increment</button>
-      <button onClick={onDecrement}>decrement</button>
+      <span {...{ 'data-inits': initCounter, 'data-renders': renderCounter.current }}>SliderInput-{viewUid}&nbsp;</span>
+      <button onClick={onIncrement}>increment-{viewUid}</button>
+      <button onClick={onDecrement}>decrement-{viewUid}</button>
     </>
   );
 }
@@ -100,16 +104,19 @@ const SliderInputContainer = ({
   renderCounter.current = renderCounter.current + 1;
 
   const initCounter = useMemo(() => {
-    initializationCounter = initializationCounter + 1;
-    return initializationCounter;
-  }, []);
+    const initKey = `SliderInputContainer-${viewUid}`;
+    if(initializationCounters[initKey]) {
+      initializationCounters[initKey] += 1;
+    } else {
+      initializationCounters[initKey] = 1;
+    }
+    return initializationCounters[initKey];
+  }, [viewUid]);
 
 
   return (
     <>
-      <span>view: {viewUid}&nbsp;</span>
-      <span>outerInitId: {initCounter}&nbsp;</span>
-      <span>numOuterRenders: {renderCounter.current}&nbsp;</span>
+      <span {...{ 'data-inits': initCounter, 'data-renders': renderCounter.current }}>SliderInputContainer-{viewUid}&nbsp;</span>
       <SliderInput
         viewUid={viewUid}
         sliderValue={sliderValue}
