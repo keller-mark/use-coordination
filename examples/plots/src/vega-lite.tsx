@@ -1,4 +1,4 @@
-import React, { useMemo, useState, Suspense } from 'react';
+import React, { useMemo, useState, Suspense, useCallback } from 'react';
 import { clamp } from 'lodash-es';
 import { useCoordination } from '@use-coordination/all';
 import { Vega, VisualizationSpec } from 'react-vega';
@@ -11,7 +11,7 @@ const partialSpec = {
       name: 'highlight',
       select: {
         type: 'point',
-        on: 'mouseover',
+        on: 'mouseover[event.shiftKey === false]',
       },
     },
     {
@@ -25,6 +25,16 @@ const partialSpec = {
         on: 'click[event.shiftKey === false]',
         fields: ['letter', 'isSelected'],
         empty: 'none',
+        toggle: false,
+      },
+    },
+    {
+      name: 'shift_bar_select',
+      select: {
+        type: 'point',
+        on: 'click[event.shiftKey]',
+        fields: ['letter', 'isSelected'],
+        toggle: false,
       },
     },
   ],
@@ -44,11 +54,8 @@ const partialSpec = {
       type: 'quantitative',
     },
     fillOpacity: {
-      condition: {
-        param: 'select',
-        value: 1,
-      },
-      value: 0.3,
+      field: 'isSelected',
+      type: 'nominal',
     },
     strokeWidth: {
       condition: [
@@ -70,19 +77,14 @@ const partialSpec = {
 
 function VegaLitePlot(props: any) {
     const {
-      viewUid,
       data,
-      width = 500,
+      barSelection,
+      setBarSelection,
+      width = 400,
       height = 500,
       marginRight = 90,
-      marginBottom = 120,
+      marginBottom = 60,
     } = props;
-
-    const [
-      { barSelection },
-      { setBarSelection },
-    ] = useCoordination(viewUid, ["barSelection"]);
-    
 
     const spec = useMemo(() => ({
       ...partialSpec,
@@ -92,13 +94,25 @@ function VegaLitePlot(props: any) {
     }), [partialSpec]);
 
     
-    const handleSignal = (name: any, value: any) => {
+    const handleSignal = useCallback((name: any, value: any) => {
       if (name === 'bar_select') {
-        const isSelected = value.isSelected[0];
         setBarSelection(value.letter);
+      } else if (name === 'shift_bar_select') {
+        const newLetter = value.letter[0];
+        // If the bar is already selected, remove it from the selection.
+        // Otherwise, add it to the selection.
+        if (barSelection.includes(newLetter)) {
+          setBarSelection(barSelection.filter((letter: any) => letter !== newLetter));
+        } else {
+          setBarSelection([...barSelection, newLetter]);
+        }
       }
-    };
-    const signalListeners = { bar_select: handleSignal, shift_bar_select: handleSignal };
+    }, [barSelection]);
+
+    const signalListeners = useMemo(() => ({
+      bar_select: handleSignal,
+      shift_bar_select: handleSignal
+    }), [handleSignal]);
 
     const vegaComponent = useMemo(() => (
       // @ts-ignore
@@ -126,18 +140,26 @@ function VegaLitePlot(props: any) {
 export function VegaLitePlotView(props: any) {
   const {
     viewUid,
-    data,
+    data: dataProp,
   } = props;
   const [
     { barSelection },
     { setBarSelection },
   ] = useCoordination(viewUid, ["barSelection"]);
 
+  const data = useMemo(() => {
+    return dataProp.map((d: any) => ({
+      ...d,
+      isSelected: barSelection?.includes(d.letter),
+    }));
+  }, [dataProp, barSelection]);
+
+
   return (
     <VegaLitePlot
       data={data}
       barSelection={barSelection}
-      onBarSelection={setBarSelection}
+      setBarSelection={setBarSelection}
     />
   )
 }

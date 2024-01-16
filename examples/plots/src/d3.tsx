@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { clamp } from 'lodash-es';
+import { clamp, set } from 'lodash-es';
 import { scaleLinear } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
@@ -23,8 +23,8 @@ function D3BarPlot(props: any) {
   const {
     data,
     barSelection,
-    onBarSelection,
-    width = 500,
+    setBarSelection,
+    width = 400,
     height = 500,
     marginBottom = 60,
     marginLeft = 60,
@@ -78,7 +78,13 @@ function D3BarPlot(props: any) {
           .attr('y', (d: any) => yScale(d.frequency))
           .attr('width', xScale.bandwidth())
           .attr('height', (d: any) => innerHeight - yScale(d.frequency))
-          .style('fill', 'blue');
+          .style('fill', (d: any) => {
+            const isSelected = barSelection?.includes(d.letter);
+            return isSelected ? 'rgba(0, 128, 0, 1.0)' : 'rgba(0, 128, 0, .3)';
+          })
+          .on('click', (event: any, d: any) => {
+            setBarSelection([d.letter]);
+          });
     
     // Y-axis ticks
     g
@@ -122,7 +128,7 @@ function D3BarPlot(props: any) {
       .style('font-size', '12px')
       .style('fill', 'black');
   }, [width, height, data, marginLeft, marginBottom,
-    marginTop, marginRight,
+    marginTop, marginRight, barSelection,
   ]);
 
   return (
@@ -153,7 +159,7 @@ export function D3BarPlotView(props: any) {
     <D3BarPlot
       data={data}
       barSelection={barSelection}
-      onBarSelection={setBarSelection}
+      setBarSelection={setBarSelection}
     />
   )
 }

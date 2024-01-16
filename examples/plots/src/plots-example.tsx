@@ -19,7 +19,7 @@ const initialConfig = {
   key: 1,
   coordinationSpace: {
     "barSelection": {
-      "A": ["bar1"],
+      "A": [],
     }
   },
   viewCoordination: {
@@ -30,12 +30,12 @@ const initialConfig = {
     },
     d3: {
       coordinationScopes: {
-        barSelection: "B",
+        barSelection: "A",
       },
     },
     visx: {
       coordinationScopes: {
-        barSelection: "C",
+        barSelection: "A",
       },
     },
   },
@@ -46,7 +46,7 @@ export function PlotsExample() {
   return (
     <>
       <style>{`
-        .slider-container {
+        .multiplot-container {
           display: flex;
           flex-direction: row;
         }
@@ -57,14 +57,16 @@ export function PlotsExample() {
           coordinationTypes={pluginCoordinationTypes}
           onConfigChange={setConfig}
         >
-          <div className="plot-container">
-            <VegaLitePlotView viewUid="vegaLite" data={letterFrequency} />
-          </div>
-          <div className="plot-container">
-            <D3BarPlotView viewUid="d3" data={letterFrequency} />
-          </div>
-          <div className="plot-container">
-            <VisxPlotView viewUid="visx" data={letterFrequency} />
+          <div className="multiplot-container">
+            <div className="plot-container">
+              <VegaLitePlotView viewUid="vegaLite" data={letterFrequency} />
+            </div>
+            <div className="plot-container">
+              <D3BarPlotView viewUid="d3" data={letterFrequency} />
+            </div>
+            <div className="plot-container">
+              <VisxPlotView viewUid="visx" data={letterFrequency} />
+            </div>
           </div>
         </ZodCmvProvider>
         <pre>

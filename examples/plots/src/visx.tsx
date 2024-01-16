@@ -13,8 +13,8 @@ function VisxPlot(props: any) {
   const {
     data,
     barSelection,
-    onBarSelection,
-    width = 500,
+    setBarSelection,
+    width = 400,
     height = 500,
     marginBottom = 60,
     marginLeft = 60,
@@ -36,14 +36,14 @@ function VisxPlot(props: any) {
         range: [marginLeft, width - marginRight],
         round: true,
         domain: data.map(getLetter),
-        padding: 0.4,
+        padding: 0.2,
       }),
     [xMax],
   );
   const yScale = useMemo(
     () =>
       scaleLinear<number>({
-        range: [yMax, marginBottom],
+        range: [yMax, marginTop],
         round: true,
         domain: [0, Math.max(...data.map(getLetterFrequency))],
       }),
@@ -54,13 +54,16 @@ function VisxPlot(props: any) {
   return (
     <svg width={width} height={height}>
       <rect width={width} height={height} fill="url(#teal)" rx={14} />
-      <Group top={verticalMargin / 2}>
+      <Group top={marginTop}>
         {data.map((d: any) => {
           const letter = getLetter(d);
           const barWidth = xScale.bandwidth();
           const barHeight = yMax - (yScale(getLetterFrequency(d)) ?? 0);
           const barX = xScale(letter);
           const barY = yMax - barHeight;
+          const isSelected = barSelection?.includes(letter);
+
+          const fill = isSelected ? 'rgba(128, 0, 0, 1.0)' : 'rgba(128, 0, 0, .3)';
           return (
             <Bar
               key={`bar-${letter}`}
@@ -68,8 +71,9 @@ function VisxPlot(props: any) {
               y={barY}
               width={barWidth}
               height={barHeight}
-              fill="rgba(23, 233, 217, .5)"
+              fill={fill}
               onClick={() => {
+                setBarSelection([letter]);
                 // if (events) alert(`clicked: ${JSON.stringify(Object.values(d))}`);
               }}
             />
@@ -106,7 +110,7 @@ export function VisxPlotView(props: any) {
     <VisxPlot
       data={data}
       barSelection={barSelection}
-      onBarSelection={setBarSelection}
+      setBarSelection={setBarSelection}
     />
   );
 }
