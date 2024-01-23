@@ -5,7 +5,6 @@ const cValueStyle = { "color": "red" };
 const viewStyle = { "color": "yellow" };
 
 function addCscopeNode(g, cType, cScope, cValue) {
-
   const cScopeNode = g.addNode(`cType_${cType}_cScope_${cScope}`, { ...cScopeStyle, label: cScope });
   const cValueNode = g.addNode(`cType_${cType}_cScope_${cScope}_value`, { ...cValueStyle, label: cValue });
   g.addEdge(cScopeNode, cValueNode);
@@ -20,10 +19,12 @@ function addViewScopeEdge(g, view, cType, cScope) {
   g.addEdge(`view_${view}`, `cType_${cType}_cScope_${cScope}`);
 }
 
-
-export function grammarToGraphviz(config) {
+// TODO: implement using TS
+export function toGraphviz(config) {
   const g = graphviz.digraph("G");
   g.set("rankdir", "LR");
+  
+  // TODO: handle meta-coordination, multi-coordination, and multi-level coordination.
 
   Object.entries(config.coordinationSpace).forEach(([cType, cObj]) => {
     const cTypeCluster = g.addCluster(`cluster_cType_${cType}`);
@@ -44,41 +45,3 @@ export function grammarToGraphviz(config) {
 
   return g.to_dot();
 }
-
-
-const initialConfig = {
-  key: 1,
-  coordinationSpace: {
-    "value": {
-      "A": 0.5,
-      "B": 0.75,
-      "C": 0.25,
-    },
-    "color": {
-      "A": [255, 0, 0],
-      "B": [0, 255, 0],
-      "C": [0, 0, 255],
-    }
-  },
-  viewCoordination: {
-    view1: {
-      coordinationScopes: {
-        value: "A",
-        color: "A",
-      },
-    },
-    view2: {
-      coordinationScopes: {
-        value: "B",
-        color: "B",
-      },
-    },
-    view3: {
-      coordinationScopes: {
-        value: "C",
-        color: "C",
-      },
-    },
-  },
-};
-console.log(grammarToGraphviz(initialConfig))
