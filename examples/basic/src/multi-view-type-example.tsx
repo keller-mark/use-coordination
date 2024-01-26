@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  ZodCmvProvider,
+  ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
 } from '@use-coordination/all';
@@ -114,7 +114,7 @@ export function MultiViewTypeExample() {
         }
       `}</style>
       <ZodErrorBoundary>
-        <ZodCmvProvider
+        <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
           onConfigChange={setConfig}
@@ -135,7 +135,7 @@ export function MultiViewTypeExample() {
             <NumericInputContainer viewUid="view4" />
             <SelectScope config={config} viewUid="view4" onConfigChange={setConfig} cType="value" />
           </div>
-        </ZodCmvProvider>
+        </ZodCoordinationProvider>
         <pre>
           {JSON.stringify(config, null, 2)}
         </pre>

@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import { Typography, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { z } from 'zod';
 import {
-  ZodCmvProvider,
+  ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
 } from '@use-coordination/all';
@@ -170,7 +170,7 @@ function BaseExample() {
         }
       `}</style>
       <ZodErrorBoundary>
-        <ZodCmvProvider
+        <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
           onConfigChange={setConfig}
@@ -187,7 +187,7 @@ function BaseExample() {
             <SliderInputContainer viewUid="slider3" />
             <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
           </div>
-        </ZodCmvProvider>
+        </ZodCoordinationProvider>
         <pre>
           {JSON.stringify(config, null, 2)}
         </pre>
