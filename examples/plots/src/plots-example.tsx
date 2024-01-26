@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  ZodCmvProvider,
+  ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
 } from '@use-coordination/all';
@@ -52,7 +52,7 @@ export function PlotsExample() {
         }
       `}</style>
       <ZodErrorBoundary>
-        <ZodCmvProvider
+        <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
           onConfigChange={setConfig}
@@ -68,7 +68,7 @@ export function PlotsExample() {
               <VisxPlotView viewUid="visx" data={letterFrequency} />
             </div>
           </div>
-        </ZodCmvProvider>
+        </ZodCoordinationProvider>
         <pre>
           {JSON.stringify(config, null, 2)}
         </pre>

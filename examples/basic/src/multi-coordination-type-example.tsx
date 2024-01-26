@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  ZodCmvProvider,
+  ZodCoordinationProvider,
   ZodErrorBoundary,
   useViewMapping,
   _useCoordination,
@@ -132,7 +132,7 @@ export function MultiCoordinationTypeExample() {
         }
       `}</style>
       <ZodErrorBoundary>
-        <ZodCmvProvider
+        <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
           onConfigChange={setConfig}
@@ -152,7 +152,7 @@ export function MultiCoordinationTypeExample() {
             <SelectScope config={config} viewUid="view3" onConfigChange={setConfig} cType="value" showType />
             <SelectScope config={config} viewUid="view3" onConfigChange={setConfig} cType="color" showType />
           </div>
-        </ZodCmvProvider>
+        </ZodCoordinationProvider>
         <pre>
           {JSON.stringify(config, null, 2)}
         </pre>

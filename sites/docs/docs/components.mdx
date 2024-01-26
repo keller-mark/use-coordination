@@ -4,7 +4,7 @@ title: Provider components
 slug: /provider-components
 ---
 
-## `<CmvProvider/>`
+## `<CoordinationProvider/>`
 
 ### Required props
 
@@ -51,9 +51,9 @@ A function to enable access to the Zustand store on its creation.
 This return value will be passed to the Zustand store creation function.
 The function will be passed the `set` parameter from `create`.
 
-## `<ZodCmvProvider/>`
+## `<ZodCoordinationProvider/>`
 
-Inherits all props except `validater` from `CmvProvider`.
+Inherits all props except `validater` from `CoordinationProvider`.
 
 ### Required props
 
@@ -73,6 +73,6 @@ Should the config be validated against the Zod schema?
 
 ## `<ZodErrorBoundary/>`
 
-Wrap `<ZodCmvProvider/>` in this error boundary to catch validation errors.
+Wrap `<ZodCoordinationProvider/>` in this error boundary to catch validation errors.
 Alternatively, implement your own [ErrorBoundary](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary).
 

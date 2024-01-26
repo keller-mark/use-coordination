@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  ZodCmvProvider,
+  ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
   useCoordinationScopesL1,
@@ -207,7 +207,7 @@ export function MetaMultiLevelExample() {
         }
       `}</style>
       <ZodErrorBoundary>
-        <ZodCmvProvider
+        <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
           onConfigChange={setConfig}
@@ -230,7 +230,7 @@ export function MetaMultiLevelExample() {
           <div className="colorful-slider-container">
             <SliderInputContainer viewUid="view6" />
           </div>
-        </ZodCmvProvider>
+        </ZodCoordinationProvider>
         <pre>
           {JSON.stringify(config, null, 2)}
         </pre>
