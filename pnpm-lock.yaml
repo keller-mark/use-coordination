@@ -185,6 +185,12 @@ importers:
         specifier: ^0.23.4
         version: 0.23.4(@vitest/ui@0.16.0)(jsdom@20.0.3)(sass@1.62.1)
 
+  packages/graphviz-renderer:
+    dependencies:
+      graphviz:
+        specifier: ^0.0.9
+        version: 0.0.9
+
   packages/json-schema:
     dependencies:
       '@use-coordination/schemas':
@@ -9200,6 +9206,13 @@ packages:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
     dev: true
 
+  /graphviz@0.0.9:
+    resolution: {integrity: sha512-SmoY2pOtcikmMCqCSy2NO1YsRfu9OO0wpTlOYW++giGjfX1a6gax/m1Fo8IdUd0/3H15cTOfR1SMKwohj4LKsg==}
+    engines: {node: '>=0.6.8'}
+    dependencies:
+      temp: 0.4.0
+    dev: false
+
   /gray-matter@4.0.3:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
@@ -13867,6 +13880,11 @@ packages:
   /tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
+    dev: false
+
+  /temp@0.4.0:
+    resolution: {integrity: sha512-IsFisGgDKk7qzK9erMIkQe/XwiSUdac7z3wYOsjcLkhPBy3k1SlvLoIh2dAHIlEpgA971CgguMrx9z8fFg7tSA==}
+    engines: {'0': node >=0.4.0}
     dev: false
 
   /term-size@2.2.1:
