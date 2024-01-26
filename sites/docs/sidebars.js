@@ -25,4 +25,15 @@ module.exports = {
       id: 'config-js',
     },
   ],
+  examples: [
+    {
+      type: 'category',
+      label: 'Examples',
+      collapsed: false,
+      items: [
+        'examples',
+        'plots-example',
+      ]
+    }
+  ]
 };

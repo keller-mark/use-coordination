@@ -27,6 +27,12 @@ module.exports = {
           position: 'left',
         },
         {
+          type: 'doc',
+          docId: 'examples',
+          label: 'Examples',
+          position: 'left',
+        },
+        {
           href: 'https://github.com/keller-mark/use-coordination',
           position: 'right',
           className: 'header-github-link',
