@@ -30,7 +30,7 @@ type InitializerFunction = (config: CmvConfigObject) => CmvConfigObject;
 
 type OnCreateStoreFunction = (set: Function) => object;
 
-export type CmvProviderProps = {
+export type CoordinationProviderProps = {
     config: CmvConfigObject;
     onConfigChange?: OnConfigChangeFunction;
     validater?: ValidaterFunction;
@@ -40,7 +40,7 @@ export type CmvProviderProps = {
     onCreateStore?: OnCreateStoreFunction;
 };
 
-export type ZodCmvProviderProps = {
+export type ZodCoordinationProviderProps = {
     config: CmvConfigObject;
     onConfigChange?: OnConfigChangeFunction;
     initializer?: InitializerFunction;

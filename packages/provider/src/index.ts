@@ -1,4 +1,4 @@
-export { CmvProvider } from './CmvProvider.js';
+export { CoordinationProvider } from './CoordinationProvider.js';
 export {
   // Advanced usage
   getScopes,
@@ -32,5 +32,5 @@ export {
   _useMultiCoordinationValues,
   useMultiCoordinationValues,
 } from './hooks.js';
-export { ZodCmvProvider } from './ZodCmvProvider.js';
+export { ZodCoordinationProvider } from './ZodCoordinationProvider.js';
 export { ZodErrorBoundary } from './ZodErrorBoundary.js';

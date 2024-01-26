@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  ZodCmvProvider,
+  ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
 } from '@use-coordination/all';
@@ -79,7 +79,7 @@ export function BaseExample() {
         }
       `}</style>
       <ZodErrorBoundary>
-        <ZodCmvProvider
+        <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
           onConfigChange={setConfig}
@@ -96,7 +96,7 @@ export function BaseExample() {
             <SliderInputContainer viewUid="slider3" />
             <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
           </div>
-        </ZodCmvProvider>
+        </ZodCoordinationProvider>
         <pre>
           {JSON.stringify(config, null, 2)}
         </pre>

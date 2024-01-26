@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import { isEqual } from 'lodash-es';
 import { buildConfigSchema } from '@use-coordination/schemas';
-import { CmvProvider } from './CmvProvider.js';
+import { CoordinationProvider } from './CoordinationProvider.js';
 import {
   logConfig,
 } from './view-config-utils.js';
-import { ZodCmvProviderProps, CmvConfigObject } from './prop-types.js';
+import { ZodCoordinationProviderProps, CmvConfigObject } from './prop-types.js';
 
-export function ZodCmvProvider(props: ZodCmvProviderProps) {
+export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
   const {
     config,
     onConfigChange,
@@ -46,14 +46,14 @@ export function ZodCmvProvider(props: ZodCmvProviderProps) {
   // - Validate after upgrade, if legacy schema.
   // - Initialize (based on initStrategy).
   const validConfig = useMemo(() => {
-    logConfig(config, 'ZodCmvProvider input config');
+    logConfig(config, 'ZodCoordinationProvider input config');
     if (!validateConfig) {
       return config;
     }
     // Perform second round of parsing against plugin-specific config schema.
     // TODO: use type from Zod infer and generics.
     const parsedConfig = pluginSpecificConfigSchema.parse(config) as CmvConfigObject;
-    logConfig(parsedConfig, 'ZodCmvProvider parsed config');
+    logConfig(parsedConfig, 'ZodCoordinationProvider parsed config');
     return parsedConfig;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey, pluginSpecificConfigSchema, validateConfig]);
@@ -80,7 +80,7 @@ export function ZodCmvProvider(props: ZodCmvProviderProps) {
   }, [pluginSpecificConfigSchema]);
 
   return (
-    <CmvProvider
+    <CoordinationProvider
       config={validConfig}
       onConfigChange={onConfigChange}
       validateOnConfigChange={validateOnConfigChange}
@@ -89,6 +89,6 @@ export function ZodCmvProvider(props: ZodCmvProviderProps) {
       onCreateStore={onCreateStore}
     >
       {children}
-    </CmvProvider>
+    </CoordinationProvider>
   );
 }

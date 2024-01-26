@@ -21,7 +21,7 @@ The following terms have been adapted from the information visualization literat
 The approach or architecture used to achieve view coordination ([Roberts 2007](https://kar.kent.ac.uk/14569/1/Coordinated_%26_Multiple.pdf)).
 
 ### Coordination Type
-The property or parameter being coordinated, such as "spatial rotation" or "heatmap zoom" or "gene expression colormap". When using the `ZodCmvProvider`, use-coordination requires that coordination type values conform to a Zod schema, for instance a primitive number or a more complex array or object schema.
+The property or parameter being coordinated, such as "spatial rotation" or "heatmap zoom" or "gene expression colormap". When using the `ZodCoordinationProvider`, use-coordination requires that coordination type values conform to a Zod schema, for instance a primitive number or a more complex array or object schema.
 
 ### Coordination Scope
 A named instance of a coordination type. Each `(coordination type, view)` tuple may map onto a different coordination scope. Views are "coordinated" if they are linked to a common coordination scope. Views may update their `(coordination type, coordination scope)` tuples if changes to the coordinated view connections are initiated by the user.

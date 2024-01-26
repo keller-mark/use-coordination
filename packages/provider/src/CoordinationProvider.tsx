@@ -5,9 +5,9 @@ import {
 } from './hooks.js';
 import ViewWrapper from './ViewWrapper.js';
 import CallbackPublisher from './CallbackPublisher.js';
-import { CmvProviderProps } from './prop-types.js';
+import { CoordinationProviderProps } from './prop-types.js';
 
-export function CmvProvider(props: CmvProviderProps) {
+export function CoordinationProvider(props: CoordinationProviderProps) {
   const {
     config,
     onConfigChange,
