@@ -526,6 +526,131 @@ describe('src/api/CmvConfig.js', () => {
       });
     });
 
+    it('can use _meta_ complex coordination with a scope prefix via the linkViewsByObject convenience function', () => {
+      const config = new CmvConfig('My config');
+
+      const spatialView = config.addView('spatial');
+      const lcView = config.addView('layerController');
+
+      config.linkViewsByObject([spatialView, lcView], {
+        spatialImageLayer: CL([
+          {
+            image: 'S-1905-017737_bf',
+            spatialLayerVisible: true,
+            spatialLayerOpacity: 1,
+            spatialImageChannel: CL([
+              {
+                spatialTargetC: 0,
+                spatialChannelColor: [255, 0, 0],
+              },
+              {
+                spatialTargetC: 1,
+                spatialChannelColor: [0, 255, 0],
+              },
+            ]),
+          },
+        ]),
+        spatialSegmentationLayer: CL([
+          {
+            image: 'S-1905-017737',
+            spatialLayerVisible: true,
+            spatialLayerOpacity: 1,
+            spatialSegmentationChannel: CL([
+              {
+                obsType: 'Cortical Interstitia',
+                spatialTargetC: 0,
+                spatialChannelColor: [255, 0, 0],
+              },
+              {
+                obsType: 'Non-Globally Sclerotic Glomeruli',
+                spatialTargetC: 1,
+                spatialChannelColor: [255, 0, 0],
+              },
+              {
+                obsType: 'Globally Sclerotic Glomeruli',
+                spatialTargetC: 2,
+                spatialChannelColor: [255, 0, 0],
+              },
+            ]),
+          },
+        ]),
+      }, { scopePrefix: 'SOME_PREFIX_' });
+
+      const configJSON = config.toJSON();
+      expect(configJSON).toEqual({
+        key: 'My config',
+        coordinationSpace: {
+          spatialImageLayer: { SOME_PREFIX_0: '__dummy__' },
+          image: { SOME_PREFIX_0: 'S-1905-017737_bf', SOME_PREFIX_1: 'S-1905-017737' },
+          spatialLayerVisible: { SOME_PREFIX_0: true, SOME_PREFIX_1: true },
+          spatialLayerOpacity: { SOME_PREFIX_0: 1, SOME_PREFIX_1: 1 },
+          spatialImageChannel: { SOME_PREFIX_0: '__dummy__', SOME_PREFIX_1: '__dummy__' },
+          spatialTargetC: {
+            SOME_PREFIX_0: 0, SOME_PREFIX_1: 1, SOME_PREFIX_2: 0, SOME_PREFIX_3: 1, SOME_PREFIX_4: 2,
+          },
+          spatialChannelColor: {
+            SOME_PREFIX_0: [255, 0, 0],
+            SOME_PREFIX_1: [0, 255, 0],
+            SOME_PREFIX_2: [255, 0, 0],
+            SOME_PREFIX_3: [255, 0, 0],
+            SOME_PREFIX_4: [255, 0, 0],
+          },
+          spatialSegmentationLayer: { SOME_PREFIX_0: '__dummy__' },
+          spatialSegmentationChannel: { SOME_PREFIX_0: '__dummy__', SOME_PREFIX_1: '__dummy__', SOME_PREFIX_2: '__dummy__' },
+          obsType: {
+            SOME_PREFIX_0: 'Cortical Interstitia',
+            SOME_PREFIX_1: 'Non-Globally Sclerotic Glomeruli',
+            SOME_PREFIX_2: 'Globally Sclerotic Glomeruli',
+          },
+          metaCoordinationScopes: {
+            SOME_PREFIX_0: {
+              spatialImageLayer: ['SOME_PREFIX_0'],
+              spatialSegmentationLayer: ['SOME_PREFIX_0'],
+            },
+          },
+          metaCoordinationScopesBy: {
+            SOME_PREFIX_0: {
+              spatialImageLayer: {
+                image: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
+                spatialLayerVisible: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
+                spatialLayerOpacity: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
+                spatialImageChannel: { SOME_PREFIX_0: ['SOME_PREFIX_0', 'SOME_PREFIX_1'] },
+              },
+              spatialImageChannel: {
+                spatialTargetC: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1' },
+                spatialChannelColor: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1' },
+              },
+              spatialSegmentationLayer: {
+                image: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
+                spatialLayerVisible: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
+                spatialLayerOpacity: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
+                spatialSegmentationChannel: { SOME_PREFIX_0: ['SOME_PREFIX_0', 'SOME_PREFIX_1', 'SOME_PREFIX_2'] },
+              },
+              spatialSegmentationChannel: {
+                obsType: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1', SOME_PREFIX_2: 'SOME_PREFIX_2' },
+                spatialTargetC: { SOME_PREFIX_0: 'SOME_PREFIX_2', SOME_PREFIX_1: 'SOME_PREFIX_3', SOME_PREFIX_2: 'SOME_PREFIX_4' },
+                spatialChannelColor: { SOME_PREFIX_0: 'SOME_PREFIX_2', SOME_PREFIX_1: 'SOME_PREFIX_3', SOME_PREFIX_2: 'SOME_PREFIX_4' },
+              },
+            },
+          },
+        },
+        viewCoordination: {
+          spatial: {
+            coordinationScopes: {
+              metaCoordinationScopes: ['SOME_PREFIX_0'],
+              metaCoordinationScopesBy: ['SOME_PREFIX_0'],
+            },
+          },
+          layerController: {
+            coordinationScopes: {
+              metaCoordinationScopes: ['SOME_PREFIX_0'],
+              metaCoordinationScopesBy: ['SOME_PREFIX_0'],
+            },
+          },
+        },
+      });
+    });
+
     it('can add a coordination scope using the link views convenience function', () => {
       const config = new CmvConfig('My config');
       const pca = config.addView('pca');

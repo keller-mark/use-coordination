@@ -1,2 +1,2 @@
-export { CmvConfig, CL as CoordinationLevel } from './CmvConfig.js';
+export { CmvConfig, CL as CoordinationLevel, getCoordinationSpaceAndScopes } from './CmvConfig.js';
 
