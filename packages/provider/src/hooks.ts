@@ -4,9 +4,10 @@ import { useRef, useMemo } from 'react';
 import create from 'zustand';
 import createContext from 'zustand/context';
 import shallow from 'zustand/shallow';
-import { merge, cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import { fromEntries, capitalize } from '@use-coordination/utils';
+import { getCoordinationSpaceAndScopes } from '@use-coordination/config';
 import { CmvConfigObject } from './prop-types.js';
 
 // Reference: https://github.com/pmndrs/zustand#react-context
@@ -53,7 +54,15 @@ export function getScopes(metaSpace: Record<string, Record<string, any>>, coordi
       metaScopesArr.forEach((metaScope) => {
         // Merge the original coordinationScopes with the matching meta-coordinationScopes
         // from the coordinationSpace.
-        result = merge(result, metaSpace[metaScope]);
+        let o1 = result;
+        const o2 = metaSpace[metaScope] || {};
+        Object.entries(o2).forEach(([cType, cScope]) => {
+          o1 = {
+            ...o1,
+            [cType]: cScope,
+          };
+        });
+        result = o1;
       });
     }
   }
@@ -81,7 +90,29 @@ export function getScopesBy(metaSpaceBy: Record<string, Record<string, any>>, co
       metaScopesArr.forEach((metaScope) => {
         // Merge the original coordinationScopesBy with the matching meta-coordinationScopesBy
         // from the coordinationSpace.
-        result = merge(result, metaSpaceBy[metaScope]);
+        let o1 = result;
+        const o2: Record<string, Record<string, Record<string, string|string[]>>> = metaSpaceBy[metaScope] || {};
+        // Cannot simply use lodash merge(o1, o2)
+        // because we do not want to merge (objects/arrays) at the leaf
+        // (i.e., secondaryScopeVal) level.
+        // We want the values in o2 to take precedence over the values in o1.
+        Object.entries(o2).forEach(([primaryType, primaryObj]) => {
+          Object.entries(primaryObj).forEach(([secondaryType, secondaryObj]) => {
+            Object.entries(secondaryObj).forEach(([primaryScope, secondaryScopeVal]) => {
+              o1 = {
+                ...o1,
+                [primaryType]: {
+                  ...(o1?.[primaryType] || {}),
+                  [secondaryType]: {
+                    ...(o1?.[primaryType]?.[secondaryType] || {}),
+                    [primaryScope]: secondaryScopeVal,
+                  },
+                },
+              };
+            });
+          });
+        });
+        result = o1;
       });
     }
   }
@@ -237,6 +268,84 @@ export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateSt
           },
         },
       },
+    };
+  }),
+  mergeCoordination: (newCoordinationValues: Record<string, any>, scopePrefix: string, viewUid: string) => set((state: any) => {
+    const { coordinationSpace, viewCoordination } = state.viewConfig;
+    const {
+      coordinationSpace: newCoordinationSpace,
+      coordinationScopes,
+    } = getCoordinationSpaceAndScopes(newCoordinationValues, scopePrefix);
+    // Merge coordination objects in coordination space
+    Object.entries(newCoordinationSpace as Record<string, any>).forEach(([coordinationType, coordinationObj]) => {
+      if (coordinationType === META_COORDINATION_SCOPES) {
+        // Perform an extra level of merging for meta-coordination scopes.
+        Object.entries(coordinationObj as Record<string, any>).forEach(([coordinationScope, coordinationValue]) => {
+          coordinationSpace[coordinationType] = {
+            ...coordinationSpace[coordinationType],
+            [coordinationScope]: {
+              ...coordinationValue,
+              ...(coordinationSpace[coordinationType]?.[coordinationScope] || {}),
+            },
+          };
+        });
+      } else if (coordinationType === META_COORDINATION_SCOPES_BY) {
+        // Perform two extra levels of merging for meta-coordination scopesBy.
+        Object.entries(coordinationObj as Record<string, any>).forEach(([coordinationScope, coordinationValue]) => {
+          Object.entries(coordinationValue as Record<string, any>).forEach(([primaryType, primaryObj]) => {
+            Object.entries(primaryObj as Record<string, any>).forEach(([secondaryType, secondaryObj]) => {
+              coordinationSpace[coordinationType] = {
+                ...coordinationSpace[coordinationType],
+                [coordinationScope]: {
+                  ...(coordinationSpace[coordinationType]?.[coordinationScope] || {}),
+                  [primaryType]: {
+                    ...(coordinationSpace[coordinationType]?.[coordinationScope]?.[primaryType] || {}),
+                    [secondaryType]: {
+                      ...secondaryObj,
+                      ...(coordinationSpace[coordinationType]?.[coordinationScope]?.[primaryType]?.[secondaryType] || {}),
+                    },
+                  },
+                },
+              };
+            });
+          });
+        });
+      } else {
+        coordinationSpace[coordinationType] = {
+          ...coordinationObj,
+          // Existing coordination values should be preserved,
+          // so that user-defined values take precedence over auto-initialization values.
+          ...(coordinationSpace[coordinationType] || {}),
+        };
+      }
+    });
+
+    const newViewConfig = {
+      ...state.viewConfig,
+      coordinationSpace: {
+        ...coordinationSpace,
+      },
+      viewCoordination: {
+        ...viewCoordination,
+        [viewUid]: {
+          ...viewCoordination[viewUid],
+          coordinationScopes: {
+            ...viewCoordination[viewUid].coordinationScopes,
+            [META_COORDINATION_SCOPES]: [
+              ...(coordinationScopes[META_COORDINATION_SCOPES] || []),
+              ...(viewCoordination[viewUid].coordinationScopes[META_COORDINATION_SCOPES] || []),
+            ],
+            [META_COORDINATION_SCOPES_BY]: [
+              ...(coordinationScopes[META_COORDINATION_SCOPES_BY] || []),
+              ...(viewCoordination[viewUid].coordinationScopes[META_COORDINATION_SCOPES_BY] || []),
+            ],
+          },
+        },
+      },
+    };
+    // console.log('newViewConfig', newViewConfig);
+    return {
+      viewConfig: newViewConfig,
     };
   }),
   ...(onCreateStore ? onCreateStore(set) : {}),
@@ -771,4 +880,14 @@ export function useSetViewConfig(viewConfigStoreApi: any) {
   const setViewConfigRef = useRef(viewConfigStoreApi.getState().setViewConfig);
   const setViewConfig = setViewConfigRef.current;
   return setViewConfig;
+}
+
+/**
+ * Obtain the loaders setter function from
+ * the global app state.
+ * @returns {function} The loaders setter function
+ * in the `useViewConfigStore` store.
+ */
+export function useMergeCoordination() {
+  return useViewConfigStore((state: any) => state.mergeCoordination);
 }

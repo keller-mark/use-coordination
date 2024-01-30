@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
-import { fromEntries, getNextScope } from '@use-coordination/utils';
+import { fromEntries, getNextScope, createPrefixedGetNextScopeNumeric } from '@use-coordination/utils';
 
 function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationScopesBy) {
   // Set this.coordinationScopes and this.coordinationScopesBy by recursion on `scopes`.
@@ -257,10 +257,10 @@ export class CmvConfigCoordinationScope {
    * @param {string} cType The coordination type for this coordination scope.
    * @param {string} cScope The name of the coordination scope.
    */
-  constructor(cType, cScope) {
+  constructor(cType, cScope, cValue = null) {
     this.cType = cType;
     this.cScope = cScope;
-    this.cValue = null;
+    this.cValue = cValue;
   }
 
   /**
@@ -353,6 +353,7 @@ export class CmvConfig {
       coordinationSpace: {},
       viewCoordination: {},
     };
+    this.getNextScope = getNextScope;
   }
 
   /**
@@ -389,7 +390,7 @@ export class CmvConfig {
           ? Object.keys(this.config.coordinationSpace[cType])
           : []
       );
-      const scope = new CmvConfigCoordinationScope(cType, getNextScope(prevScopes));
+      const scope = new CmvConfigCoordinationScope(cType, this.getNextScope(prevScopes));
       if (!this.config.coordinationSpace[scope.cType]) {
         this.config.coordinationSpace[scope.cType] = {};
       }
@@ -416,8 +417,8 @@ export class CmvConfig {
         : []
     );
     const metaContainer = new CmvConfigMetaCoordinationScope(
-      getNextScope(prevMetaScopes),
-      getNextScope(prevMetaByScopes),
+      this.getNextScope(prevMetaScopes),
+      this.getNextScope(prevMetaByScopes),
     );
     if (!this.config.coordinationSpace[META_COORDINATION_SCOPES]) {
       this.config.coordinationSpace[META_COORDINATION_SCOPES] = {};
@@ -525,6 +526,9 @@ export class CmvConfig {
     */
     const processLevel = (level) => {
       const result = {};
+      if (level === null) {
+        return result;
+      }
       Object.entries(level).forEach(([cType, nextLevelOrInitialValue]) => {
         // Check if value of object is instanceof CoordinationLevel
         // (otherwise assume it is the coordination value).
@@ -607,10 +611,19 @@ export class CmvConfig {
    * instance, or a `CoordinationLevel` instance.
    * The CL function takes an array of objects as its argument, and returns a CoordinationLevel
    * instance, to support nesting.
-   * @param {boolean} meta Should meta-coordination be used? Optional. By default, true.
+   * @param {object|null} options
+   * @param {bool} options.meta Should meta-coordination be used? Optional.
+   * By default, true.
+   * @param {string|null} options.scopePrefix A prefix to add to all
+   * coordination scope names. Optional.
    * @returns {CmvConfig} This, to allow chaining.
    */
-  linkViewsByObject(views, input, meta = true) {
+  linkViewsByObject(views, input, options = null) {
+    const { meta = true, scopePrefix = null } = options || {};
+
+    if (scopePrefix) {
+      this.getNextScope = createPrefixedGetNextScopeNumeric(scopePrefix);
+    }
     const scopes = this.addCoordinationByObject(input);
     if (meta) {
       const metaScope = this.addMetaCoordination();
@@ -624,7 +637,28 @@ export class CmvConfig {
         view.useCoordinationByObject(scopes);
       });
     }
+    if (scopePrefix) {
+      this.getNextScope = getNextScope;
+    }
     return this;
+  }
+
+  /**
+   * Set the value for a coordination scope.
+   * If a coordination object for the coordination type does not yet exist
+   * in the coordination space, it will be created.
+   * @param {string} cType The coordination type.
+   * @param {string} cScope The coordination scope.
+   * @param {any} cValue The initial value for the coordination scope.
+   * @returns {CmvConfigCoordinationScope} A coordination scope instance.
+   */
+  setCoordinationValue(cType, cScope, cValue) {
+    const scope = new CmvConfigCoordinationScope(cType, cScope, cValue);
+    if (!this.config.coordinationSpace[scope.cType]) {
+      this.config.coordinationSpace[scope.cType] = {};
+    }
+    this.config.coordinationSpace[scope.cType][scope.cScope] = scope;
+    return scope;
   }
 
   /**
@@ -680,4 +714,23 @@ export class CmvConfig {
     });
     return vc;
   }
+}
+
+// For usage during auto-initialization.
+export function getCoordinationSpaceAndScopes(partialCoordinationValues, scopePrefix) {
+  const vc = new CmvConfig('__dummy__');
+  vc.getNextScope = createPrefixedGetNextScopeNumeric(scopePrefix);
+  const v1 = vc.addView('__dummy__');
+  vc.linkViewsByObject([v1], partialCoordinationValues, { meta: true });
+  const vcJson = vc.toJSON();
+  // TODO: remove the "dataset" coordination type from these objects.
+  const { coordinationSpace } = vcJson;
+  const { coordinationScopes } = vcJson.layout[0];
+  const { coordinationScopesBy } = vcJson.layout[0];
+
+  return {
+    coordinationSpace,
+    coordinationScopes,
+    coordinationScopesBy,
+  };
 }

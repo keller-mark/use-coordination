@@ -365,6 +365,9 @@ importers:
 
   packages/provider:
     dependencies:
+      '@use-coordination/config':
+        specifier: workspace:*
+        version: link:../config
       '@use-coordination/constants-internal':
         specifier: workspace:*
         version: link:../constants-internal

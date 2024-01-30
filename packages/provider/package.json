@@ -28,6 +28,7 @@
     "@use-coordination/constants-internal": "workspace:*",
     "@use-coordination/schemas": "workspace:*",
     "@use-coordination/utils": "workspace:*",
+    "@use-coordination/config": "workspace:*",
     "lodash-es": "^4.17.21",
     "zustand": "^3.5.10",
     "zod": "^3.21.4"
