@@ -48,7 +48,9 @@
     "@visx/group": "^3.3.0",
     "@visx/shape": "^3.5.0",
     "@visx/scale": "^3.5.0",
-    "@visx/axis": "^3.5.0"
+    "@visx/axis": "^3.5.0",
+    "plotly.js": "^2.29.0",
+    "react-plotly.js": "^2.6.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

@@ -10,6 +10,7 @@ import { letterFrequency } from '@visx/mock-data';
 import { VegaLitePlotView } from './vega-lite.js';
 import { D3BarPlotView } from './d3.js';
 import { VisxPlotView } from './visx.js';
+import { PlotlyBarPlotView } from './plotly.js';
 
 
 const pluginCoordinationTypes = {
@@ -39,6 +40,11 @@ const initialConfig = defineConfig({
         barSelection: "A",
       },
     },
+    plotly: {
+      coordinationScopes: {
+        barSelection: "A",
+      },
+    },
   },
 });
 
@@ -50,6 +56,7 @@ export function PlotsExample() {
         .multiplot-container {
           display: flex;
           flex-direction: row;
+          flex-wrap: wrap;
         }
       `}</style>
       <ZodErrorBoundary>
@@ -67,6 +74,9 @@ export function PlotsExample() {
             </div>
             <div className="plot-container">
               <VisxPlotView viewUid="visx" data={letterFrequency} />
+            </div>
+            <div className="plot-container">
+              <PlotlyBarPlotView viewUid="plotly" data={letterFrequency} />
             </div>
           </div>
         </ZodCoordinationProvider>
