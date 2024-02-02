@@ -34,3 +34,4 @@ export {
 } from './hooks.js';
 export { ZodCoordinationProvider } from './ZodCoordinationProvider.js';
 export { ZodErrorBoundary } from './ZodErrorBoundary.js';
+export { defineConfig } from './generic-types.js';

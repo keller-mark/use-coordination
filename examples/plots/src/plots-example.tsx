@@ -3,6 +3,7 @@ import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
+  defineConfig,
 } from '@use-coordination/all';
 import { z } from 'zod';
 import { letterFrequency } from '@visx/mock-data';
@@ -16,7 +17,7 @@ const pluginCoordinationTypes = {
   barSelection: z.array(z.string()),
 };
 
-const initialConfig = {
+const initialConfig = defineConfig({
   key: 1,
   coordinationSpace: {
     "barSelection": {
@@ -45,7 +46,7 @@ const initialConfig = {
       },
     },
   },
-};
+});
 
 export function PlotsExample() {
   const [config, setConfig] = React.useState<any>(initialConfig);
