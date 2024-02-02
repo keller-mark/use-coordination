@@ -30,7 +30,7 @@ jobs:
         with:
           version: 8
           run_install: true
-      - run: pnpm run build
+      - run: pnpm run build && pnpm run build-json-schema
       - run: pnpm exec playwright test
       - run: pnpm run changeset-status
       - name: Create Release Pull Request or Publish to NPM
