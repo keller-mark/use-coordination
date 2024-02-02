@@ -11,42 +11,10 @@ const baseCoordinationTypes = {
   [META_COORDINATION_SCOPES_BY]: z.record(z.any()).nullable(),
 };
 
-/**
- * Build a Zod schema for the latest Vitessce config,
- * which is specific to any registered plugins.
- * The builder pattern allows the returned
- * Zod schema to be typed despite not knowing
- * the plugin names or sub-schemas in advance.
- * @param coordinationTypes
- * @returns The Zod schema.
- */
-export function buildConfigSchema<
-  T extends Record<string, z.ZodTypeAny>,
->(
-  coordinationTypes: T,
-) {
+function buildConfigSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
   return z.object({
     key: z.union([z.string(), z.number()]).optional(),
-    // Merge with coordination type schemas.
-    coordinationSpace: z.object(
-      // Wrap each value schema in z.record()
-      fromEntries(
-        [
-          ...Object.entries(baseCoordinationTypes),
-          ...Object.entries(coordinationTypes),
-        ].map(([ctName, ctValueSchema]) => ([
-            ctName,
-            z.record(
-              // For now, assume the key type is string (though it would be
-              // slightly nicer if we could use the coordinationScopeName schema here).
-              // Once https://github.com/colinhacks/zod/issues/2746 gets resolved
-              // then we can try that approach again, but it should not be a big deal.
-              ctValueSchema.optional(),
-            ).optional(),
-          ])),
-      ),
-    )
-      .strict()
+    coordinationSpace: coordinationSpace
       .describe(
         'The coordination space stores the values for each scope of each coordination object.',
       )
@@ -61,6 +29,59 @@ export function buildConfigSchema<
     )
       .describe(
         'The layout array defines the views, or components, rendered in the grid.',
-      ),
+      )
+      .optional(),
   });
+}
+
+// For usage in documentation and JSON schema generation.
+export const genericConfigSchema = buildConfigSchemaAux(
+  // TODO: Special meta-coordination types should be included.
+  z.record(
+    // Coordination Type
+    z.string(),
+    z.record(
+      // Coordination Scope
+      z.string(),
+      // Coordination Value
+      z.any()
+    ).nullable()
+  )
+);
+
+/**
+ * Build a Zod schema for the latest Vitessce config,
+ * which is specific to any registered plugins.
+ * The builder pattern allows the returned
+ * Zod schema to be typed despite not knowing
+ * the plugin names or sub-schemas in advance.
+ * @param coordinationTypes
+ * @returns The Zod schema.
+ */
+export function buildConfigSchema<
+  T extends Record<string, z.ZodTypeAny>,
+>(
+  coordinationTypes: T,
+) {
+  return buildConfigSchemaAux(
+    z.object(
+      // Wrap each value schema in z.record()
+      fromEntries(
+        [
+          ...Object.entries(baseCoordinationTypes),
+          // Merge with coordination type schemas.
+          ...Object.entries(coordinationTypes),
+        ].map(([ctName, ctValueSchema]) => ([
+            ctName,
+            z.record(
+              // For now, assume the key type is string (though it would be
+              // slightly nicer if we could use the coordinationScopeName schema here).
+              // Once https://github.com/colinhacks/zod/issues/2746 gets resolved
+              // then we can try that approach again, but it should not be a big deal.
+              ctValueSchema.optional(),
+            ).optional(),
+          ])),
+      ),
+    ).strict(),
+  );
 }
