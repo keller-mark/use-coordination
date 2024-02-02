@@ -1,4 +1,25 @@
 
+## 0.0.4
+
+### Patch Changes
+
+- Playwright e2e test for counting re-renders. (`demo`) ([#35](https://github.com/keller-mark/use-coordination/pull/35))
+
+- Add mergeCoordination changes. (`@use-coordination/provider`, `@use-coordination/config`, `@use-coordination/utils`) ([#49](https://github.com/keller-mark/use-coordination/pull/49))
+
+- Add multiple plot libraries example. (`@use-coordination/plots-example`) ([#33](https://github.com/keller-mark/use-coordination/pull/33))
+
+- Add graphviz render function. (`@use-coordination/graphviz-renderer`) ([#45](https://github.com/keller-mark/use-coordination/pull/45))
+
+- License. (`use-coordination`) ([#48](https://github.com/keller-mark/use-coordination/pull/48))
+
+- Add plotly example to multiple plot libraries example. (`@use-coordination/plots-example`) ([#51](https://github.com/keller-mark/use-coordination/pull/51))
+
+- Implement a defineConfig function using TypeScript generics to integrate config with type system. (`@use-coordination/provider`) ([#52](https://github.com/keller-mark/use-coordination/pull/52))
+
+- Rename CmvProvider -> CoordinationProvider. (`@use-coordination/provider`) ([#47](https://github.com/keller-mark/use-coordination/pull/47))
+
+
 ## 0.0.3
 
 ### Patch Changes
