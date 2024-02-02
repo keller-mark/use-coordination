@@ -34,7 +34,7 @@ type Config<
 
 export function defineConfig<
   CoordinationSpaceT extends CoordinationSpace,
-  const ViewCoordinationT extends ViewCoordination<CoordinationSpaceT>,
+  ViewCoordinationT extends ViewCoordination<CoordinationSpaceT>,
 >(
   config: Config<CoordinationSpaceT, ViewCoordinationT>,
 ): Config<CoordinationSpaceT, ViewCoordinationT> {
