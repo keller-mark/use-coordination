@@ -11,7 +11,7 @@ npm install use-coordination
 
 ### Basics
 
-In React components that define views, use the hooks from `use-coordination` to get and set values in the coordination space.
+In React components that define views, use the [hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/#usecoordination) from `use-coordination` to get and set values in the coordination space.
 For example, if we want our view to be coordinated on a coordination type called `myValue`:
 
 ```js
@@ -36,7 +36,7 @@ function SomeViewType(props) {
 }
 ```
 
-Then, wrap the app (or a parent component of all views you would like to coordinate) in a `CoordinationProvider`.
+Then, wrap the app (or a parent component of all views you would like to coordinate) in a [CoordinationProvider](https://keller-mark.github.io/use-coordination/docs/provider-components/#coordinationprovider) (or [ZodCoordinationProvider](https://keller-mark.github.io/use-coordination/docs/provider-components/#zodcoordinationprovider)).
 Pass a config to the provider to set the initial state of the coordination space and the view-coordination scope mappings.
 
 
