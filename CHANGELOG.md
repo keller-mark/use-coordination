@@ -1,4 +1,11 @@
 
+## 0.0.6
+
+### Patch Changes
+
+- Use more modern graphviz library. (`@use-coordination/graphviz-renderer`) ([#57](https://github.com/keller-mark/use-coordination/pull/57))
+
+
 ## 0.0.5
 
 ### Patch Changes
