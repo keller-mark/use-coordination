@@ -9,7 +9,36 @@ A library for coordinated multiple views in React-based visualization systems.
 npm install use-coordination
 ```
 
-Then, in a parent component of all views you would like to coordinate:
+### Basics
+
+In React components that define views, use the hooks from `use-coordination` to get and set values in the coordination space.
+For example, if we want our view to be coordinated on a coordination type called `myValue`:
+
+```js
+import React from 'react';
+import { useCoordination } from 'use-coordination';
+
+function SomeViewType(props) {
+  const { viewUid } = props;
+  const [{
+    myValue,
+  }, {
+    setMyValue,
+  }] = useCoordination(viewUid, ['myValue']);
+
+  return (
+    <input
+      type="number"
+      value={myValue}
+      onChange={e => setMyValue(e.target.value)}
+    />
+  );
+}
+```
+
+Then, wrap the app (or a parent component of all views you would like to coordinate) in a `CoordinationProvider`.
+Pass a config to the provider to set the initial state of the coordination space and the view-coordination scope mappings.
+
 
 ```js
 import React from 'react';
@@ -17,14 +46,30 @@ import { CoordinationProvider } from 'use-coordination';
 
 // ...
 
-const initialConfig = defineConfig({ // Alternatively, use the OOP API
+// Alternatively, use the object-oriented API.
+const initialConfig = defineConfig({
   coordinationSpace: {
-    // TODO
+    myValue: {
+      myValueScope1: 99,
+      myValueScope2: 20,
+    },
   },
   viewCoordination: {
-    v1: {}, // TODO
-    v2: {},
-    v3: {},
+    v1: {
+      coordinationScopes: {
+        myValue: 'myValueScope1',
+      },
+    },
+    v2: {
+      coordinationScopes: {
+        myValue: 'myValueScope1',
+      },
+    },
+    v3: {
+      coordinationScopes: {
+        myValue: 'myValueScope2',
+      },
+    },
   },
 });
 
@@ -39,35 +84,11 @@ function MyApp(props) {
 }
 ```
 
-The React components that define views can now use the React hooks to get and set values in the coordination space:
-
-```js
-import React from 'react';
-import { useCoordination } from 'use-coordination';
-
-function SomeViewType(props) {
-  const { viewUid } = props;
-  const [{}, {}] = useCoordination(viewUid, []);
-
-  return (
-    <input type="number" value={} />
-  );
-}
-```
-
-A list of all available hooks can be found in the documentation.
-
-### Typescript usage
-
-### Controlled component usage
-
-### OOP API for initialConfig
-
-### On Zustand store creation
-
-### Validation of coordination values
-
-
+To learn more, please visit the [documentation](https://keller-mark.github.io/use-coordination/):
+- [List of available hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/)
+- [List of available providers](https://keller-mark.github.io/use-coordination/docs/provider-components/)
+- [JSON schema](https://keller-mark.github.io/use-coordination/docs/config-json/)
+- [Object-oriented config API](https://keller-mark.github.io/use-coordination/docs/config-js/)
 
 
 ## Development
