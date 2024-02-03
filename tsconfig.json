@@ -25,6 +25,7 @@
     { "path": "packages/utils" },
     { "path": "packages/schemas" },
     { "path": "packages/graphviz-renderer" },
+    { "path": "packages/flow-editor" },
     { "path": "packages/provider" },
     { "path": "packages/main/all" },
     { "path": "packages/main/dev" },

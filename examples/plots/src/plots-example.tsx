@@ -5,6 +5,7 @@ import {
   useCoordination,
   defineConfig,
 } from '@use-coordination/all';
+import { FlowEditor } from '@use-coordination/flow-editor';
 import { z } from 'zod';
 import { letterFrequency } from '@visx/mock-data';
 import { VegaLitePlotView } from './vega-lite.js';
@@ -59,6 +60,7 @@ export function PlotsExample() {
           flex-wrap: wrap;
         }
       `}</style>
+      <FlowEditor config={config} onConfigChange={setConfig} />
       <ZodErrorBoundary>
         <ZodCoordinationProvider
           config={config}
