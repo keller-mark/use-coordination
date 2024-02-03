@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import ReactFlow, { useNodesState, useEdgesState, addEdge } from 'reactflow';
 import { scale as vega_scale } from 'vega-scale';
+import { v4 as uuidv4 } from 'uuid';
+import { InternMap } from 'internmap';
 import { CTypeNode, CScopeNode, ViewNode } from './NodeTypes.js';
 
 const scaleBand = vega_scale('band');
@@ -422,18 +424,125 @@ const nodeTypes = {
   viewNode: ViewNode,
 };
 
-const isValidConnection = (connection) => {
-  if(connection.source.startsWith('cScope_') && connection.target.startsWith('view_')) {
-    // TODO: check if the view supports the coordination type of the scope.
-    return true;
+function configToNodesAndEdges(config, width, height) {
+  const nodesArr = [];
+  const edgesArr = [];
+
+  const nodeIdToInfo = new Map();
+  const edgeIdToInfo = new Map();
+
+  const nodeInfoToId = new InternMap([], JSON.stringify);
+  const edgeInfoToId = new InternMap([], JSON.stringify);
+
+  if (config) {
+    const { coordinationSpace = {}, viewCoordination = {} } = config;
+    
+    const xScale = scaleBand()
+      .domain(["cType", "cScope", "view"])
+      .range([0, width])
+    const cTypeYScale = scaleBand()
+      .domain(Object.keys(coordinationSpace))
+      .range([0, height]);
+    const cScopeYScale = scaleBand()
+      .domain(Object.keys(coordinationSpace).reduce((acc, cType) => acc.concat(Object.keys(coordinationSpace[cType]).map(cScope => `${cType}_${cScope}`)), []))
+      .range([0, height]);
+    const viewYScale = scaleBand()
+      .domain(Object.keys(viewCoordination))
+      .range([0, height]);
+
+
+    Object.entries(coordinationSpace).forEach(([cType, cObj]) => {
+      const cTypeNodeId = uuidv4();
+      const cTypeNodeInfo = { cType };
+      nodeIdToInfo.set(cTypeNodeId, cTypeNodeInfo);
+      nodeInfoToId.set(cTypeNodeInfo, cTypeNodeId);
+
+      nodesArr.push({
+        id: cTypeNodeId,
+        type: 'cTypeNode',
+        position: { x: xScale("cType"), y: cTypeYScale(cType) },
+        data: { label: cType },
+        sourcePosition: 'right',
+        targetPosition: 'left',
+      });
+
+      Object.entries(cObj).forEach(([cScope, cValue]) => {
+
+        const cTypeScopeEdgeId = uuidv4();
+        const cTypeScopeEdgeInfo = { cType, cScope };
+        edgeIdToInfo.set(cTypeScopeEdgeId, cTypeScopeEdgeInfo);
+        edgeInfoToId.set(cTypeScopeEdgeInfo, cTypeScopeEdgeId);
+
+        const cScopeNodeId = uuidv4();
+        const cScopeNodeInfo = { cType, cScope };
+        nodeIdToInfo.set(cScopeNodeId, cScopeNodeInfo);
+        nodeInfoToId.set(cScopeNodeInfo, cScopeNodeId);
+
+        edgesArr.push({
+          id: cTypeScopeEdgeId,
+          source: cTypeNodeId,
+          target: cScopeNodeId,
+        });
+        
+        nodesArr.push({
+          id: cScopeNodeId,
+          type: 'cScopeNode',
+          position: { x: xScale("cScope"), y: cScopeYScale(`${cType}_${cScope}`) },
+          data: { label: cScope, value: cValue },
+          sourcePosition: 'right',
+          targetPosition: 'left',
+        });
+      });
+    });
+  
+    Object.entries(viewCoordination).forEach(([viewUid, vObj]) => {
+      const viewNodeId = uuidv4();
+      // TODO: include the view type in the viewNodeInfo
+      const viewNodeInfo = { viewUid };
+      nodeIdToInfo.set(viewNodeId, viewNodeInfo);
+      nodeInfoToId.set(viewNodeInfo, viewNodeId);
+
+      nodesArr.push({
+        id: viewNodeId,
+        type: 'viewNode',
+        position: { x: xScale("view"), y: viewYScale(viewUid) },
+        data: { label: viewUid },
+        sourcePosition: 'right',
+        targetPosition: 'left',
+      });
+      Object.entries(vObj.coordinationScopes).forEach(([cType, cScope]) => {
+
+        const viewScopeEdgeId = uuidv4();
+        const viewScopeEdgeInfo = { viewUid, cType, cScope };
+
+        edgeIdToInfo.set(viewScopeEdgeId, viewScopeEdgeInfo);
+        edgeInfoToId.set(viewScopeEdgeInfo, viewScopeEdgeId);
+
+        const cScopeNodeId = nodeInfoToId.get({ cType, cScope });
+
+        edgesArr.push({
+          id: viewScopeEdgeId,
+          source: cScopeNodeId,
+          target: viewNodeId,
+        });
+      });
+    });
   }
-  if(connection.source.startsWith('cType_') && connection.target.startsWith('cScope_')) {
-    // TODO: check if the scope is for this coordination type.
-    return true;
-  }
-  return false;
+  return [nodesArr, edgesArr, { nodeIdToInfo, edgeIdToInfo, nodeInfoToId, edgeInfoToId }];
 }
 
+function nodeInfoToNodeType(nodeInfo) {
+  return Object.keys(nodeInfo).includes('viewUid')
+    ? 'view' : (Object.keys(nodeInfo).includes('cScope')
+      ? 'cScope'
+      : 'cType');
+}
+
+function edgeInfoToEdgeType(edgeInfo) {
+  return Object.keys(edgeInfo).includes('viewUid')
+    ? 'cScope-view'
+    : 'cType-cScope';
+}
 
 export function FlowEditor(props) {
   const {
@@ -441,89 +550,124 @@ export function FlowEditor(props) {
     height = 600,
     config,
     onConfigChange,
+
+    coordinationTypesEditable = false,
+
+    coordinationScopesEditable = true,
+    coordinationValuesEditable = true,
+
+    viewUidsEditable = false,
+    viewsRemovable = false,
+
+    viewUidToViewType = null,
+    viewTypeToCoordinationTypes = null,
+
+    coordinationTypeToValueEditor = null,
+
+    nodesDraggable = false,
   } = props;
 
-  const [initialNodes, initialEdges] = useMemo(() => {
-    const nodesArr = [];
-    const edgesArr = [];
+  // TODO: compute initial node positions based on config.key
+  // and then assume that the user will drag them around.
 
-    if (config) {
-      const { coordinationSpace = {}, viewCoordination = {} } = config;
+  // Additional nodes that are added should not affect the initial positions.
+  // Instead, the scales should be extended so that the new nodes do not affect the initial positions.
 
-      const numScopes = Object.values(coordinationSpace).reduce((acc, cObj) => acc + Object.keys(cObj).length, 0);
-      const numViews = Object.keys(viewCoordination).length;
-      const maxNodesCol = Math.max(numScopes, numViews);
-      
-      const xScale = scaleBand()
-        .domain(["cType", "cScope", "view"])
-        .range([0, width])
-      const cTypeYScale = scaleBand()
-        .domain(Object.keys(coordinationSpace))
-        .range([0, height]);
-      const cScopeYScale = scaleBand()
-        .domain(Object.keys(coordinationSpace).reduce((acc, cType) => acc.concat(Object.keys(coordinationSpace[cType]).map(cScope => `${cType}_${cScope}`)), []))
-        .range([0, height]);
-      const viewYScale = scaleBand()
-        .domain(Object.keys(viewCoordination))
-        .range([0, height]);
+  const [nodes, edges, idToInfoMappings] = useMemo(() => configToNodesAndEdges(config, width, height), [config, width, height]);
 
+  const isValidConnection = useCallback((connection) => {
+    const { nodeIdToInfo } = idToInfoMappings;
+    const sourceNodeInfo = nodeIdToInfo.get(connection.source);
+    const targetNodeInfo = nodeIdToInfo.get(connection.target);
 
-      Object.entries(coordinationSpace).forEach(([cType, cObj], cTypeI) => {
-        nodesArr.push({
-          id: `cType_${cType}`,
-          type: 'cTypeNode',
-          position: { x: xScale("cType"), y: cTypeYScale(cType) },
-          data: { label: cType },
-          sourcePosition: 'right',
-          targetPosition: 'left',
-        });
+    const sourceNodeType = nodeInfoToNodeType(sourceNodeInfo);
+    const targetNodeType = nodeInfoToNodeType(targetNodeInfo);
 
-        Object.entries(cObj).forEach(([cScope, cValue]) => {
-          edgesArr.push({
-            id: `e${cType}`,
-            source: `cType_${cType}`,
-            target: `cScope_${cScope}_cType_${cType}`,
-          });
-          
-          nodesArr.push({
-            id: `cScope_${cScope}_cType_${cType}`,
-            type: 'cScopeNode',
-            position: { x: xScale("cScope"), y: cScopeYScale(`${cType}_${cScope}`) },
-            data: { label: cScope, value: cValue },
-            sourcePosition: 'right',
-            targetPosition: 'left',
-          });
-        });
-      });
-    
-      Object.entries(viewCoordination).forEach(([viewUid, vObj]) => {
-        nodesArr.push({
-          id: `view_${viewUid}`,
-          type: 'viewNode',
-          position: { x: xScale("view"), y: viewYScale(viewUid) },
-          data: { label: viewUid },
-          sourcePosition: 'right',
-          targetPosition: 'left',
-        });
-        Object.entries(vObj.coordinationScopes).forEach(([cType, cScope]) => {
-          edgesArr.push({
-            id: `e${viewUid}_${cType}_${cScope}`,
-            target: `view_${viewUid}`,
-            source: `cScope_${cScope}_cType_${cType}`,
-          });
-        });
-      });
+    if(sourceNodeType == 'cScope' && targetNodeType == 'view') {
+      // TODO: check if the view type supports the coordination type of the scope.
+      return true;
     }
-    return [nodesArr, edgesArr];
-  }, [config]);
+    if(sourceNodeType == 'cType' && targetNodeInfo == 'cScope') {
+      // Check if the scope is for this coordination
+      if(sourceNodeInfo.cType == targetNodeInfo.cType) {
+        return true;
+      }
+    }
+    return false;
+  }, [idToInfoMappings]);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
- 
-  const onConnect = useCallback((params) => {
-    console.log(params);
-    setEdges((eds) => addEdge(params, eds));
-  }, [setEdges]);
+  const onNodesChange = useCallback((changes) => {
+    // This is called on node drag, select, and move.
+    // Changes should result in an updated config emitted via onConfigChange.
+
+    // TODO
+  }, [config, onConfigChange, idToInfoMappings]);
+
+  const onEdgesChange = useCallback((changes) => {
+    // This is called on edge select and remove.
+    // Changes should result in an updated config emitted via onConfigChange.
+    const { edgeIdToInfo } = idToInfoMappings;
+    let newConfig = { ...config };
+    let shouldEmit = false;
+    changes.forEach((change) => {
+      const { type, id } = change;
+      const edgeInfo = edgeIdToInfo.get(id);
+      const edgeType = edgeInfoToEdgeType(edgeInfo);
+      if(type == 'remove') {
+        if(edgeType === 'cScope-view') {
+          newConfig = {
+            ...newConfig,
+            key: newConfig.key + 1,
+            viewCoordination: {
+              ...newConfig.viewCoordination,
+              [edgeInfo.viewUid]: {
+                ...newConfig.viewCoordination[edgeInfo.viewUid],
+                coordinationScopes: Object.fromEntries(
+                  Object.entries(newConfig.viewCoordination[edgeInfo.viewUid].coordinationScopes)
+                    .filter(([cType, cScope]) => cType !== edgeInfo.cType)
+                ),
+              },
+            },
+          };
+          shouldEmit = true;
+        }
+      }
+    });
+    if(shouldEmit) {
+      onConfigChange(newConfig);
+    }
+  }, [config, onConfigChange, idToInfoMappings]);
+
+  const onConnect = useCallback((connection) => {
+    // When a connection line is completed and two nodes are
+    // connected by the user, this event fires with the new connection.
+    const { nodeIdToInfo } = idToInfoMappings;
+    const { source, target } = connection;
+
+    const sourceNodeInfo = nodeIdToInfo.get(source);
+    const targetNodeInfo = nodeIdToInfo.get(target);
+
+    const sourceNodeType = nodeInfoToNodeType(sourceNodeInfo);
+    const targetNodeType = nodeInfoToNodeType(targetNodeInfo);
+
+    if(sourceNodeType == 'cScope' && targetNodeType == 'view') {
+      const newConfig = {
+        ...config,
+        key: config.key + 1,
+        viewCoordination: {
+          ...config.viewCoordination,
+          [targetNodeInfo.viewUid]: {
+            ...config.viewCoordination[targetNodeInfo.viewUid],
+            coordinationScopes: {
+              ...config.viewCoordination[targetNodeInfo.viewUid].coordinationScopes,
+              [sourceNodeInfo.cType]: sourceNodeInfo.cScope,
+            },
+          },
+        },
+      };
+      onConfigChange(newConfig);
+    }
+  }, [config, onConfigChange, idToInfoMappings]);
 
   return (
     <>
@@ -537,6 +681,7 @@ export function FlowEditor(props) {
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           isValidConnection={isValidConnection}
+          nodesDraggable={nodesDraggable}
         />
       </div>
     </>
