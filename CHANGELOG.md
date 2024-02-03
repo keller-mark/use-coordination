@@ -1,4 +1,11 @@
 
+## 0.0.5
+
+### Patch Changes
+
+- Browser only for Plotly in docs. (`docs`) ([#54](https://github.com/keller-mark/use-coordination/pull/54))
+
+
 ## 0.0.4
 
 ### Patch Changes
