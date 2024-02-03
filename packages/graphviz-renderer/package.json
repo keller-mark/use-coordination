@@ -27,6 +27,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "graphviz": "^0.0.9"
+    "ts-graphviz": "^1.8.1"
   }
 }
