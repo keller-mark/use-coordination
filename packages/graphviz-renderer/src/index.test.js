@@ -38,7 +38,6 @@ describe('Graphviz Rendering', () => {
       };
 
       const dot = toGraphviz(config);
-      console.log(dot);
       expect(dot).toEqual(`digraph {
   rankdir = "LR";
   "view_vegaLite" [
@@ -74,7 +73,6 @@ describe('Graphviz Rendering', () => {
   "view_visx" -> "cType_barSelection_cScope_A";
   "view_plotly" -> "cType_barSelection_cScope_A";
 }`);
-
     });
-});
+  });
 });
