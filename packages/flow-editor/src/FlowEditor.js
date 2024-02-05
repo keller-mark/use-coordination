@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
-import ReactFlow, { useNodesState, useEdgesState, addEdge } from 'reactflow';
+import ReactFlow, { Background, Controls } from 'reactflow';
 import { scale as vega_scale } from 'vega-scale';
 import { v4 as uuidv4 } from 'uuid';
 import { InternMap } from 'internmap';
 import { CTypeNode, CScopeNode, ViewNode } from './NodeTypes.js';
+import { connectViewToScope, disconnectViewFromScope, addScopeForType } from './utils.js';
 
 const scaleBand = vega_scale('band');
 
@@ -424,7 +425,7 @@ const nodeTypes = {
   viewNode: ViewNode,
 };
 
-function configToNodesAndEdges(config, width, height) {
+function configToNodesAndEdges(config, width, height, { onAddScope }) {
   const nodesArr = [];
   const edgesArr = [];
 
@@ -461,7 +462,10 @@ function configToNodesAndEdges(config, width, height) {
         id: cTypeNodeId,
         type: 'cTypeNode',
         position: { x: xScale("cType"), y: cTypeYScale(cType) },
-        data: { label: cType },
+        data: {
+          label: cType,
+          onAddScope: () => onAddScope(cType),
+        },
         sourcePosition: 'right',
         targetPosition: 'left',
       });
@@ -572,8 +576,14 @@ export function FlowEditor(props) {
 
   // Additional nodes that are added should not affect the initial positions.
   // Instead, the scales should be extended so that the new nodes do not affect the initial positions.
+  const onAddScope = useCallback((cType) => {
+    onConfigChange({
+      ...addScopeForType(config, cType),
+      key: config.key + 1,
+    });
+  }, [config]);
 
-  const [nodes, edges, idToInfoMappings] = useMemo(() => configToNodesAndEdges(config, width, height), [config, width, height]);
+  const [nodes, edges, idToInfoMappings] = useMemo(() => configToNodesAndEdges(config, width, height, { onAddScope }), [config, width, height]);
 
   const isValidConnection = useCallback((connection) => {
     const { nodeIdToInfo } = idToInfoMappings;
@@ -615,25 +625,20 @@ export function FlowEditor(props) {
       const edgeType = edgeInfoToEdgeType(edgeInfo);
       if(type == 'remove') {
         if(edgeType === 'cScope-view') {
-          newConfig = {
-            ...newConfig,
-            key: newConfig.key + 1,
-            viewCoordination: {
-              ...newConfig.viewCoordination,
-              [edgeInfo.viewUid]: {
-                ...newConfig.viewCoordination[edgeInfo.viewUid],
-                coordinationScopes: Object.fromEntries(
-                  Object.entries(newConfig.viewCoordination[edgeInfo.viewUid].coordinationScopes)
-                    .filter(([cType, cScope]) => cType !== edgeInfo.cType)
-                ),
-              },
-            },
-          };
+          newConfig = disconnectViewFromScope(
+            newConfig,
+            edgeInfo.viewUid,
+            edgeInfo.cType,
+          );
           shouldEmit = true;
         }
       }
     });
     if(shouldEmit) {
+      newConfig = {
+        ...newConfig,
+        key: newConfig.key + 1,
+      };
       onConfigChange(newConfig);
     }
   }, [config, onConfigChange, idToInfoMappings]);
@@ -652,18 +657,13 @@ export function FlowEditor(props) {
 
     if(sourceNodeType == 'cScope' && targetNodeType == 'view') {
       const newConfig = {
-        ...config,
+        ...connectViewToScope(
+          config,
+          targetNodeInfo.viewUid,
+          sourceNodeInfo.cType,
+          sourceNodeInfo.cScope,
+        ),
         key: config.key + 1,
-        viewCoordination: {
-          ...config.viewCoordination,
-          [targetNodeInfo.viewUid]: {
-            ...config.viewCoordination[targetNodeInfo.viewUid],
-            coordinationScopes: {
-              ...config.viewCoordination[targetNodeInfo.viewUid].coordinationScopes,
-              [sourceNodeInfo.cType]: sourceNodeInfo.cScope,
-            },
-          },
-        },
       };
       onConfigChange(newConfig);
     }
@@ -682,7 +682,10 @@ export function FlowEditor(props) {
           nodeTypes={nodeTypes}
           isValidConnection={isValidConnection}
           nodesDraggable={nodesDraggable}
-        />
+        >
+          <Controls />
+          <Background />
+        </ReactFlow>
       </div>
     </>
   );

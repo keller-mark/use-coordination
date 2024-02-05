@@ -284,6 +284,9 @@ importers:
       clsx:
         specifier: ^2.1.0
         version: 2.1.0
+      d3-array:
+        specifier: ^2.4.0
+        version: 2.4.0
       d3-scale:
         specifier: ^4.0.0
         version: 4.0.0
@@ -8710,7 +8713,7 @@ packages:
     resolution: {integrity: sha512-VqKjzBLejbSMT4IgbmVgDjpkYrNWUYJnbCGo874u7MMKIWsILRX+OpX/gTk8MqjpT1A/c6HY2dCA77ZN0lkQ2Q==}
     engines: {node: '>=12'}
     dependencies:
-      d3-array: 2.4.0
+      d3-array: 2.12.1
     dev: false
 
   /d3-timer@1.0.10:

@@ -9,6 +9,7 @@ export const CTypeNode = memo(({ data, isConnectable }) => {
         Coordination Type
       </div>
       <input className="nodrag" type="text" onChange={data.onChangeLabel} defaultValue={data.label} />
+      <button onClick={data.onAddScope}>Add scope</button>
       <Handle
         type="source"
         position={Position.Right}

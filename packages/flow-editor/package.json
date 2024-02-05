@@ -27,6 +27,7 @@
   "dependencies": {
     "reactflow": "^11.10.3",
     "d3-scale": "^4.0.0",
+    "d3-array": "^2.4.0",
     "vega-scale": "^6.0.0",
     "clsx": "^2.1.0",
     "uuid": "^9.0.0",
