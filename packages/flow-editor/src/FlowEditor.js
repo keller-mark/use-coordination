@@ -161,18 +161,18 @@ export function FlowEditor(props) {
     config,
     onConfigChange,
 
-    coordinationTypesEditable = false,
+    coordinationTypesAddable = true,
+    coordinationTypesEditable = false, // Allow coordination type names to be changed via text input
 
     coordinationScopesEditable = true,
     coordinationValuesEditable = true,
 
-    viewUidsEditable = false,
+    viewsEditable = false, // Allow viewUids to be changed via text input
     viewsRemovable = false,
+    viewsAddable = true,
 
     viewUidToViewType = null,
     viewTypeToCoordinationTypes = null,
-
-    coordinationTypeToValueEditor = null,
 
     nodesDraggable = false,
   } = props;
