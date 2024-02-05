@@ -33,6 +33,7 @@ module.exports = {
       items: [
         'examples',
         'plots-example',
+        'flow-editor-example',
       ]
     }
   ]

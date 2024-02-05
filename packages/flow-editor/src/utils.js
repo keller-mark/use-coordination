@@ -47,3 +47,23 @@ export function addScopeForType(config, cType) {
     },
   };
 }
+
+export function addCoordinationType(config) {
+  return {
+    ...config,
+    coordinationSpace: {
+      ...config.coordinationSpace,
+      [getNextScope(Object.keys(config.coordinationSpace))]: {},
+    }
+  };
+}
+
+export function addView(config) {
+  return {
+    ...config,
+    viewCoordination: {
+      ...config.viewCoordination,
+      [getNextScope(Object.keys(config.viewCoordination))]: {},
+    }
+  };
+}

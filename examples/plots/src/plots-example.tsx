@@ -49,7 +49,8 @@ const initialConfig = defineConfig({
   },
 });
 
-export function PlotsExample() {
+export function PlotsExample(props: any) {
+  const { showFlowEditor } = props;
   const [config, setConfig] = React.useState<any>(initialConfig);
   return (
     <>
@@ -60,7 +61,9 @@ export function PlotsExample() {
           flex-wrap: wrap;
         }
       `}</style>
-      <FlowEditor config={config} onConfigChange={setConfig} />
+      {showFlowEditor ? (
+        <FlowEditor config={config} onConfigChange={setConfig} />
+      ) : null}
       <ZodErrorBoundary>
         <ZodCoordinationProvider
           config={config}
