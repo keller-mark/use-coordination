@@ -1,3 +1,4 @@
+import { getNextScope } from '@use-coordination/utils';
 
 export function connectViewToScope(config, viewUid, cType, cScope) {
   const newConfig = {
@@ -40,9 +41,8 @@ export function addScopeForType(config, cType) {
       ...config.coordinationSpace,
       [cType]: {
         ...config.coordinationSpace[cType],
-        // TODO: getNextScope function
         // TODO: use default value for the coordination type
-        ["new" + Math.random()]: ["A", "B", "C"],
+        [getNextScope(Object.keys(config.coordinationSpace[cType]))]: null,
       },
     },
   };

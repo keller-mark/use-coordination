@@ -15,7 +15,7 @@ import { PlotlyBarPlotView } from './plotly.js';
 
 
 const pluginCoordinationTypes = {
-  barSelection: z.array(z.string()),
+  barSelection: z.array(z.string()).nullable(),
 };
 
 const initialConfig = defineConfig({

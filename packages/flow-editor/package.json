@@ -25,6 +25,7 @@
     "test": "pnpm exec vitest --run"
   },
   "dependencies": {
+    "@use-coordination/utils": "workspace:*",
     "reactflow": "^11.10.3",
     "d3-scale": "^4.0.0",
     "d3-array": "^2.4.0",

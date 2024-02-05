@@ -281,6 +281,9 @@ importers:
 
   packages/flow-editor:
     dependencies:
+      '@use-coordination/utils':
+        specifier: workspace:*
+        version: link:../utils
       clsx:
         specifier: ^2.1.0
         version: 2.1.0
