@@ -1,14 +1,30 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import clsx from 'clsx';
 
-export const CTypeNode = memo(({ data, isConnectable }) => {
+function arePropsEqual(prevProps, nextProps) {
   return (
-    <div className={clsx('react-flow__node-default', 'ctype-node')}>
+    prevProps.isConnectable === nextProps.isConnectable
+    && prevProps.data === nextProps.data
+    && prevProps.data.label === nextProps.data.label
+    && prevProps.data.value === nextProps.data.value
+    && prevProps.data.onAddScope === nextProps.data.onAddScope
+    && prevProps.data.onChangeLabel === nextProps.data.onChangeLabel
+    && prevProps.data.onChangeValue === nextProps.data.onChangeValue
+  );
+}
+
+export const CTypeNode = memo(({ data, isConnectable }) => {
+  const [label, setLabel] = useState(data.label);
+  return (
+    <div>
       <div>
         Coordination Type
       </div>
-      <input className="nodrag" type="text" onChange={data.onChangeLabel} defaultValue={data.label} />
+      <div>
+        <input className="nodrag" type="text" onChange={e => setLabel(e.target.value)} value={label} />
+        {data.label !== label ? <button onClick={() => data.onChangeLabel(label)}>Save</button> : null}
+      </div>
       <button onClick={data.onAddScope}>Add scope</button>
       <Handle
         type="source"
@@ -18,11 +34,13 @@ export const CTypeNode = memo(({ data, isConnectable }) => {
       />
     </div>
   );
-});
+}, arePropsEqual);
 
 export const CScopeNode = memo(({ data, isConnectable }) => {
+  const [label, setLabel] = useState(data.label);
+  const [value, setValue] = useState(JSON.stringify(data.value));
   return (
-    <div className={clsx('react-flow__node-default', 'cscope-node')}>
+    <div>
       <Handle
         type="target"
         position={Position.Left}
@@ -32,8 +50,15 @@ export const CScopeNode = memo(({ data, isConnectable }) => {
       <div>
         Coordination Scope
       </div>
-      <input className="nodrag" type="text" onChange={data.onChangeLabel} defaultValue={data.label} />
-      <input className="nodrag" type="text" onChange={data.onChangeValue} defaultValue={JSON.stringify(data.value)} />
+      <div>
+        <input className="nodrag" type="text" onChange={e => setLabel(e.target.value)} value={label} />
+        {data.label !== label ? <button onClick={() => data.onChangeLabel(label)}>Save</button> : null}
+      </div>
+      <div>
+        <input className="nodrag" type="text" onChange={e => setValue(e.target.value)} value={value} />
+        {/* TODO: Wrap JSON.parse in try/catch */}
+        {JSON.stringify(data.value) !== value ? <button onClick={() => data.onChangeValue(JSON.parse(value))}>Save</button> : null}
+      </div>
       <Handle
         type="source"
         position={Position.Right}
@@ -42,11 +67,12 @@ export const CScopeNode = memo(({ data, isConnectable }) => {
       />
     </div>
   );
-});
+}, arePropsEqual);
 
 export const ViewNode = memo(({ data, isConnectable }) => {
+  const [label, setLabel] = useState(data.label);
   return (
-    <div className={clsx('react-flow__node-default', 'view-node')}>
+    <div>
       <Handle
         type="target"
         position={Position.Left}
@@ -56,7 +82,10 @@ export const ViewNode = memo(({ data, isConnectable }) => {
       <div>
         View
       </div>
-      <input className="nodrag" type="text" onChange={data.onChangeLabel} defaultValue={data.label} />
+      <div>
+      <input className="nodrag" type="text" onChange={e => setLabel(e.target.value)} value={label} />
+        {data.label !== label ? <button onClick={() => data.onChangeLabel(label)}>Save</button> : null}
+      </div>
     </div>
   );
-});
+}, arePropsEqual);

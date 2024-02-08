@@ -1,7 +1,8 @@
 const customStyles = `
-  .react-flow__node-default input {
+  .react-flow__node-cTypeNode input, .react-flow__node-cScopeNode input, .react-flow__node-viewNode input {
     max-width: 100%;
   }
+
 `;
 
 export const styles = `
@@ -236,7 +237,10 @@ export const styles = `
 .react-flow__node-default,
 .react-flow__node-input,
 .react-flow__node-output,
-.react-flow__node-group {
+.react-flow__node-group,
+.react-flow__node-cTypeNode,
+.react-flow__node-cScopeNode,
+.react-flow__node-viewNode {
   padding: 10px;
   border-radius: 3px;
   width: 150px;
@@ -248,7 +252,13 @@ export const styles = `
   border-color: #1a192b;
   background-color: white;
 }
-.react-flow__node-default.selectable:hover, .react-flow__node-input.selectable:hover, .react-flow__node-output.selectable:hover, .react-flow__node-group.selectable:hover {
+.react-flow__node-default.selectable:hover,
+.react-flow__node-input.selectable:hover,
+.react-flow__node-output.selectable:hover,
+.react-flow__node-group.selectable:hover,
+.react-flow__node-cTypeNode.selectable:hover,
+.react-flow__node-cScopeNode.selectable:hover,
+.react-flow__node-viewNode.selectable:hover {
       box-shadow: 0 1px 4px 1px rgba(0, 0, 0, 0.08);
     }
 .react-flow__node-default.selectable.selected,
@@ -262,7 +272,18 @@ export const styles = `
     .react-flow__node-output.selectable:focus-visible,
     .react-flow__node-group.selectable.selected,
     .react-flow__node-group.selectable:focus,
-    .react-flow__node-group.selectable:focus-visible {
+    .react-flow__node-group.selectable:focus-visible,
+    .react-flow__node-cTypeNode.selectable.selected,
+    .react-flow__node-cTypeNode.selectable:focus,
+    .react-flow__node-cTypeNode.selectable:focus-visible,
+
+    .react-flow__node-cScopeNode.selectable.selected,
+    .react-flow__node-cScopeNode.selectable:focus,
+    .react-flow__node-cScopeNode.selectable:focus-visible,
+
+    .react-flow__node-viewNode.selectable.selected,
+    .react-flow__node-viewNode.selectable:focus,
+    .react-flow__node-viewNode.selectable:focus-visible {
       box-shadow: 0 0 0 0.5px #1a192b;
     }
 .react-flow__node-group {

@@ -10,6 +10,13 @@ import {
   addScopeForType,
   addCoordinationType,
   addView,
+  removeCoordinationType,
+  removeView,
+  changeCoordinationTypeName,
+  changeCoordinationScopeName,
+  changeCoordinationScopeValue,
+  changeViewUid,
+  removeCoordinationScope,
 } from './utils.js';
 import { styles } from './styles.js';
 
@@ -21,7 +28,14 @@ const nodeTypes = {
   viewNode: ViewNode,
 };
 
-function configToNodesAndEdges(config, width, height, { onAddScope }) {
+function configToNodesAndEdges(config, width, height, eventHandlers) {
+  const {
+    onAddScope,
+    onChangeCoordinationTypeName,
+    onChangeCoordinationScopeName,
+    onChangeCoordinationScopeValue,
+    onChangeViewUid,
+  } = eventHandlers;
   const nodesArr = [];
   const edgesArr = [];
 
@@ -61,13 +75,15 @@ function configToNodesAndEdges(config, width, height, { onAddScope }) {
         data: {
           label: cType,
           onAddScope: () => onAddScope(cType),
+          onChangeLabel: (newName) => {
+            onChangeCoordinationTypeName(cType, newName);
+          }
         },
         sourcePosition: 'right',
         targetPosition: 'left',
       });
 
       Object.entries(cObj).forEach(([cScope, cValue]) => {
-
         const cTypeScopeEdgeId = uuidv4();
         const cTypeScopeEdgeInfo = { cType, cScope };
         edgeIdToInfo.set(cTypeScopeEdgeId, cTypeScopeEdgeInfo);
@@ -88,7 +104,16 @@ function configToNodesAndEdges(config, width, height, { onAddScope }) {
           id: cScopeNodeId,
           type: 'cScopeNode',
           position: { x: xScale("cScope"), y: cScopeYScale(`${cType}_${cScope}`) },
-          data: { label: cScope, value: cValue },
+          data: {
+            label: cScope,
+            value: cValue,
+            onChangeLabel: (newName) => {
+              onChangeCoordinationScopeName(cType, cScope, newName);
+            },
+            onChangeValue: (newValue) => {
+              onChangeCoordinationScopeValue(cType, cScope, newValue);
+            },
+          },
           sourcePosition: 'right',
           targetPosition: 'left',
         });
@@ -106,12 +131,16 @@ function configToNodesAndEdges(config, width, height, { onAddScope }) {
         id: viewNodeId,
         type: 'viewNode',
         position: { x: xScale("view"), y: viewYScale(viewUid) },
-        data: { label: viewUid },
+        data: {
+          label: viewUid,
+          onChangeLabel: (newName) => {
+            onChangeViewUid(viewUid, newName);
+          },
+        },
         sourcePosition: 'right',
         targetPosition: 'left',
       });
       Object.entries(vObj.coordinationScopes || {}).forEach(([cType, cScope]) => {
-
         const viewScopeEdgeId = uuidv4();
         const viewScopeEdgeInfo = { viewUid, cType, cScope };
 
@@ -177,6 +206,8 @@ export function FlowEditor(props) {
     nodesDraggable = false,
   } = props;
 
+  console.log(config);
+
   // TODO: compute initial node positions based on config.key
   // and then assume that the user will drag them around.
 
@@ -189,7 +220,44 @@ export function FlowEditor(props) {
     });
   }, [config]);
 
-  const [nodes, edges, idToInfoMappings] = useMemo(() => configToNodesAndEdges(config, width, height, { onAddScope }), [config, width, height]);
+  const onChangeCoordinationTypeName = useCallback((prevName, newName) => {
+    onConfigChange({
+      ...changeCoordinationTypeName(config, prevName, newName),
+      key: config.key + 1,
+    });
+  }, [config, onConfigChange]);
+
+  const onChangeCoordinationScopeName = useCallback((cType, prevName, newName) => {
+    onConfigChange({
+      ...changeCoordinationScopeName(config, cType, prevName, newName),
+      key: config.key + 1,
+    });
+  }, [config, onConfigChange]);
+
+  const onChangeCoordinationScopeValue = useCallback((cType, cScope, newValue) => {
+    onConfigChange({
+      ...changeCoordinationScopeValue(config, cType, cScope, newValue),
+      key: config.key + 1,
+    });
+  }, [config, onConfigChange]);
+
+  const onChangeViewUid = useCallback((prevUid, newUid) => {
+    onConfigChange({
+      ...changeViewUid(config, prevUid, newUid),
+      key: config.key + 1,
+    });
+  }, [config, onConfigChange]);
+
+  const [nodes, edges, idToInfoMappings] = useMemo(() => configToNodesAndEdges(
+    config, width, height,
+    {
+      onAddScope,
+      onChangeCoordinationTypeName,
+      onChangeCoordinationScopeName,
+      onChangeCoordinationScopeValue,
+      onChangeViewUid,
+    },
+  ), [config, width, height]);
 
   const isValidConnection = useCallback((connection) => {
     const { nodeIdToInfo } = idToInfoMappings;
@@ -216,7 +284,35 @@ export function FlowEditor(props) {
     // This is called on node drag, select, and move.
     // Changes should result in an updated config emitted via onConfigChange.
 
-    // TODO
+    const { nodeIdToInfo } = idToInfoMappings;
+    let newConfig = { ...config };
+    let shouldEmit = false;
+    changes.forEach((change) => {
+      const { type, id } = change;
+      const nodeInfo = nodeIdToInfo.get(id);
+      const nodeType = nodeInfoToNodeType(nodeInfo);
+      if(type == 'remove') {
+        if(nodeType === 'cType') {
+          newConfig = removeCoordinationType(newConfig, nodeInfo.cType);
+          shouldEmit = true;
+        }
+        if(nodeType === 'view') {
+          newConfig = removeView(newConfig, nodeInfo.viewUid);
+          shouldEmit = true;
+        }
+        if(nodeType === 'cScope') {
+          newConfig = removeCoordinationScope(newConfig, nodeInfo.cType, nodeInfo.cScope);
+          shouldEmit = true;
+        }
+      }
+    });
+    if(shouldEmit) {
+      newConfig = {
+        ...newConfig,
+        key: newConfig.key + 1,
+      };
+      onConfigChange(newConfig);
+    }
   }, [config, onConfigChange, idToInfoMappings]);
 
   const onEdgesChange = useCallback((changes) => {

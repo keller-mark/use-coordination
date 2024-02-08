@@ -64,7 +64,7 @@ export function PlotsExample(props: any) {
       {showFlowEditor ? (
         <FlowEditor config={config} onConfigChange={setConfig} />
       ) : null}
-      <ZodErrorBoundary>
+      <ZodErrorBoundary key={config.key}>
         <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
