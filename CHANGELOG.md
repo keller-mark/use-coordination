@@ -1,4 +1,13 @@
 
+## 0.0.7
+
+### Patch Changes
+
+- Add flow editor, initial implementation. (`@use-coordination/flow-editor`) ([#62](https://github.com/keller-mark/use-coordination/pull/62))
+
+- Create documentation pages for flow-editor and graphviz-rendering. (`docs`) ([#64](https://github.com/keller-mark/use-coordination/pull/64))
+
+
 ## 0.0.6
 
 ### Patch Changes
