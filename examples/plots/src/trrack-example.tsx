@@ -3,7 +3,6 @@ import {
   CoordinationProvider,
   defineConfig,
 } from '@use-coordination/all';
-import { z } from 'zod';
 import { 
   initializeTrrack,
   Registry,
@@ -15,10 +14,6 @@ import { D3BarPlotView } from './d3.js';
 import { VisxPlotView } from './visx.js';
 import { PlotlyBarPlotView } from './plotly.js';
 
-
-const pluginCoordinationTypes = {
-  barSelection: z.array(z.string()).nullable(),
-};
 
 const initialConfig = defineConfig({
   coordinationSpace: {
