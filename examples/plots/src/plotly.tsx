@@ -8,7 +8,7 @@ function PlotlyBarPlot(props: any) {
     barSelection,
     setBarSelection,
     width = 450,
-    height = 500,
+    height = 400,
     marginBottom = 60,
     marginLeft = 60,
     marginRight = 2,

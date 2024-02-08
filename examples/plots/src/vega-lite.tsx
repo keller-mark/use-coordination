@@ -81,7 +81,7 @@ function VegaLitePlot(props: any) {
       barSelection,
       setBarSelection,
       width = 400,
-      height = 500,
+      height = 400,
       marginRight = 90,
       marginBottom = 60,
     } = props;

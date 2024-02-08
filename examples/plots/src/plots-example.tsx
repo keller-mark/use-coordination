@@ -5,6 +5,7 @@ import {
   useCoordination,
   defineConfig,
 } from '@use-coordination/all';
+import { FlowEditor } from '@use-coordination/flow-editor';
 import { z } from 'zod';
 import { letterFrequency } from '@visx/mock-data';
 import { VegaLitePlotView } from './vega-lite.js';
@@ -14,7 +15,7 @@ import { PlotlyBarPlotView } from './plotly.js';
 
 
 const pluginCoordinationTypes = {
-  barSelection: z.array(z.string()),
+  barSelection: z.array(z.string()).nullable(),
 };
 
 const initialConfig = defineConfig({
@@ -48,7 +49,8 @@ const initialConfig = defineConfig({
   },
 });
 
-export function PlotsExample() {
+export function PlotsExample(props: any) {
+  const { showFlowEditor } = props;
   const [config, setConfig] = React.useState<any>(initialConfig);
   return (
     <>
@@ -59,7 +61,10 @@ export function PlotsExample() {
           flex-wrap: wrap;
         }
       `}</style>
-      <ZodErrorBoundary>
+      {showFlowEditor ? (
+        <FlowEditor config={config} onConfigChange={setConfig} />
+      ) : null}
+      <ZodErrorBoundary key={config.key}>
         <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
