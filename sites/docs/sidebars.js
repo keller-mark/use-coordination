@@ -24,6 +24,14 @@ module.exports = {
       type: 'doc',
       id: 'config-js',
     },
+    {
+      type: 'doc',
+      id: 'flow-editor',
+    },
+    {
+      type: 'doc',
+      id: 'graphviz-rendering',
+    }
   ],
   examples: [
     {

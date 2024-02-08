@@ -1,0 +1,29 @@
+---
+id: graphviz-rendering
+title: Graphviz rendering
+---
+
+## Overview
+
+We provide a function to render a `use-coordination` config to [Graphviz](https://graphviz.org/) [DOT](https://graphviz.org/doc/info/lang.html) format.
+The functionality described on this page is available in the sub-package `@use-coordination/graphviz-renderer` (and not contained in the main `use-coordination` package).
+
+
+To make this approach as modular as possible, we do not include the functionality to render the DOT-formatted string to an image.
+We leave the choice of Graphviz rendering engine to the user.
+
+## `toGraphviz(config)`
+
+#### Parameters:
+
+- `config` (`object`) - The config to render to DOT format.
+
+#### Returns:
+
+- Type: `string` - The DOT-formatted string.
+
+```js
+import { toGraphviz } from '@use-coordination/graphviz-renderer';
+```
+
+
