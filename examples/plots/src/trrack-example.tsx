@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React from 'react';
 import {
   CoordinationProvider,
   defineConfig,
@@ -7,7 +7,6 @@ import {
   useTrrack,
 } from '@use-coordination/trrack-helpers';
 import { ProvVis } from '@trrack/vis-react';
-import { cloneDeep } from 'lodash-es';
 import { letterFrequency } from '@visx/mock-data';
 import { VegaLitePlotView } from './vega-lite.js';
 import { D3BarPlotView } from './d3.js';
@@ -55,8 +54,7 @@ export function TrrackExample(props: any) {
     config: configToUse,
     onConfigChange: setConfig,
     onChangeCurrent,
-   } = useTrrack(initialConfig);
-
+  } = useTrrack(initialConfig);
   
   return (
     <>
