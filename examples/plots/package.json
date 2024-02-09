@@ -33,6 +33,8 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@tanstack/react-query": "^4.35.3",
+    "@use-coordination/trrack-helpers": "workspace:*",
+    "@trrack/vis-react": "^1.5.0",
     "lodash-es": "^4.17.21",
     "zod": "^3.21.4",
     "d3-array": "^2.4.0",

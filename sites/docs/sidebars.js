@@ -42,6 +42,7 @@ module.exports = {
         'examples',
         'plots-example',
         'flow-editor-example',
+        'trrack-example',
       ]
     }
   ]
