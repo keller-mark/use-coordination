@@ -1,4 +1,11 @@
 
+## 0.0.8
+
+### Patch Changes
+
+- Add example that integrates Trrack library for provenance tracking. Implement hook function in helper sub-package. (`@use-coordination/trrack-helpers`) ([#65](https://github.com/keller-mark/use-coordination/pull/65))
+
+
 ## 0.0.7
 
 ### Patch Changes
