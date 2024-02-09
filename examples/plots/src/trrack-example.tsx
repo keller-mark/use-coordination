@@ -7,6 +7,7 @@ import {
   initializeTrrack,
   Registry,
 } from '@trrack/core';
+import { ProvVis } from '@trrack/vis-react';
 import { cloneDeep } from 'lodash-es';
 import { letterFrequency } from '@visx/mock-data';
 import { VegaLitePlotView } from './vega-lite.js';
@@ -112,6 +113,18 @@ export function TrrackExample(props: any) {
           flex-wrap: wrap;
         }
       `}</style>
+      <ProvVis
+        root={trrack.root.id}
+        config={{
+          changeCurrent: (node: any) => {
+            trrack.to(node)
+            setShowTrrackConfig(true);
+            setConfigFromTrrack((prev: number) => prev + 1);
+          },
+        }}
+        nodeMap={trrack.graph.backend.nodes}
+        currentNode={trrack.current.id}
+      />
       <button onClick={onUndo} disabled={!canUndo}>Undo</button>
       <button onClick={onRedo} disabled={!canRedo}>Redo</button>
       <CoordinationProvider
