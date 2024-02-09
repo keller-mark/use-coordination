@@ -24,6 +24,7 @@
     { "path": "packages/constants-internal" },
     { "path": "packages/utils" },
     { "path": "packages/schemas" },
+    { "path": "packages/trrack-helpers" },
     { "path": "packages/graphviz-renderer" },
     { "path": "packages/flow-editor" },
     { "path": "packages/provider" },
