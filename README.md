@@ -9,6 +9,13 @@ A library for coordinated multiple views in React-based visualization systems.
 npm install use-coordination
 ```
 
+### Quick start
+
+- Define a coordination specification (i.e., representation of the coordinated state of your app) using the [declarative](https://keller-mark.github.io/use-coordination/docs/config-json/) or [imperative](https://keller-mark.github.io/use-coordination/docs/config-js/) API.
+- Get and set coordinated state via the `useCoordination` [hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/) within React components (i.e., views).
+- Wrap the views with a [coordination provider](https://keller-mark.github.io/use-coordination/docs/provider-components/).
+
+
 ### Basics
 
 In React components that define views, use the [hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/#usecoordination) from `use-coordination` to get and set values in the coordination space.
