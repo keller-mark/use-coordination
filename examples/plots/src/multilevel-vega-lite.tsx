@@ -1,7 +1,8 @@
 import React, { useMemo, useState, Suspense, useCallback } from 'react';
 import { clamp } from 'lodash-es';
-import { useCoordination, useCoordinationScopesL1, useCoordinationL1 } from '@use-coordination/all';
+import { useCoordinationScopesL1, useCoordinationL1 } from '@use-coordination/all';
 import { Vega, VisualizationSpec } from 'react-vega';
+import { useSelectBar, useUnselectBar } from './multilevel-example.js';
 
 const DATASET_NAME = 'table';
 const partialSpec = {
@@ -11,7 +12,7 @@ const partialSpec = {
       name: 'highlight',
       select: {
         type: 'point',
-        on: 'mouseover[event.shiftKey === false]',
+        on: 'mouseover',
       },
     },
     {
@@ -22,18 +23,9 @@ const partialSpec = {
       name: 'bar_select',
       select: {
         type: 'point',
-        on: 'click[event.shiftKey === false]',
+        on: 'click',
         fields: ['letter', 'isSelected'],
         empty: 'none',
-        toggle: false,
-      },
-    },
-    {
-      name: 'shift_bar_select',
-      select: {
-        type: 'point',
-        on: 'click[event.shiftKey]',
-        fields: ['letter', 'isSelected'],
         toggle: false,
       },
     },
@@ -56,6 +48,12 @@ const partialSpec = {
     fillOpacity: {
       field: 'isSelected',
       type: 'nominal',
+    },
+    color: {
+      field: 'letter',
+      type: 'nominal',
+      scale: null,
+      legend: null,
     },
     strokeWidth: {
       condition: [
@@ -80,6 +78,7 @@ function MultiLevelVegaLitePlot(props: any) {
       data,
       barSelection,
       setBarSelection,
+      barColors,
       width = 400,
       height = 400,
       marginRight = 90,
@@ -88,30 +87,32 @@ function MultiLevelVegaLitePlot(props: any) {
 
     const spec = useMemo(() => ({
       ...partialSpec,
+      encoding: {
+        ...partialSpec.encoding,
+        color: {
+          ...partialSpec.encoding.color,
+          scale: {
+            domain: Object.keys(barColors)
+              .concat(data.map((d: any) => d.letter).filter((letter: any) => !Object.keys(barColors).includes(letter))),
+            range: Object.values(barColors)
+              .concat(data.map((d: any) => d.letter).filter((letter: any) => !Object.keys(barColors).includes(letter)).map(() => 'lightblue')),
+          },
+        },
+      },
       width: clamp(width - marginRight, 10, Infinity),
       height: clamp(height - marginBottom, 10, Infinity),
       data: { name: DATASET_NAME },
-    }), [partialSpec]);
+    }), [partialSpec, barColors, data]);
 
     
     const handleSignal = useCallback((name: any, value: any) => {
       if (name === 'bar_select') {
-        setBarSelection(value.letter);
-      } else if (name === 'shift_bar_select') {
-        const newLetter = value.letter[0];
-        // If the bar is already selected, remove it from the selection.
-        // Otherwise, add it to the selection.
-        if (barSelection.includes(newLetter)) {
-          setBarSelection(barSelection.filter((letter: any) => letter !== newLetter));
-        } else {
-          setBarSelection([...barSelection, newLetter]);
-        }
+        setBarSelection(value.letter[0]);
       }
     }, [barSelection]);
 
     const signalListeners = useMemo(() => ({
       bar_select: handleSignal,
-      shift_bar_select: handleSignal
     }), [handleSignal]);
 
     const vegaComponent = useMemo(() => (
@@ -143,14 +144,18 @@ export function MultiLevelVegaLitePlotView(props: any) {
     data: dataProp,
   } = props;
 
+  const selectBar = useSelectBar();
+  const unselectBar = useUnselectBar();
+
   const selectionScopes = useCoordinationScopesL1(viewUid, "barSelection");
   const selectionCoordination = useCoordinationL1(viewUid, "barSelection", ["barColor", "barValue"]);
 
-  console.log(selectionScopes, selectionCoordination);
-
   const barSelection = selectionScopes.map(scope => selectionCoordination[0][scope].barValue);
-  const setBarSelection = () => {};
-
+  const barColors = Object.fromEntries(selectionScopes.map(scope => ([
+    selectionCoordination[0][scope].barValue,
+    selectionCoordination[0][scope].barColor,
+  ])));
+  
   const data = useMemo(() => {
     return dataProp.map((d: any) => ({
       ...d,
@@ -158,16 +163,20 @@ export function MultiLevelVegaLitePlotView(props: any) {
     }));
   }, [dataProp, barSelection]);
 
-  const selectBar = useSelectBarInMetaCoordinationScopes(); // TODO: define this hook and import
-  const handleSelectBar = useCallback((letter: string) => {
-    selectBar(viewUid, letter);
-  }, [selectBar]);
+  const setBarSelection = useCallback((letter: string) => {
+    if(!barSelection?.includes(letter)) {
+      selectBar(viewUid, letter);
+    } else {
+      unselectBar(viewUid, letter);
+    }
+  }, [selectBar, barSelection]);
 
   return (
     <MultiLevelVegaLitePlot
       data={data}
       barSelection={barSelection}
       setBarSelection={setBarSelection}
+      barColors={barColors}
     />
-  )
+  );
 }

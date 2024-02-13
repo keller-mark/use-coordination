@@ -1,19 +1,10 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { clamp, set } from 'lodash-es';
 import { scaleLinear } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import {
-  bin,
   max,
-  rollup as d3_rollup,
-  mean as d3_mean,
-  deviation as d3_deviation,
-  ascending as d3_ascending,
-  map as d3_map,
-  quantileSorted,
 } from 'd3-array';
-import { area as d3_area, curveBasis } from 'd3-shape';
 import { select } from 'd3-selection';
 import { useCoordination } from '@use-coordination/all';
 

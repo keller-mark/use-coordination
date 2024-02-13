@@ -7,12 +7,15 @@ import {
   META_COORDINATION_SCOPES,
   META_COORDINATION_SCOPES_BY,
   getMetaScope,
+  getMetaScopeBy,
   getNextScope,
+  useViewConfigStore,
 } from '@use-coordination/all';
 import { z } from 'zod';
 import { letterFrequency } from '@visx/mock-data';
 import { MultiLevelVegaLitePlotView } from './multilevel-vega-lite.js';
 import { MultiLevelD3BarPlotView } from './multilevel-d3.js';
+import { MultilevelColors } from './multilevel-colors.js';
 
 
 const pluginCoordinationTypes = {
@@ -28,7 +31,7 @@ const initialConfig = defineConfig({
       S1: "__dummy__",
     },
     barColor: {
-      C1: "red",
+      C1: "#ff0000",
     },
     barValue: {
       V1: "A",
@@ -63,11 +66,18 @@ const initialConfig = defineConfig({
         metaCoordinationScopes: "A",
         metaCoordinationScopesBy: "A"
       },
+    },
+    barColorPicker: {
+      coordinationScopes: {
+        metaCoordinationScopes: "A",
+        metaCoordinationScopesBy: "A"
+      },
     }
   },
 });
 
 function selectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, letter: string, coordinationSpace: any) {
+  console.log('coordinationScopesRaw', coordinationScopesRaw, letter, coordinationSpace);
   // Set up next values
   const nextSelectionScope = getNextScope(Object.keys(coordinationSpace.barSelection));
   const nextValueScope = getNextScope(Object.keys(coordinationSpace.barValue));
@@ -75,7 +85,7 @@ function selectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, let
 
   const nextSelectionValue = "__dummy__";
   const nextValue = letter;
-  const nextColor = "green";
+  const nextColor = "#ff00ff";
 
   // Get the current meta-coordination scopes for the bar selection type.
   const metaCoordinationScopes = coordinationSpace[META_COORDINATION_SCOPES];
@@ -84,7 +94,8 @@ function selectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, let
   let newMetaCoordinationScopes = metaCoordinationScopes;
   let newMetaCoordinationScopesBy = metaCoordinationScopesBy;
 
-  const selectionMetaScope = getMetaScope(coordinationScopesRaw, coordinationSpace, "barSelection");
+  const selectionMetaScope = getMetaScope(coordinationSpace, coordinationScopesRaw, "barSelection");
+  const byScope = coordinationScopesRaw.metaCoordinationScopesBy;
   // TODO: get the meta-info for values and colors independently?
 
   if(selectionMetaScope) {
@@ -97,6 +108,24 @@ function selectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, let
       [selectionMetaScope]: {
         ...metaCoordinationScopes?.[selectionMetaScope],
         barSelection: [...prevSelectionScopes, nextSelectionScope],
+      },
+    };
+
+    newMetaCoordinationScopesBy = {
+      ...metaCoordinationScopesBy,
+      [byScope]: {
+        ...metaCoordinationScopesBy?.[byScope],
+        barSelection: {
+          ...metaCoordinationScopesBy?.[selectionMetaScope]?.barSelection,
+          barValue: {
+            ...metaCoordinationScopesBy?.[selectionMetaScope]?.barSelection?.barValue,
+            [nextSelectionScope]: nextValueScope,
+          },
+          barColor: {
+            ...metaCoordinationScopesBy?.[selectionMetaScope]?.barSelection?.barColor,
+            [nextSelectionScope]: nextColorScope,
+          },
+        },
       },
     };
   }
@@ -120,23 +149,56 @@ function selectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, let
   };
 }
 
+function unselectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, letter: string, coordinationSpace: any) {
+  // TODO
+  return coordinationSpace;
+}
+
 function onCreateStore(set: Function) {
   return {
+    // Reference: https://github.com/vitessce/vitessce/blob/f4900f79f5fc2c1bdcc0ee42e1ba4b7026ab939a/packages/vit-s/src/state/hooks.js#L302
     selectBar: (viewUid: string, letter: string) => set((state: any) => {
       const { coordinationSpace, viewCoordination } = state.viewConfig;
       const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
+      const newConfig = {
+        ...state.viewConfig,
+        coordinationSpace: selectBarInMetaCoordinationScopesHelper(
+          coordinationScopesRaw,
+          letter,
+          coordinationSpace,
+        ),
+      };
+      console.log('newConfig', newConfig);
       return {
-        viewConfig: {
-          ...state.viewConfig,
-          coordinationSpace: selectBarInMetaCoordinationScopesHelper(
-            coordinationScopesRaw,
-            letter,
-            coordinationSpace,
-          ),
-        },
+        viewConfig: newConfig,
+      };
+    }),
+    unselectBar: (viewUid: string, letter: string) => set((state: any) => {
+      const { coordinationSpace, viewCoordination } = state.viewConfig;
+      const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
+      const newConfig = {
+        ...state.viewConfig,
+        coordinationSpace: unselectBarInMetaCoordinationScopesHelper(
+          coordinationScopesRaw,
+          letter,
+          coordinationSpace,
+        ),
+      };
+      console.log('newConfig', newConfig);
+      return {
+        viewConfig: newConfig,
       };
     }),
   };
+}
+
+// Reference: https://github.com/vitessce/vitessce/blob/f4900f79f5fc2c1bdcc0ee42e1ba4b7026ab939a/packages/vit-s/src/state/hooks.js#L1060
+export function useSelectBar() {
+  return useViewConfigStore((state: any) => state.selectBar);
+}
+
+export function useUnselectBar() {
+  return useViewConfigStore((state: any) => state.unselectBar);
 }
 
 export function MultiLevelPlotsExample(props: any) {
@@ -155,6 +217,7 @@ export function MultiLevelPlotsExample(props: any) {
           config={config}
           coordinationTypes={pluginCoordinationTypes}
           onConfigChange={setConfig}
+          onCreateStore={onCreateStore}
         >
           <div className="multiplot-container">
             <div className="plot-container">
@@ -164,6 +227,7 @@ export function MultiLevelPlotsExample(props: any) {
               <MultiLevelD3BarPlotView viewUid="d3" data={letterFrequency} />
             </div>
           </div>
+          <MultilevelColors viewUid="barColorPicker" />
         </ZodCoordinationProvider>
         <pre>
           {JSON.stringify(config, null, 2)}

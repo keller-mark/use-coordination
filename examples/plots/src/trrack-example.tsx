@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  CoordinationProvider,
   defineConfig,
   ZodCoordinationProvider,
   ZodErrorBoundary,

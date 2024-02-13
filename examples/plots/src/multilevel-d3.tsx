@@ -1,21 +1,14 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { clamp, set } from 'lodash-es';
 import { scaleLinear } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import {
-  bin,
   max,
-  rollup as d3_rollup,
-  mean as d3_mean,
-  deviation as d3_deviation,
-  ascending as d3_ascending,
-  map as d3_map,
-  quantileSorted,
 } from 'd3-array';
-import { area as d3_area, curveBasis } from 'd3-shape';
 import { select } from 'd3-selection';
-import { useCoordination } from '@use-coordination/all';
+import { useCoordinationScopesL1, useCoordinationL1 } from '@use-coordination/all';
+import { useSelectBar, useUnselectBar } from './multilevel-example.js';
 
 const scaleBand = vega_scale('band');
 
@@ -24,6 +17,7 @@ function MultiLevelD3BarPlot(props: any) {
     data,
     barSelection,
     setBarSelection,
+    barColors,
     width = 360,
     height = 400,
     marginBottom = 60,
@@ -79,11 +73,11 @@ function MultiLevelD3BarPlot(props: any) {
           .attr('width', xScale.bandwidth())
           .attr('height', (d: any) => innerHeight - yScale(d.frequency))
           .style('fill', (d: any) => {
-            const isSelected = barSelection?.includes(d.letter);
-            return isSelected ? 'rgba(0, 128, 0, 1.0)' : 'rgba(0, 128, 0, .3)';
+            const selectionColor = barColors?.[d.letter];
+            return selectionColor || 'rgba(0, 128, 0, .3)';
           })
           .on('click', (event: any, d: any) => {
-            setBarSelection([d.letter]);
+            setBarSelection(d.letter);
           });
     
     // Y-axis ticks
@@ -150,16 +144,33 @@ export function MultiLevelD3BarPlotView(props: any) {
     viewUid,
     data,
   } = props;
-  const [
-    { barSelection },
-    { setBarSelection },
-  ] = useCoordination(viewUid, ["barSelection"]);
+
+  const selectBar = useSelectBar();
+  const unselectBar = useUnselectBar();
+
+  const selectionScopes = useCoordinationScopesL1(viewUid, "barSelection");
+  const selectionCoordination = useCoordinationL1(viewUid, "barSelection", ["barColor", "barValue"]);
+
+  const barSelection = selectionScopes.map(scope => selectionCoordination[0][scope].barValue);
+  const barColors = Object.fromEntries(selectionScopes.map(scope => ([
+    selectionCoordination[0][scope].barValue,
+    selectionCoordination[0][scope].barColor,
+  ])));
+
+  const setBarSelection = useCallback((letter: string) => {
+    if(!barSelection?.includes(letter)) {
+      selectBar(viewUid, letter);
+    } else {
+      unselectBar(viewUid, letter);
+    }
+  }, [selectBar, barSelection]);
 
   return (
     <MultiLevelD3BarPlot
       data={data}
       barSelection={barSelection}
       setBarSelection={setBarSelection}
+      barColors={barColors}
     />
   )
 }
