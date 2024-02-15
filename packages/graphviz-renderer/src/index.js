@@ -27,13 +27,13 @@ function addViewScopeEdge(g, view, cType, cScope) {
 }
 
 // TODO: implement using TS
-export function toGraphviz(config) {
+export function toGraphviz(spec) {
   const g = new Digraph({
     [_.rankdir]: "LR",
   });  
   // TODO: handle meta-coordination, multi-coordination, and multi-level coordination.
 
-  Object.entries(config.coordinationSpace).forEach(([cType, cObj]) => {
+  Object.entries(spec.coordinationSpace).forEach(([cType, cObj]) => {
     const cTypeCluster = new Subgraph(`cluster_cType_${cType}`, {
       [_.label]: cType,
     });
@@ -44,7 +44,7 @@ export function toGraphviz(config) {
     });
   });
 
-  Object.entries(config.viewCoordination).forEach(([view, viewObj]) => {
+  Object.entries(spec.viewCoordination).forEach(([view, viewObj]) => {
     addViewNode(g, view);
 
     Object.entries(viewObj.coordinationScopes).forEach(([cType, cScope]) => {

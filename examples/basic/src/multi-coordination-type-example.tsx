@@ -113,7 +113,7 @@ const initialSpec = {
 };
 
 export function MultiCoordinationTypeExample() {
-  const [config, setConfig] = React.useState<any>(initialSpec);
+  const [spec, setSpec] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`
@@ -133,28 +133,28 @@ export function MultiCoordinationTypeExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={config}
+          config={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setSpec}
         >
           <div className="colorful-slider-container">
             <ColorfulSliderInputContainer viewUid="view1" />
-            <SelectScope config={config} viewUid="view1" onConfigChange={setConfig} cType="value" showType />
-            <SelectScope config={config} viewUid="view1" onConfigChange={setConfig} cType="color" showType />
+            <SelectScope config={spec} viewUid="view1" onSpecChange={setSpec} cType="value" showType />
+            <SelectScope config={spec} viewUid="view1" onSpecChange={setSpec} cType="color" showType />
           </div>
           <div className="colorful-slider-container">
             <ColorfulSliderInputContainer viewUid="view2" />
-            <SelectScope config={config} viewUid="view2" onConfigChange={setConfig} cType="value" showType />
-            <SelectScope config={config} viewUid="view2" onConfigChange={setConfig} cType="color" showType />
+            <SelectScope config={spec} viewUid="view2" onSpecChange={setSpec} cType="value" showType />
+            <SelectScope config={spec} viewUid="view2" onSpecChange={setSpec} cType="color" showType />
           </div>
           <div className="colorful-slider-container">
             <ColorfulSliderInputContainer viewUid="view3" />
-            <SelectScope config={config} viewUid="view3" onConfigChange={setConfig} cType="value" showType />
-            <SelectScope config={config} viewUid="view3" onConfigChange={setConfig} cType="color" showType />
+            <SelectScope config={spec} viewUid="view3" onSpecChange={setSpec} cType="value" showType />
+            <SelectScope config={spec} viewUid="view3" onSpecChange={setSpec} cType="color" showType />
           </div>
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

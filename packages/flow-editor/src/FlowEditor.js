@@ -188,7 +188,7 @@ export function FlowEditor(props) {
     width = 800,
     height = 600,
     config,
-    onConfigChange,
+    onSpecChange,
 
     coordinationTypesAddable = true,
     coordinationTypesEditable = false, // Allow coordination type names to be changed via text input
@@ -214,39 +214,39 @@ export function FlowEditor(props) {
   // Additional nodes that are added should not affect the initial positions.
   // Instead, the scales should be extended so that the new nodes do not affect the initial positions.
   const onAddScope = useCallback((cType) => {
-    onConfigChange({
+    onSpecChange({
       ...addScopeForType(config, cType),
       key: config.key + 1,
     });
   }, [config]);
 
   const onChangeCoordinationTypeName = useCallback((prevName, newName) => {
-    onConfigChange({
+    onSpecChange({
       ...changeCoordinationTypeName(config, prevName, newName),
       key: config.key + 1,
     });
-  }, [config, onConfigChange]);
+  }, [config, onSpecChange]);
 
   const onChangeCoordinationScopeName = useCallback((cType, prevName, newName) => {
-    onConfigChange({
+    onSpecChange({
       ...changeCoordinationScopeName(config, cType, prevName, newName),
       key: config.key + 1,
     });
-  }, [config, onConfigChange]);
+  }, [config, onSpecChange]);
 
   const onChangeCoordinationScopeValue = useCallback((cType, cScope, newValue) => {
-    onConfigChange({
+    onSpecChange({
       ...changeCoordinationScopeValue(config, cType, cScope, newValue),
       key: config.key + 1,
     });
-  }, [config, onConfigChange]);
+  }, [config, onSpecChange]);
 
   const onChangeViewUid = useCallback((prevUid, newUid) => {
-    onConfigChange({
+    onSpecChange({
       ...changeViewUid(config, prevUid, newUid),
       key: config.key + 1,
     });
-  }, [config, onConfigChange]);
+  }, [config, onSpecChange]);
 
   const [nodes, edges, idToInfoMappings] = useMemo(() => configToNodesAndEdges(
     config, width, height,
@@ -282,7 +282,7 @@ export function FlowEditor(props) {
 
   const onNodesChange = useCallback((changes) => {
     // This is called on node drag, select, and move.
-    // Changes should result in an updated config emitted via onConfigChange.
+    // Changes should result in an updated config emitted via onSpecChange.
 
     const { nodeIdToInfo } = idToInfoMappings;
     let newConfig = { ...config };
@@ -311,13 +311,13 @@ export function FlowEditor(props) {
         ...newConfig,
         key: newConfig.key + 1,
       };
-      onConfigChange(newConfig);
+      onSpecChange(newConfig);
     }
-  }, [config, onConfigChange, idToInfoMappings]);
+  }, [config, onSpecChange, idToInfoMappings]);
 
   const onEdgesChange = useCallback((changes) => {
     // This is called on edge select and remove.
-    // Changes should result in an updated config emitted via onConfigChange.
+    // Changes should result in an updated config emitted via onSpecChange.
     const { edgeIdToInfo } = idToInfoMappings;
     let newConfig = { ...config };
     let shouldEmit = false;
@@ -341,9 +341,9 @@ export function FlowEditor(props) {
         ...newConfig,
         key: newConfig.key + 1,
       };
-      onConfigChange(newConfig);
+      onSpecChange(newConfig);
     }
-  }, [config, onConfigChange, idToInfoMappings]);
+  }, [config, onSpecChange, idToInfoMappings]);
 
   const onConnect = useCallback((connection) => {
     // When a connection line is completed and two nodes are
@@ -367,16 +367,16 @@ export function FlowEditor(props) {
         ),
         key: config.key + 1,
       };
-      onConfigChange(newConfig);
+      onSpecChange(newConfig);
     }
-  }, [config, onConfigChange, idToInfoMappings]);
+  }, [config, onSpecChange, idToInfoMappings]);
 
   const onAddType = useCallback(() => {
     const newConfig = {
       ...addCoordinationType(config),
       key: config.key + 1,
     };
-    onConfigChange(newConfig);
+    onSpecChange(newConfig);
   }, [config]);
 
   const onAddView = useCallback(() => {
@@ -384,7 +384,7 @@ export function FlowEditor(props) {
       ...addView(config),
       key: config.key + 1,
     };
-    onConfigChange(newConfig);
+    onSpecChange(newConfig);
   }, [config]);
 
   return (

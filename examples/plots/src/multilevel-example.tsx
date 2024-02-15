@@ -256,7 +256,7 @@ export function MultiLevelPlotsExample() {
         <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setConfig}
           onCreateStore={onCreateStore}
         >
           <div className="multiplot-container">

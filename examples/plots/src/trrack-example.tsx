@@ -56,8 +56,8 @@ export function TrrackExample(props: any) {
     onRedo,
     canUndo,
     canRedo,
-    config: configToUse,
-    onConfigChange: setConfig,
+    config: specToUse,
+    onSpecChange: setSpec,
     onChangeCurrent,
   } = useTrrack(initialSpec);
   
@@ -74,12 +74,12 @@ export function TrrackExample(props: any) {
         <div>
           <button onClick={onUndo} disabled={!canUndo}>Undo</button>
           <button onClick={onRedo} disabled={!canRedo}>Redo</button>
-          <ZodErrorBoundary key={configToUse.key}>
+          <ZodErrorBoundary key={specToUse.key}>
             <ZodCoordinationProvider
-              config={configToUse}
+              config={specToUse}
               coordinationTypes={pluginCoordinationTypes}
-              onConfigChange={(newConfig: any) => {
-                setConfig(newConfig);
+              onSpecChange={(newConfig: any) => {
+                setSpec(newConfig);
               }}
               remountOnKeyChange={false}
               emitInitialSpecChange={false}
@@ -101,7 +101,7 @@ export function TrrackExample(props: any) {
             </ZodCoordinationProvider>
           </ZodErrorBoundary>
           <pre>
-            {JSON.stringify(configToUse, null, 2)}
+            {JSON.stringify(specToUse, null, 2)}
           </pre>
         </div>
         <div>

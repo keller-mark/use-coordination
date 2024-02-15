@@ -9,9 +9,9 @@ import { CallbackPublisherProps } from './prop-types.js';
  */
 export default function CallbackPublisher(props: CallbackPublisherProps) {
   const {
-    onConfigChange,
+    onSpecChange,
     validater,
-    validateOnConfigChange,
+    validateOnSpecChange,
   } = props;
 
   const storeApi = useCoordinationStoreApi();
@@ -23,17 +23,17 @@ export default function CallbackPublisher(props: CallbackPublisherProps) {
   useEffect(() => storeApi.subscribe(
     // The function to run on each publish.
     (spec: any) => {
-      if (validateOnConfigChange && spec && validater) {
+      if (validateOnSpecChange && spec && validater) {
         validater(spec);
       }
-      if (onConfigChange && spec) {
-        onConfigChange(spec);
+      if (onSpecChange && spec) {
+        onSpecChange(spec);
       }
     },
     // The function to specify which part of the store
     // we want to subscribe to.
     (state: any) => state.spec,
-  ), [onConfigChange, validater, validateOnConfigChange, storeApi]);
+  ), [onSpecChange, validater, validateOnSpecChange, storeApi]);
 
   // Render nothing.
   return null;

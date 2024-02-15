@@ -11,7 +11,7 @@ const baseCoordinationTypes = {
   [META_COORDINATION_SCOPES_BY]: z.record(z.any()).nullable(),
 };
 
-function buildConfigSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
+function buildSpecSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
   return z.object({
     key: z.union([z.string(), z.number()]).optional(),
     coordinationSpace: coordinationSpace
@@ -35,7 +35,7 @@ function buildConfigSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
 }
 
 // For usage in documentation and JSON schema generation.
-export const genericConfigSchema = buildConfigSchemaAux(
+export const genericSpecSchema = buildSpecSchemaAux(
   // TODO: Special meta-coordination types should be included.
   z.record(
     // Coordination Type
@@ -58,12 +58,12 @@ export const genericConfigSchema = buildConfigSchemaAux(
  * @param coordinationTypes
  * @returns The Zod schema.
  */
-export function buildConfigSchema<
+export function buildSpecSchema<
   T extends Record<string, z.ZodTypeAny>,
 >(
   coordinationTypes: T,
 ) {
-  return buildConfigSchemaAux(
+  return buildSpecSchemaAux(
     z.object(
       // Wrap each value schema in z.record()
       fromEntries(

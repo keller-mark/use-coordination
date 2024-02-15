@@ -12,7 +12,7 @@ import { ViewWrapperProps } from './prop-types.js';
  */
 export default function ViewWrapper(props: ViewWrapperProps) {
   const {
-    configKey,
+    specKey,
     config,
     children,
   } = props;
@@ -27,7 +27,7 @@ export default function ViewWrapper(props: ViewWrapperProps) {
   useEffect(() => {
     setSpec(config);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey]);
+  }, [specKey]);
 
   return children as JSX.Element;
 }

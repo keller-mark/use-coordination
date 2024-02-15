@@ -51,7 +51,7 @@ const initialSpec = defineSpec({
 
 export function PlotsExample(props: any) {
   const { showFlowEditor } = props;
-  const [config, setConfig] = React.useState<any>(initialSpec);
+  const [spec, setSpec] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`
@@ -62,13 +62,13 @@ export function PlotsExample(props: any) {
         }
       `}</style>
       {showFlowEditor ? (
-        <FlowEditor config={config} onConfigChange={setConfig} />
+        <FlowEditor config={spec} onSpecChange={setSpec} />
       ) : null}
-      <ZodErrorBoundary key={config.key}>
+      <ZodErrorBoundary key={spec.key}>
         <ZodCoordinationProvider
-          config={config}
+          config={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setSpec}
         >
           <div className="multiplot-container">
             <div className="plot-container">
@@ -86,7 +86,7 @@ export function PlotsExample(props: any) {
           </div>
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

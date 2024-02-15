@@ -1,8 +1,8 @@
 import React from 'react';
 import CodeBlock from "@theme/CodeBlock";
-import jsonSchema from '@use-coordination/json-schema/dist/config.schema.json';
+import jsonSchema from '@use-coordination/json-schema/dist/spec.schema.json';
 
-export function GenericConfigJsonSchema(props) {
+export function GenericSpecJsonSchema(props) {
   return (
     <CodeBlock
       language="jsx"

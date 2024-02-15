@@ -5,7 +5,7 @@ export function SelectScope(props: any) {
     config,
     viewUid,
     cType = "sliderValue",
-    onConfigChange,
+    onSpecChange,
     showType = false,
   } = props;
 
@@ -27,7 +27,7 @@ export function SelectScope(props: any) {
         },
       },
     };
-    onConfigChange(newConfig)
+    onSpecChange(newConfig)
   }
 
   return (
@@ -47,7 +47,7 @@ export function MetaSelectScope(props: any) {
       config,
       viewUid,
       cType = "sliderValue",
-      onConfigChange,
+      onSpecChange,
     } = props;
     
     const allMetaScopes = Object.keys(config.coordinationSpace["metaCoordinationScopes"]);
@@ -72,7 +72,7 @@ export function MetaSelectScope(props: any) {
           },
         },
       };
-      onConfigChange(newConfig)
+      onSpecChange(newConfig)
     }
       
     // Update the meta-scope for the view.
@@ -92,7 +92,7 @@ export function MetaSelectScope(props: any) {
           },
         },
       };
-      onConfigChange(newConfig)
+      onSpecChange(newConfig)
     }
   
     return (

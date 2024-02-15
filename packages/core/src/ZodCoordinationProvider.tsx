@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import { isEqual } from 'lodash-es';
-import { buildConfigSchema } from '@use-coordination/schemas';
+import { buildSpecSchema } from '@use-coordination/schemas';
 import { CoordinationProvider } from './CoordinationProvider.js';
 import {
   logConfig,
@@ -10,9 +10,9 @@ import { ZodCoordinationProviderProps, CmvConfigObject } from './prop-types.js';
 export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
   const {
     config,
-    onConfigChange,
+    onSpecChange,
     validateConfig = true,
-    validateOnConfigChange = false,
+    validateOnSpecChange = false,
     coordinationTypes: coordinationTypesProp,
     initializer,
     children,
@@ -29,7 +29,7 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
   // If config.key exists, then use it for hook dependencies to detect changes
   // (controlled component case). If not, then use the config object itself
   // and assume the un-controlled component case.
-  const configKey = useMemo(() => {
+  const specKey = useMemo(() => {
     if (config?.key) {
       return config.key;
     }
@@ -38,7 +38,7 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
     return JSON.stringify(config);
   }, [config]);
 
-  const pluginSpecificConfigSchema = useMemo(() => buildConfigSchema(
+  const pluginSpecificSpecSchema = useMemo(() => buildSpecSchema(
     coordinationTypes,
   ), [coordinationTypes]);
 
@@ -54,38 +54,38 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
     }
     // Perform second round of parsing against plugin-specific config schema.
     // TODO: use type from Zod infer and generics.
-    const parsedConfig = pluginSpecificConfigSchema.parse(config) as CmvConfigObject;
+    const parsedConfig = pluginSpecificSpecSchema.parse(config) as CmvConfigObject;
     logConfig(parsedConfig, 'ZodCoordinationProvider parsed config');
     return parsedConfig;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, pluginSpecificConfigSchema, validateConfig]);
+  }, [specKey, pluginSpecificSpecSchema, validateConfig]);
 
 
   // Emit the upgraded/initialized view config
-  // to onConfigChange if necessary.
+  // to onSpecChange if necessary.
   useEffect(() => {
-    if (!isEqual(validConfig, config) && onConfigChange && emitInitialSpecChange) {
-      onConfigChange(validConfig);
+    if (!isEqual(validConfig, config) && onSpecChange && emitInitialSpecChange) {
+      onSpecChange(validConfig);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, validConfig, onConfigChange]);
+  }, [specKey, validConfig, onSpecChange]);
 
   const validater = useCallback((viewConfig: any) => {
     // Need the try-catch here since Zustand will actually
     // just catch and ignore errors in its subscription callbacks.
     try {
-      pluginSpecificConfigSchema.parse(viewConfig);
+      pluginSpecificSpecSchema.parse(viewConfig);
     } catch (e) {
       console.error(e);
     }
     // Do nothing if successful.
-  }, [pluginSpecificConfigSchema]);
+  }, [pluginSpecificSpecSchema]);
 
   return (
     <CoordinationProvider
       config={validConfig}
-      onConfigChange={onConfigChange}
-      validateOnConfigChange={validateOnConfigChange}
+      onSpecChange={onSpecChange}
+      validateOnSpecChange={validateOnSpecChange}
       validater={validater}
       initializer={initializer}
       onCreateStore={onCreateStore}

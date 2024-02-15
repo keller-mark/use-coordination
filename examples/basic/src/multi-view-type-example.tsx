@@ -117,23 +117,23 @@ export function MultiViewTypeExample() {
         <ZodCoordinationProvider
           config={config}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setConfig}
         >
           <div className="slider-container">
             <SliderInputContainer viewUid="view1" />
-            <SelectScope config={config} viewUid="view1" onConfigChange={setConfig} cType="value" />
+            <SelectScope config={config} viewUid="view1" onSpecChange={setConfig} cType="value" />
           </div>
           <div className="slider-container">
             <NumericInputContainer viewUid="view2" />
-            <SelectScope config={config} viewUid="view2" onConfigChange={setConfig} cType="value" />
+            <SelectScope config={config} viewUid="view2" onSpecChange={setConfig} cType="value" />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="view3" />
-            <SelectScope config={config} viewUid="view3" onConfigChange={setConfig} cType="value" />
+            <SelectScope config={config} viewUid="view3" onSpecChange={setConfig} cType="value" />
           </div>
           <div className="slider-container">
             <NumericInputContainer viewUid="view4" />
-            <SelectScope config={config} viewUid="view4" onConfigChange={setConfig} cType="value" />
+            <SelectScope config={config} viewUid="view4" onSpecChange={setConfig} cType="value" />
           </div>
         </ZodCoordinationProvider>
         <pre>

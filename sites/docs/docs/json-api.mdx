@@ -3,7 +3,7 @@ id: config-json
 title: Configs via JSON
 slug: /config-json
 ---
-import { GenericConfigJsonSchema } from '../src/pages/_JsonSchema.js';
+import { GenericSpecJsonSchema } from '../src/pages/_JsonSchema.js';
 
 The CMV config stores the coordination space (i.e., the state of the views) and defines which views and properties are coordinated.
 
@@ -15,7 +15,7 @@ The CMV config stores the coordination space (i.e., the state of the views) and 
 
 A unique ID for the config. Optional.
 
-Intended to be used in situations where `<CoordinationProvider/>` is used as a controlled component (i.e., a parent component is the source of truth for the config prop and likely also uses the `onConfigChange` prop).
+Intended to be used in situations where `<CoordinationProvider/>` is used as a controlled component (i.e., a parent component is the source of truth for the config prop and likely also uses the `onSpecChange` prop).
 For example, if a change in `config.key` is detected, the configuration will be re-validated (which might not occur on other changes to config for performance reasons). 
 
 ### `coordinationSpace`
@@ -79,14 +79,14 @@ The types of values that each coordination scope can take can be as simple as a 
         <li>No restrictions on coordination type value schemas</li>
         <li>No restrictions on which coordination scopes can be mapped to views based on their presence in the coordination space</li>
     </ul>
-    <GenericConfigJsonSchema/>
+    <GenericSpecJsonSchema/>
   </div>
 </details>
 
 The JSON schema is published to NPM via `@use-coordination/json-schema`:
 
 ```js
-import jsonSchema from '@use-coordination/json-schema/dist/config.schema.json';
+import jsonSchema from '@use-coordination/json-schema/dist/spec.schema.json';
 ```
 
 ## Zod schema
@@ -94,9 +94,9 @@ import jsonSchema from '@use-coordination/json-schema/dist/config.schema.json';
 To enforce the coordination values for particular coordination types, we can build a [Zod](https://zod.dev) schema:
 
 ```js
-import { buildConfigSchema, z } from '@use-coordination/schema';
+import { buildSpecSchema, z } from '@use-coordination/schema';
 
-const configSchema = buildConfigSchema({
+const specSchema = buildSpecSchema({
     someCoordinationType: z.number(),
     someOtherCoordinationType: z.array(z.string()),
 });
@@ -105,18 +105,18 @@ const configSchema = buildConfigSchema({
 ## Integration with type system
 
 
-We provide a helper function that checks the config using TypeScript.
-This can be helpful to check that coordination types and scopes used in the config are valid.
+We provide a helper function that checks the specification using TypeScript.
+This can be helpful to check that coordination types and scopes used in the specification are valid.
 
-### `defineSpec(config)`
+### `defineSpec(spec)`
 
 #### Parameters
 
-- `config` (`object`) - A JSON object representing a config.
+- `spec` (`object`) - A JSON object representing a specification.
 
 #### Returns
 
-- `object` - The same `config` object that was passed in.
+- `object` - The same `spec` object that was passed in.
 
 
 This checks that the coordination types and scopes used within the `viewCoordination` object are valid due to their presence in the `coordinationSpace`.

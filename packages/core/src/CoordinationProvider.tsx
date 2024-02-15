@@ -10,8 +10,8 @@ import { CoordinationProviderProps } from './prop-types.js';
 export function CoordinationProvider(props: CoordinationProviderProps) {
   const {
     config,
-    onConfigChange,
-    validateOnConfigChange = false,
+    onSpecChange,
+    validateOnSpecChange = false,
     validater,
     initializer,
     children,
@@ -23,7 +23,7 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
   // If config.key exists, then use it for hook dependencies to detect changes
   // (controlled component case). If not, then use the config object itself
   // and assume the un-controlled component case.
-  const configKey = useMemo(() => {
+  const specKey = useMemo(() => {
     if (config?.key) {
       return config.key;
     }
@@ -34,13 +34,13 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
 
 
   // Emit the upgraded/initialized view config
-  // to onConfigChange if necessary.
+  // to onSpecChange if necessary.
   useEffect(() => {
-    if (onConfigChange && emitInitialSpecChange) {
-      onConfigChange(config);
+    if (onSpecChange && emitInitialSpecChange) {
+      onSpecChange(config);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, onConfigChange, emitInitialSpecChange]);
+  }, [specKey, onSpecChange, emitInitialSpecChange]);
 
   // Initialize the view config and loaders in the global state.
   const createCoordinationStoreClosure = useCallback(() => {
@@ -49,20 +49,20 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
       : config;
     return createCoordinationStore(initializedConfig, onCreateStore);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, initializer, onCreateStore]);
+  }, [specKey, initializer, onCreateStore]);
 
   return (
     /* @ts-ignore */
-    <CoordinationStoreProvider createStore={createCoordinationStoreClosure} {...(remountOnKeyChange ? ({ key: configKey }) : {})}>
+    <CoordinationStoreProvider createStore={createCoordinationStoreClosure} {...(remountOnKeyChange ? ({ key: specKey }) : {})}>
         <ViewWrapper
-          configKey={configKey}
+          specKey={specKey}
           config={config}
         >
           {children}
         </ViewWrapper>
         <CallbackPublisher
-          onConfigChange={onConfigChange}
-          validateOnConfigChange={validateOnConfigChange}
+          onSpecChange={onSpecChange}
+          validateOnSpecChange={validateOnSpecChange}
           validater={validater}
         />
     </CoordinationStoreProvider>

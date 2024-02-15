@@ -236,8 +236,7 @@ export function getParameterScopeBy(
  */
 export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateStore: Function | undefined) => create(set => ({
   // State:
-  // The spec is an object which must conform to the schema
-  // found in src/schemas/config.schema.json.
+  // The spec is an object which must conform to the schema.
   spec: initialSpec,
   // Store the initial config so that its values can be used for resetting.
   initialSpec: cloneDeep(initialSpec),
