@@ -1,0 +1,99 @@
+---
+id: usage
+title: Basic usage
+---
+
+## Installation
+
+```sh
+npm install use-coordination
+```
+
+## Quick start
+
+- Define a coordination specification (i.e., representation of the coordinated state of your app) using the [declarative](../spec-json/) or [imperative](../spec-js/) API.
+- Get and set coordinated state via the `useCoordination` [hooks](../view-hooks/) within React components (i.e., views).
+- Wrap the views with a [coordination provider](../provider-components/).
+
+
+## Basics
+
+In React components that define views, use the [hooks](../view-hooks/#usecoordination) from `use-coordination` to get and set values in the coordination space.
+For example, if we want our view to be coordinated on a coordination type called `myValue`:
+
+```js
+import React from 'react';
+import { useCoordination } from 'use-coordination';
+
+function SomeViewType(props) {
+  const { viewUid } = props;
+  const [{
+    myValue,
+  }, {
+    setMyValue,
+  }] = useCoordination(viewUid, ['myValue']);
+
+  return (
+    <input
+      type="number"
+      value={myValue}
+      onChange={e => setMyValue(e.target.value)}
+    />
+  );
+}
+```
+
+Then, wrap the app (or a parent component of all views you would like to coordinate) in a [CoordinationProvider](../provider-components/#coordinationprovider) (or [ZodCoordinationProvider](../provider-components/#zodcoordinationprovider)).
+Pass a `spec` to the provider to set the initial state of the coordination space and the view-coordination scope mappings.
+
+
+```js
+import React from 'react';
+import { CoordinationProvider } from 'use-coordination';
+
+// ...
+
+// Alternatively, use the object-oriented API.
+const initialSpec = defineSpec({
+  coordinationSpace: {
+    myValue: {
+      myValueScope1: 99,
+      myValueScope2: 20,
+    },
+  },
+  viewCoordination: {
+    v1: {
+      coordinationScopes: {
+        myValue: 'myValueScope1',
+      },
+    },
+    v2: {
+      coordinationScopes: {
+        myValue: 'myValueScope1',
+      },
+    },
+    v3: {
+      coordinationScopes: {
+        myValue: 'myValueScope2',
+      },
+    },
+  },
+});
+
+function MyApp(props) {
+  return (
+    <CoordinationProvider spec={initialSpec}>
+      <SomeViewType viewUid="v1" />
+      <SomeViewType viewUid="v2" />
+      <AnotherViewType viewUid="v3" />
+    </CoordinationProvider>
+  );
+}
+```
+
+To learn more, please see these documentation pages:
+- [List of available hooks](../view-hooks/)
+- [List of available providers](../provider-components/)
+- [JSON schema](../spec-json/)
+- [Object-oriented spec API](../spec-js/)
+
