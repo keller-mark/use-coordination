@@ -49,7 +49,7 @@ Pass a `spec` to the provider to set the initial state of the coordination space
 
 ```js
 import React from 'react';
-import { CoordinationProvider } from 'use-coordination';
+import { CoordinationProvider, defineSpec } from 'use-coordination';
 
 // ...
 
