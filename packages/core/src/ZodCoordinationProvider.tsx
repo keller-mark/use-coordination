@@ -11,7 +11,7 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
   const {
     spec,
     onSpecChange,
-    validateConfig = true,
+    validateSpec = true,
     validateOnSpecChange = false,
     coordinationTypes: coordinationTypesProp,
     initializer,
@@ -49,7 +49,7 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
   // - Initialize (based on initStrategy).
   const validConfig = useMemo(() => {
     logSpec(spec, 'ZodCoordinationProvider input spec');
-    if (!validateConfig) {
+    if (!validateSpec) {
       return spec;
     }
     // Perform second round of parsing against plugin-specific spec schema.
@@ -58,7 +58,7 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
     logSpec(parsedConfig, 'ZodCoordinationProvider parsed spec');
     return parsedConfig;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [specKey, pluginSpecificSpecSchema, validateConfig]);
+  }, [specKey, pluginSpecificSpecSchema, validateSpec]);
 
 
   // Emit the upgraded/initialized spec

@@ -47,7 +47,7 @@ export type ZodCoordinationProviderProps = {
     onSpecChange?: OnSpecChangeFunction;
     initializer?: InitializerFunction;
     validateOnSpecChange?: boolean;
-    validateConfig?: boolean;
+    validateSpec?: boolean;
     coordinationTypes: Record<string, z.ZodTypeAny>;
     children: ReactNode;
     onCreateStore?: OnCreateStoreFunction;
