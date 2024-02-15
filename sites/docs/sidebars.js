@@ -18,11 +18,11 @@ module.exports = {
     },
     {
       type: 'doc',
-      id: 'config-json',
+      id: 'spec-json',
     },
     {
       type: 'doc',
-      id: 'config-js',
+      id: 'spec-js',
     },
     {
       type: 'doc',

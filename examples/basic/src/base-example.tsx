@@ -40,7 +40,7 @@ const pluginCoordinationTypes = {
   sliderValue: z.number(),
 };
 
-const initialConfig = {
+const initialSpec = {
   key: 1,
   coordinationSpace: {
     "sliderValue": {
@@ -69,7 +69,7 @@ const initialConfig = {
 };
 
 export function BaseExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [spec, setSpec] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`
@@ -80,25 +80,25 @@ export function BaseExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={config}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setSpec}
         >
           <div className="slider-container">
             <SliderInputContainer viewUid="slider1" />
-            <SelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
+            <SelectScope spec={spec} viewUid="slider1" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider2" />
-            <SelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
+            <SelectScope spec={spec} viewUid="slider2" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider3" />
-            <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
+            <SelectScope spec={spec} viewUid="slider3" onSpecChange={setSpec} />
           </div>
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

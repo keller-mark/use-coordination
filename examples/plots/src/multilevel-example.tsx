@@ -2,13 +2,13 @@ import React from 'react';
 import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
-  defineConfig,
+  defineSpec,
   META_COORDINATION_SCOPES,
   META_COORDINATION_SCOPES_BY,
   getMetaScope,
   getMetaScopeBy,
   createPrefixedGetNextScopeNumeric,
-  useViewConfigStore,
+  useCoordinationStore,
 } from '@use-coordination/all';
 import { z } from 'zod';
 import { letterFrequency } from '@visx/mock-data';
@@ -16,7 +16,7 @@ import { MultiLevelVegaLitePlotView } from './multilevel-vega-lite.js';
 import { MultiLevelD3BarPlotView } from './multilevel-d3.js';
 import { MultilevelColors } from './multilevel-colors.js';
 
-// Define prefixed next-scope functions for improved readability of the config.
+// Define prefixed next-scope functions for improved readability of the spec.
 const getNextSelectionScope = createPrefixedGetNextScopeNumeric("S");
 const getNextColorScope = createPrefixedGetNextScopeNumeric("C");
 
@@ -25,7 +25,7 @@ const pluginCoordinationTypes = {
   barColor: z.string().nullable(),
 };
 
-const initialConfig = defineConfig({
+const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     barSelection: {
@@ -199,10 +199,10 @@ function unselectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, l
 function onCreateStore(set: Function) {
   return {
     selectBar: (viewUid: string, letter: string) => set((state: any) => {
-      const { coordinationSpace, viewCoordination } = state.viewConfig;
+      const { coordinationSpace, viewCoordination } = state.spec;
       const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
-      const newConfig = {
-        ...state.viewConfig,
+      const newSpec = {
+        ...state.spec,
         coordinationSpace: selectBarInMetaCoordinationScopesHelper(
           coordinationScopesRaw,
           letter,
@@ -210,14 +210,14 @@ function onCreateStore(set: Function) {
         ),
       };
       return {
-        viewConfig: newConfig,
+        spec: newSpec,
       };
     }),
     unselectBar: (viewUid: string, letter: string) => set((state: any) => {
-      const { coordinationSpace, viewCoordination } = state.viewConfig;
+      const { coordinationSpace, viewCoordination } = state.spec;
       const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
-      const newConfig = {
-        ...state.viewConfig,
+      const newSpec = {
+        ...state.spec,
         coordinationSpace: unselectBarInMetaCoordinationScopesHelper(
           coordinationScopesRaw,
           letter,
@@ -225,7 +225,7 @@ function onCreateStore(set: Function) {
         ),
       };
       return {
-        viewConfig: newConfig,
+        spec: newSpec,
       };
     }),
   };
@@ -234,15 +234,15 @@ function onCreateStore(set: Function) {
 // Export custom hook functions that expose the custom store actions
 // that were defined in the `onCreateStore` function.
 export function useSelectBar() {
-  return useViewConfigStore((state: any) => state.selectBar);
+  return useCoordinationStore((state: any) => state.selectBar);
 }
 
 export function useUnselectBar() {
-  return useViewConfigStore((state: any) => state.unselectBar);
+  return useCoordinationStore((state: any) => state.unselectBar);
 }
 
 export function MultiLevelPlotsExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [spec, setSpec] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`
@@ -252,11 +252,11 @@ export function MultiLevelPlotsExample() {
           flex-wrap: wrap;
         }
       `}</style>
-      <ZodErrorBoundary key={config.key}>
+      <ZodErrorBoundary key={spec.key}>
         <ZodCoordinationProvider
-          config={config}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setSpec}
           onCreateStore={onCreateStore}
         >
           <div className="multiplot-container">
@@ -270,7 +270,7 @@ export function MultiLevelPlotsExample() {
           <MultilevelColors viewUid="barColorPicker" />
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

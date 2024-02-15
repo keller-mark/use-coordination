@@ -11,7 +11,7 @@ npm install use-coordination
 
 ### Quick start
 
-- Define a coordination specification (i.e., representation of the coordinated state of your app) using the [declarative](https://keller-mark.github.io/use-coordination/docs/config-json/) or [imperative](https://keller-mark.github.io/use-coordination/docs/config-js/) API.
+- Define a coordination specification (i.e., representation of the coordinated state of your app) using the [declarative](https://keller-mark.github.io/use-coordination/docs/spec-json/) or [imperative](https://keller-mark.github.io/use-coordination/docs/spec-js/) API.
 - Get and set coordinated state via the `useCoordination` [hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/) within React components (i.e., views).
 - Wrap the views with a [coordination provider](https://keller-mark.github.io/use-coordination/docs/provider-components/).
 
@@ -44,7 +44,7 @@ function SomeViewType(props) {
 ```
 
 Then, wrap the app (or a parent component of all views you would like to coordinate) in a [CoordinationProvider](https://keller-mark.github.io/use-coordination/docs/provider-components/#coordinationprovider) (or [ZodCoordinationProvider](https://keller-mark.github.io/use-coordination/docs/provider-components/#zodcoordinationprovider)).
-Pass a config to the provider to set the initial state of the coordination space and the view-coordination scope mappings.
+Pass a `spec` to the provider to set the initial state of the coordination space and the view-coordination scope mappings.
 
 
 ```js
@@ -54,7 +54,7 @@ import { CoordinationProvider } from 'use-coordination';
 // ...
 
 // Alternatively, use the object-oriented API.
-const initialConfig = defineConfig({
+const initialSpec = defineSpec({
   coordinationSpace: {
     myValue: {
       myValueScope1: 99,
@@ -82,7 +82,7 @@ const initialConfig = defineConfig({
 
 function MyApp(props) {
   return (
-    <CoordinationProvider config={initialConfig}>
+    <CoordinationProvider spec={initialSpec}>
       <SomeViewType viewUid="v1" />
       <SomeViewType viewUid="v2" />
       <AnotherViewType viewUid="v3" />
@@ -94,8 +94,8 @@ function MyApp(props) {
 To learn more, please visit the [documentation](https://keller-mark.github.io/use-coordination/):
 - [List of available hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/)
 - [List of available providers](https://keller-mark.github.io/use-coordination/docs/provider-components/)
-- [JSON schema](https://keller-mark.github.io/use-coordination/docs/config-json/)
-- [Object-oriented config API](https://keller-mark.github.io/use-coordination/docs/config-js/)
+- [JSON schema](https://keller-mark.github.io/use-coordination/docs/spec-json/)
+- [Object-oriented spec API](https://keller-mark.github.io/use-coordination/docs/spec-js/)
 
 
 ## Development

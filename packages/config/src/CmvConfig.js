@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
-import { fromEntries, getNextScope, createPrefixedGetNextScopeNumeric } from '@use-coordination/utils';
+import { getNextScope, createPrefixedGetNextScopeNumeric } from '@use-coordination/utils';
 
 function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationScopesBy) {
   // Set this.coordinationScopes and this.coordinationScopesBy by recursion on `scopes`.
@@ -139,7 +139,7 @@ function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationS
 }
 
 /**
- * Class representing a view within a Vitessce layout.
+ * Class representing a view.
  */
 export class CmvConfigView {
   /**
@@ -337,15 +337,13 @@ export class CmvConfigMetaCoordinationScope {
 }
 
 /**
- * Class representing a Vitessce view config.
+ * Class representing a coordination spec.
  */
 export class CmvConfig {
   /**
-   * Construct a new view config instance.
+   * Construct a new spec instance.
    * @param {object} params An object with named arguments.
-   * @param {string} params.schemaVersion The view config schema version. Required.
-   * @param {string} params.name A name for the config. Optional.
-   * @param {string|undefined} params.description A description for the config. Optional.
+   * @param {string|number|undefined} params.key The spec key.
    */
   constructor(key) {
     this.config = {
@@ -357,7 +355,7 @@ export class CmvConfig {
   }
 
   /**
-   * Add a new view to the config.
+   * Add a new view to the spec.
    * @param {CmvConfigDataset} dataset The dataset instance which defines the data
    * that will be displayed in the view.
    * @param {string} component A component name, such as "scatterplot" or "spatial".
@@ -662,16 +660,16 @@ export class CmvConfig {
   }
 
   /**
-   * Convert this instance to a JSON object that can be passed to the Vitessce component.
-   * @returns {object} The view config as a JSON object.
+   * Convert this instance to a JSON object that can be passed to a provider component.
+   * @returns {object} The spec as a JSON object.
    */
   toJSON() {
     return {
       ...this.config,
-      coordinationSpace: fromEntries(
+      coordinationSpace: Object.fromEntries(
         Object.entries(this.config.coordinationSpace).map(([cType, cScopes]) => ([
           cType,
-          fromEntries(
+          Object.fromEntries(
             Object.entries(cScopes).map(([cScopeName, cScope]) => ([
               cScopeName,
               cScope.cValue,
@@ -679,7 +677,7 @@ export class CmvConfig {
           ),
         ])),
       ),
-      viewCoordination: fromEntries(
+      viewCoordination: Object.fromEntries(
         Object.entries(this.config.viewCoordination).map(([viewUid, viewObj]) => ([
           viewUid,
           viewObj.toJSON(),
@@ -689,17 +687,17 @@ export class CmvConfig {
   }
 
   /**
-   * Create a CmvConfig instance from an existing view config, to enable
+   * Create a CmvConfig instance from an existing spec, to enable
    * manipulation with the JavaScript API.
-   * @param {object} config An existing Vitessce view config as a JSON object.
+   * @param {object} spec An existing spec as a JSON object.
    * @returns {CmvConfig} A new config instance, with values set to match
-   * the config parameter.
+   * the spec parameter.
    */
-  static fromJSON(config) {
-    const { key } = config;
+  static fromJSON(spec) {
+    const { key } = spec;
     const vc = new CmvConfig(key);
-    Object.keys(config.coordinationSpace).forEach((cType) => {
-      const cObj = config.coordinationSpace[cType];
+    Object.keys(spec.coordinationSpace).forEach((cType) => {
+      const cObj = spec.coordinationSpace[cType];
       vc.config.coordinationSpace[cType] = {};
       Object.entries(cObj).forEach(([cScopeName, cScopeValue]) => {
         const scope = new CmvConfigCoordinationScope(cType, cScopeName);
@@ -707,8 +705,8 @@ export class CmvConfig {
         vc.config.coordinationSpace[cType][cScopeName] = scope;
       });
     });
-    Object.keys(config.viewCoordination).forEach((viewUid) => {
-      const viewObj = config.viewCoordination[viewUid];
+    Object.keys(spec.viewCoordination).forEach((viewUid) => {
+      const viewObj = spec.viewCoordination[viewUid];
       const newView = new CmvConfigView(viewObj.coordinationScopes, viewObj.coordinationScopesBy);
       vc.config.viewCoordination[viewUid] = newView;
     });

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  defineConfig,
+  defineSpec,
   ZodCoordinationProvider,
   ZodErrorBoundary,
   z,
@@ -19,7 +19,7 @@ const pluginCoordinationTypes = {
   barSelection: z.array(z.string()).nullable(),
 };
 
-const initialConfig = defineConfig({
+const initialSpec = defineSpec({
   coordinationSpace: {
     "barSelection": {
       "A": [],
@@ -56,10 +56,10 @@ export function TrrackExample(props: any) {
     onRedo,
     canUndo,
     canRedo,
-    config: configToUse,
-    onConfigChange: setConfig,
+    spec: specToUse,
+    onSpecChange: setSpec,
     onChangeCurrent,
-  } = useTrrack(initialConfig);
+  } = useTrrack(initialSpec);
   
   return (
     <>
@@ -74,15 +74,15 @@ export function TrrackExample(props: any) {
         <div>
           <button onClick={onUndo} disabled={!canUndo}>Undo</button>
           <button onClick={onRedo} disabled={!canRedo}>Redo</button>
-          <ZodErrorBoundary key={configToUse.key}>
+          <ZodErrorBoundary key={specToUse.key}>
             <ZodCoordinationProvider
-              config={configToUse}
+              spec={specToUse}
               coordinationTypes={pluginCoordinationTypes}
-              onConfigChange={(newConfig: any) => {
-                setConfig(newConfig);
+              onSpecChange={(newSpec: any) => {
+                setSpec(newSpec);
               }}
-              diffByKey={false}
-              emitInitialConfigChange={false}
+              remountOnKeyChange={false}
+              emitInitialSpecChange={false}
             >
               <div className="multiplot-container">
                 <div className="plot-container">
@@ -101,7 +101,7 @@ export function TrrackExample(props: any) {
             </ZodCoordinationProvider>
           </ZodErrorBoundary>
           <pre>
-            {JSON.stringify(configToUse, null, 2)}
+            {JSON.stringify(specToUse, null, 2)}
           </pre>
         </div>
         <div>

@@ -24,45 +24,45 @@ export type CmvConfigObject = {
     };
 };
 
-type OnConfigChangeFunction = (config: CmvConfigObject) => void;
-type ValidaterFunction = (config: CmvConfigObject) => void;
-type InitializerFunction = (config: CmvConfigObject) => CmvConfigObject;
+type OnSpecChangeFunction = (spec: CmvConfigObject) => void;
+type ValidaterFunction = (spec: CmvConfigObject) => void;
+type InitializerFunction = (spec: CmvConfigObject) => CmvConfigObject;
 
 type OnCreateStoreFunction = (set: Function) => object;
 
 export type CoordinationProviderProps = {
-    config: CmvConfigObject;
-    onConfigChange?: OnConfigChangeFunction;
+    spec: CmvConfigObject;
+    onSpecChange?: OnSpecChangeFunction;
     validater?: ValidaterFunction;
     initializer?: InitializerFunction;
-    validateOnConfigChange?: boolean;
+    validateOnSpecChange?: boolean;
     children: ReactNode;
     onCreateStore?: OnCreateStoreFunction;
-    diffByKey?: boolean;
-    emitInitialConfigChange?: boolean;
+    remountOnKeyChange?: boolean;
+    emitInitialSpecChange?: boolean;
 };
 
 export type ZodCoordinationProviderProps = {
-    config: CmvConfigObject;
-    onConfigChange?: OnConfigChangeFunction;
+    spec: CmvConfigObject;
+    onSpecChange?: OnSpecChangeFunction;
     initializer?: InitializerFunction;
-    validateOnConfigChange?: boolean;
-    validateConfig?: boolean;
+    validateOnSpecChange?: boolean;
+    validateSpec?: boolean;
     coordinationTypes: Record<string, z.ZodTypeAny>;
     children: ReactNode;
     onCreateStore?: OnCreateStoreFunction;
-    diffByKey?: boolean;
-    emitInitialConfigChange?: boolean;
+    remountOnKeyChange?: boolean;
+    emitInitialSpecChange?: boolean;
 };
 
 export type CallbackPublisherProps = {
-    onConfigChange?: OnConfigChangeFunction;
+    onSpecChange?: OnSpecChangeFunction;
     validater?: ValidaterFunction;
-    validateOnConfigChange?: boolean;
+    validateOnSpecChange?: boolean;
 };
 
 export type ViewWrapperProps = {
-    config: CmvConfigObject;
-    configKey: string | number;
+    spec: CmvConfigObject;
+    specKey: string | number;
     children: ReactNode;
 };

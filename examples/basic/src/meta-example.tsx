@@ -39,7 +39,7 @@ const pluginCoordinationTypes = {
   sliderValue: z.number(),
 };
 
-const initialMetaConfig = {
+const initialMetaSpec = {
   key: 1,
   coordinationSpace: {
     "sliderValue": {
@@ -79,7 +79,7 @@ const initialMetaConfig = {
 };
 
 export function MetaCoordinationExample() {
-  const [config, setConfig] = React.useState<any>(initialMetaConfig);
+  const [spec, setSpec] = React.useState<any>(initialMetaSpec);
   return (
     <>
       <style>{`
@@ -90,25 +90,25 @@ export function MetaCoordinationExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={config}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setSpec}
         >
           <div className="slider-container">
             <SliderInputContainer viewUid="slider1" />
-            <MetaSelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
+            <MetaSelectScope spec={spec} viewUid="slider1" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider2" />
-            <MetaSelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
+            <MetaSelectScope spec={spec} viewUid="slider2" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider3" />
-            <MetaSelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
+            <MetaSelectScope spec={spec} viewUid="slider3" onSpecChange={setSpec} />
           </div>
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

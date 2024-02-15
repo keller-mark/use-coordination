@@ -8,8 +8,8 @@ export {
   getParameterScope,
   getParameterScopeBy,
   useRawViewMapping,
-  useViewConfigStore,
-  useViewConfigStoreApi,
+  useCoordinationStore,
+  useCoordinationStoreApi,
   
   // Normal usage
   useViewMapping,
@@ -34,4 +34,4 @@ export {
 } from './hooks.js';
 export { ZodCoordinationProvider } from './ZodCoordinationProvider.js';
 export { ZodErrorBoundary } from './ZodErrorBoundary.js';
-export { defineConfig } from './generic-types.js';
+export { defineSpec } from './generic-types.js';

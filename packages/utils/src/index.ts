@@ -1,15 +1,3 @@
-
-// Adapted from https://github.com/feross/fromentries/blob/29b52a850bb3a47c390937631c2638edf3443942/index.js
-export function fromEntries(iterable: [string, any][]): { [key: string]: any } {
-  return [...iterable]
-    .reduce((obj, { 0: key, 1: val }) => Object.assign(obj, { [key]: val }), {});
-}
-
-export function commaNumber(n: number) {
-  const nf = new Intl.NumberFormat('en-US');
-  return nf.format(n);
-}
-
 /**
  * Capitalize a the first letter of a string.
  * @param {string} word A string to capitalize.
@@ -17,19 +5,6 @@ export function commaNumber(n: number) {
  */
 export function capitalize(word: string | null) {
   return word ? word.charAt(0).toUpperCase() + word.slice(1) : '';
-}
-
-/**
- * Get the longest string in the array of strings.
- * @param {string[]} strings The array of strings.
- * @returns The longest string.
- */
-export function getLongestString(strings: string[]) {
-  return strings.reduce(
-    (prevLongest, currentValue) => (
-      prevLongest.length > currentValue.length ? prevLongest : currentValue
-    ),
-  );
 }
 
 /**

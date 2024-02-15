@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { fromEntries } from '@use-coordination/utils';
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import {
   componentCoordinationScopes,
@@ -11,7 +10,7 @@ const baseCoordinationTypes = {
   [META_COORDINATION_SCOPES_BY]: z.record(z.any()).nullable(),
 };
 
-function buildConfigSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
+function buildSpecSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
   return z.object({
     key: z.union([z.string(), z.number()]).optional(),
     coordinationSpace: coordinationSpace
@@ -35,7 +34,7 @@ function buildConfigSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
 }
 
 // For usage in documentation and JSON schema generation.
-export const genericConfigSchema = buildConfigSchemaAux(
+export const genericSpecSchema = buildSpecSchemaAux(
   // TODO: Special meta-coordination types should be included.
   z.record(
     // Coordination Type
@@ -50,7 +49,7 @@ export const genericConfigSchema = buildConfigSchemaAux(
 );
 
 /**
- * Build a Zod schema for the latest Vitessce config,
+ * Build a Zod schema for the latest spec,
  * which is specific to any registered plugins.
  * The builder pattern allows the returned
  * Zod schema to be typed despite not knowing
@@ -58,15 +57,15 @@ export const genericConfigSchema = buildConfigSchemaAux(
  * @param coordinationTypes
  * @returns The Zod schema.
  */
-export function buildConfigSchema<
+export function buildSpecSchema<
   T extends Record<string, z.ZodTypeAny>,
 >(
   coordinationTypes: T,
 ) {
-  return buildConfigSchemaAux(
+  return buildSpecSchemaAux(
     z.object(
       // Wrap each value schema in z.record()
-      fromEntries(
+      Object.fromEntries(
         [
           ...Object.entries(baseCoordinationTypes),
           // Merge with coordination type schemas.

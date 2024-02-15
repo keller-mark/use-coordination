@@ -108,7 +108,7 @@ const pluginCoordinationTypes = {
   channelValue: z.number(),
 };
 
-const initialConfig = {
+const initialSpec = {
   key: 1,
   coordinationSpace: {
     "channel": {
@@ -184,7 +184,7 @@ const initialConfig = {
 };
 
 export function MultiLevelExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [spec, setSpec] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`
@@ -204,9 +204,9 @@ export function MultiLevelExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={config}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setSpec}
         >
           <div className="colorful-slider-container">
             <ColorfulSliderInputContainer viewUid="view1" />
@@ -228,7 +228,7 @@ export function MultiLevelExample() {
           </div>
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

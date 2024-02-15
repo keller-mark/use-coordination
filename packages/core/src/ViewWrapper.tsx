@@ -2,8 +2,8 @@ import {
   useEffect,
 } from 'react';
 import {
-  useViewConfigStoreApi,
-  useSetViewConfig,
+  useCoordinationStoreApi,
+  useSetSpec,
 } from './hooks.js';
 import { ViewWrapperProps } from './prop-types.js';
 
@@ -12,22 +12,22 @@ import { ViewWrapperProps } from './prop-types.js';
  */
 export default function ViewWrapper(props: ViewWrapperProps) {
   const {
-    configKey,
-    config,
+    specKey,
+    spec,
     children,
   } = props;
 
-  const viewConfigStoreApi = useViewConfigStoreApi();
-  const setViewConfig = useSetViewConfig(viewConfigStoreApi);
+  const storeApi = useCoordinationStoreApi();
+  const setSpec = useSetSpec(storeApi);
 
-  // Update the view config and loaders in the global state.
+  // Update the spec and loaders in the global state.
   // This effect is needed for the controlled component case in which
-  // the store has already been initialized with a view config,
-  // and we want to replace it with a new view config.
+  // the store has already been initialized with a spec,
+  // and we want to replace it with a new spec.
   useEffect(() => {
-    setViewConfig(config);
+    setSpec(spec);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey]);
+  }, [specKey]);
 
   return children as JSX.Element;
 }

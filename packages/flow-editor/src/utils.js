@@ -1,83 +1,83 @@
 import { getNextScope } from '@use-coordination/utils';
 
-export function connectViewToScope(config, viewUid, cType, cScope) {
-  const newConfig = {
-    ...config,
+export function connectViewToScope(spec, viewUid, cType, cScope) {
+  const newSpec = {
+    ...spec,
     viewCoordination: {
-      ...config.viewCoordination,
+      ...spec.viewCoordination,
       [viewUid]: {
-        ...config.viewCoordination[viewUid],
+        ...spec.viewCoordination[viewUid],
         coordinationScopes: {
-          ...config.viewCoordination[viewUid].coordinationScopes,
+          ...spec.viewCoordination[viewUid].coordinationScopes,
           [cType]: cScope,
         },
       },
     },
   };
-  return newConfig;
+  return newSpec;
 }
 
-export function disconnectViewFromScope(config, viewUid, cTypeOfScope) {
-  const newConfig = {
-    ...config,
+export function disconnectViewFromScope(spec, viewUid, cTypeOfScope) {
+  const newSpec = {
+    ...spec,
     viewCoordination: {
-      ...config.viewCoordination,
+      ...spec.viewCoordination,
       [viewUid]: {
-        ...config.viewCoordination[viewUid],
+        ...spec.viewCoordination[viewUid],
         coordinationScopes: Object.fromEntries(
-          Object.entries(config.viewCoordination[viewUid].coordinationScopes)
+          Object.entries(spec.viewCoordination[viewUid].coordinationScopes)
             .filter(([cType, cScope]) => cType !== cTypeOfScope)
         ),
       },
     },
   };
-  return newConfig;
+  return newSpec;
 }
 
-export function addScopeForType(config, cType) {
+export function addScopeForType(spec, cType) {
   return {
-    ...config,
+    ...spec,
     coordinationSpace: {
-      ...config.coordinationSpace,
+      ...spec.coordinationSpace,
       [cType]: {
-        ...config.coordinationSpace[cType],
+        ...spec.coordinationSpace[cType],
         // TODO: use default value for the coordination type
-        [getNextScope(Object.keys(config.coordinationSpace[cType]))]: null,
+        [getNextScope(Object.keys(spec.coordinationSpace[cType]))]: null,
       },
     },
   };
 }
 
-export function addCoordinationType(config) {
+export function addCoordinationType(spec) {
   return {
-    ...config,
+    ...spec,
     coordinationSpace: {
-      ...config.coordinationSpace,
-      [getNextScope(Object.keys(config.coordinationSpace))]: {},
+      ...spec.coordinationSpace,
+      [getNextScope(Object.keys(spec.coordinationSpace))]: {},
     }
   };
 }
 
-export function addView(config) {
+export function addView(spec) {
   return {
-    ...config,
+    ...spec,
     viewCoordination: {
-      ...config.viewCoordination,
-      [getNextScope(Object.keys(config.viewCoordination))]: {},
+      ...spec.viewCoordination,
+      [getNextScope(Object.keys(spec.viewCoordination))]: {},
     }
   };
 }
 
-export function removeCoordinationType(config, cTypeToRemove) {
+export function removeCoordinationType(spec, cTypeToRemove) {
   return {
-    ...config,
+    ...spec,
     coordinationSpace: Object.fromEntries(
-      Object.entries(config.coordinationSpace)
+      Object.entries(spec.coordinationSpace)
         .filter(([cType, cScope]) => (cType !== cTypeToRemove))
       // TODO: removal within meta-coordination scopes
     ),
     viewCoordination: Object.fromEntries(
-      Object.entries(config.viewCoordination)
+      Object.entries(spec.viewCoordination)
         .map(([viewUid, view]) => {
           return [viewUid, {
             ...view,
@@ -92,11 +92,11 @@ export function removeCoordinationType(config, cTypeToRemove) {
   };
 }
 
-export function removeView(config, viewUidToRemove) {
+export function removeView(spec, viewUidToRemove) {
   return {
-    ...config,
+    ...spec,
     viewCoordination: Object.fromEntries(
-      Object.entries(config.viewCoordination)
+      Object.entries(spec.viewCoordination)
         .filter(([viewUid]) => {
           return viewUid !== viewUidToRemove;
         })
@@ -104,12 +104,12 @@ export function removeView(config, viewUidToRemove) {
   };
 }
 
-export function changeCoordinationTypeName(config, prevName, newName) {
+export function changeCoordinationTypeName(spec, prevName, newName) {
   // TODO: First check if the new name is already in use, and if so throw an error.
   return {
-    ...config,
+    ...spec,
     coordinationSpace: Object.fromEntries(
-      Object.entries(config.coordinationSpace)
+      Object.entries(spec.coordinationSpace)
         .map(([cType, cScope]) => {
           if(cType === prevName) {
             return [newName, cScope];
@@ -119,7 +119,7 @@ export function changeCoordinationTypeName(config, prevName, newName) {
       // TODO: change name within meta-coordination scopes
     ),
     viewCoordination: Object.fromEntries(
-      Object.entries(config.viewCoordination)
+      Object.entries(spec.viewCoordination)
         .map(([viewUid, view]) => {
           return [viewUid, {
             ...view,
@@ -139,12 +139,12 @@ export function changeCoordinationTypeName(config, prevName, newName) {
   };
 }
 
-export function changeCoordinationScopeName(config, cTypeForScope, prevName, newName) {
+export function changeCoordinationScopeName(spec, cTypeForScope, prevName, newName) {
   // TODO: First check if the new name is already in use, and if so throw an error.
   return {
-    ...config,
+    ...spec,
     coordinationSpace: Object.fromEntries(
-      Object.entries(config.coordinationSpace)
+      Object.entries(spec.coordinationSpace)
         .map(([cType, cObj]) => {
           if(cType === cTypeForScope) {
             return [cType, Object.fromEntries(
@@ -162,7 +162,7 @@ export function changeCoordinationScopeName(config, cTypeForScope, prevName, new
       // TODO: change name within meta-coordination scopes
     ),
     viewCoordination: Object.fromEntries(
-      Object.entries(config.viewCoordination)
+      Object.entries(spec.viewCoordination)
         .map(([viewUid, view]) => {
           return [viewUid, {
             ...view,
@@ -182,24 +182,24 @@ export function changeCoordinationScopeName(config, cTypeForScope, prevName, new
   };
 }
 
-export function changeCoordinationScopeValue(config, cTypeForValue, cScopeForValue, newValue) {
+export function changeCoordinationScopeValue(spec, cTypeForValue, cScopeForValue, newValue) {
   return {
-    ...config,
+    ...spec,
     coordinationSpace: {
-      ...config.coordinationSpace,
+      ...spec.coordinationSpace,
       [cTypeForValue]: {
-        ...config.coordinationSpace[cTypeForValue],
+        ...spec.coordinationSpace[cTypeForValue],
         [cScopeForValue]: newValue,
       },
     },
   };
 }
 
-export function changeViewUid(config, prevUid, newUid) {
+export function changeViewUid(spec, prevUid, newUid) {
   return {
-    ...config,
+    ...spec,
     viewCoordination: Object.fromEntries(
-      Object.entries(config.viewCoordination)
+      Object.entries(spec.viewCoordination)
         .map(([viewUid, view]) => {
           if(viewUid === prevUid) {
             return [newUid, view];
@@ -210,11 +210,11 @@ export function changeViewUid(config, prevUid, newUid) {
   };
 }
 
-export function removeCoordinationScope(config, cTypeForScope, cScopeToRemove) {
+export function removeCoordinationScope(spec, cTypeForScope, cScopeToRemove) {
   return {
-    ...config,
+    ...spec,
     coordinationSpace: Object.fromEntries(
-      Object.entries(config.coordinationSpace)
+      Object.entries(spec.coordinationSpace)
         .map(([cType, cObj]) => {
           if(cType === cTypeForScope) {
             return [cType, Object.fromEntries(
@@ -226,7 +226,7 @@ export function removeCoordinationScope(config, cTypeForScope, cScopeToRemove) {
         }),
     ),
     viewCoordination: Object.fromEntries(
-      Object.entries(config.viewCoordination)
+      Object.entries(spec.viewCoordination)
         .map(([viewUid, view]) => {
           return [viewUid, {
             ...view,

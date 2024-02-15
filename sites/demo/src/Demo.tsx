@@ -17,38 +17,38 @@ const NavBarGrid = styled(Grid)`
 
 function SelectScope(props: any) {
   const {
-    config,
+    spec,
     viewUid,
     cType = "sliderValue",
-    onConfigChange,
+    onSpecChange,
     showType = false,
   } = props;
 
-  const allScopes = Object.keys(config.coordinationSpace[cType]);
+  const allScopes = Object.keys(spec.coordinationSpace[cType]);
 
   function handleChange(event: any) {
     const newScope = event.target.value;
-    const newConfig = {
-      ...config,
-      key: config.key + 1,
+    const newSpec = {
+      ...spec,
+      key: spec.key + 1,
       viewCoordination: {
-        ...config.viewCoordination,
+        ...spec.viewCoordination,
         [viewUid]: {
-          ...config.viewCoordination[viewUid],
+          ...spec.viewCoordination[viewUid],
           coordinationScopes: {
-            ...config.viewCoordination[viewUid].coordinationScopes,
+            ...spec.viewCoordination[viewUid].coordinationScopes,
             [cType]: newScope,
           },
         },
       },
     };
-    onConfigChange(newConfig)
+    onSpecChange(newSpec)
   }
 
   return (
     <>
       <label>{showType ? cType : "Coordination"} scope for {viewUid}:&nbsp;</label>
-      <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]} title={`select-${viewUid}`}>
+      <select onChange={handleChange} value={spec.viewCoordination[viewUid].coordinationScopes[cType]} title={`select-${viewUid}`}>
         {allScopes.map((scope: any) => (
           <option key={scope} value={scope}>{scope}</option>
         ))}
@@ -131,7 +131,7 @@ const pluginCoordinationTypes = {
   sliderValue: z.number(),
 };
 
-const initialConfig = {
+const initialSpec = {
   key: 1,
   coordinationSpace: {
     "sliderValue": {
@@ -160,7 +160,7 @@ const initialConfig = {
 };
 
 function BaseExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [spec, setSpec] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`
@@ -171,25 +171,25 @@ function BaseExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={config}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setSpec}
         >
           <div className="slider-container">
             <SliderInputContainer viewUid="slider1" />
-            <SelectScope config={config} viewUid="slider1" onConfigChange={setConfig} />
+            <SelectScope spec={spec} viewUid="slider1" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider2" />
-            <SelectScope config={config} viewUid="slider2" onConfigChange={setConfig} />
+            <SelectScope spec={spec} viewUid="slider2" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider3" />
-            <SelectScope config={config} viewUid="slider3" onConfigChange={setConfig} />
+            <SelectScope spec={spec} viewUid="slider3" onSpecChange={setSpec} />
           </div>
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

@@ -8,7 +8,7 @@ slug: /provider-components
 
 ### Required props
 
-#### `config`
+#### `spec`
 
 - Type: `object`
 
@@ -18,13 +18,13 @@ slug: /provider-components
 
 ### Optional props
 
-#### `onConfigChange`
+#### `onSpecChange`
 
 - Type: `function`
 
-A callback function for config updates.
+A callback function for spec updates.
 
-#### `validateOnConfigChange`
+#### `validateOnSpecChange`
 
 - Type: `boolean`
 
@@ -35,7 +35,7 @@ Use for debugging purposes only, as this has a performance impact.
 
 - Type: `function`
 
-Validation function to run when `validateOnConfigChange` is true.
+Validation function to run when `validateOnSpecChange` is true.
 
 #### `initializer`
 
@@ -65,11 +65,11 @@ Mapping from coordination type names to Zod schemas.
 
 ### Optional props
 
-#### `validateConfig`
+#### `validateSpec`
 
 - Type: `boolean`
 
-Should the config be validated against the Zod schema?
+Should the spec be validated against the Zod schema?
 
 ## `<ZodErrorBoundary/>`
 

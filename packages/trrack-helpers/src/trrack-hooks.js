@@ -2,37 +2,37 @@ import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { cloneDeep } from 'lodash-es';
 import { initializeTrrack, Registry } from '@trrack/core';
 
-export function useTrrack(initialConfig) {
+export function useTrrack(initialSpec) {
   // Setup Trrack
   const { registry, actions } = useMemo(() => {
     const reg = Registry.create();
-    const updateConfig = reg.register('update-config', (state, newConfig) => {
-      state.config = cloneDeep(newConfig);
+    const updateSpec = reg.register('update-spec', (state, newSpec) => {
+      state.spec = cloneDeep(newSpec);
     });
     return {
       registry: reg,
       actions: {
-        updateConfig,
+        updateSpec,
       },
     };
   }, []);
   const trrack = useMemo(() => initializeTrrack({
-    initialState: { config: initialConfig },
+    initialState: { spec: initialSpec },
     registry,
   }), []);
   // End setup Trrack
 
-  const [config, setConfig] = useState(initialConfig);
-  const [configFromTrrack, setConfigFromTrrack] = useState(0);
-  const [showTrrackConfig, setShowTrrackConfig] = useState(false);
+  const [spec, setSpec] = useState(initialSpec);
+  const [specFromTrrack, setSpecFromTrrack] = useState(0);
+  const [showSpecFromTrrack, setShowSpecFromTrrack] = useState(false);
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
 
   useEffect(() => {
-    trrack.apply('Update config', actions.updateConfig(config));
-    setShowTrrackConfig(false);
-    setConfigFromTrrack((prev) => prev + 1);
-  }, [config]);
+    trrack.apply('Update spec', actions.updateSpec(spec));
+    setShowSpecFromTrrack(false);
+    setSpecFromTrrack((prev) => prev + 1);
+  }, [spec]);
 
   useEffect(() => {
     const unsubscribe = trrack.currentChange(() => {
@@ -50,23 +50,23 @@ export function useTrrack(initialConfig) {
 
   const onUndo = useCallback(() => {
     trrack.undo();
-    setShowTrrackConfig(true);
-    setConfigFromTrrack((prev) => prev + 1);
+    setShowSpecFromTrrack(true);
+    setSpecFromTrrack((prev) => prev + 1);
   }, [trrack]);
 
   const onRedo = useCallback(() => {
     trrack.redo();
-    setShowTrrackConfig(true);
-    setConfigFromTrrack((prev) => prev + 1);
+    setShowSpecFromTrrack(true);
+    setSpecFromTrrack((prev) => prev + 1);
   }, [trrack]);
 
-  const configToUse = (showTrrackConfig ? trrack.getState().config : config);
+  const specToUse = (showSpecFromTrrack ? trrack.getState().spec : spec);
 
   // Things for ProvVis
   const onChangeCurrent = useCallback((node) => {
     trrack.to(node)
-    setShowTrrackConfig(true);
-    setConfigFromTrrack((prev) => prev + 1);
+    setShowSpecFromTrrack(true);
+    setSpecFromTrrack((prev) => prev + 1);
   }, [trrack]);
   // End things for ProvVis
 
@@ -76,8 +76,8 @@ export function useTrrack(initialConfig) {
     onRedo,
     canUndo,
     canRedo,
-    config: configToUse,
-    onConfigChange: setConfig,
+    spec: specToUse,
+    onSpecChange: setSpec,
     onChangeCurrent,
   };
 }

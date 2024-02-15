@@ -9,8 +9,8 @@ describe('src/api/CmvConfig.js', () => {
     it('can be instantiated', () => {
       const config = new CmvConfig('My config');
 
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON).toEqual({
         coordinationSpace: {},
         viewCoordination: {},
         key: 'My config',
@@ -22,8 +22,8 @@ describe('src/api/CmvConfig.js', () => {
       config.addView('description');
       config.addView('scatterplot');
 
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON).toEqual({
         coordinationSpace: {},
         viewCoordination: {
           description: {
@@ -54,8 +54,8 @@ describe('src/api/CmvConfig.js', () => {
       etyScope.setValue(12);
 
 
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON).toEqual({
         coordinationSpace: {
           embeddingZoom: {
             A: 10,
@@ -132,8 +132,8 @@ describe('src/api/CmvConfig.js', () => {
           },
         ]),
       });
-      const configJSON = config.toJSON();
-      expect(configJSON.coordinationSpace).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON.coordinationSpace).toEqual({
         spatialImageLayer: { A: '__dummy__' },
         image: { A: 'S-1905-017737_bf', B: 'S-1905-017737' },
         spatialLayerVisible: { A: true, B: true },
@@ -212,8 +212,8 @@ describe('src/api/CmvConfig.js', () => {
       const spatialView = config.addView('spatial');
       spatialView.useCoordinationByObject(scopes);
 
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON).toEqual({
         key: 'My config',
         coordinationSpace: {
           spatialImageLayer: { A: '__dummy__' },
@@ -326,8 +326,8 @@ describe('src/api/CmvConfig.js', () => {
       spatialView.useMetaCoordination(metaCoordinationScope);
       lcView.useMetaCoordination(metaCoordinationScope);
 
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON).toEqual({
         key: 'My config',
         coordinationSpace: {
           spatialImageLayer: { A: '__dummy__' },
@@ -451,8 +451,8 @@ describe('src/api/CmvConfig.js', () => {
         ]),
       });
 
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON).toEqual({
         key: 'My config',
         coordinationSpace: {
           spatialImageLayer: { A: '__dummy__' },
@@ -576,8 +576,8 @@ describe('src/api/CmvConfig.js', () => {
         ]),
       }, { scopePrefix: 'SOME_PREFIX_' });
 
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON).toEqual({
         key: 'My config',
         coordinationSpace: {
           spatialImageLayer: { SOME_PREFIX_0: '__dummy__' },
@@ -675,8 +675,8 @@ describe('src/api/CmvConfig.js', () => {
         ],
       );
 
-      const configJSON = config.toJSON();
-      expect(configJSON).toEqual({
+      const specJSON = config.toJSON();
+      expect(specJSON).toEqual({
         coordinationSpace: {
           embeddingZoom: {
             A: null,

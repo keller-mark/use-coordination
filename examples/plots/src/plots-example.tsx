@@ -3,7 +3,7 @@ import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
-  defineConfig,
+  defineSpec,
 } from '@use-coordination/all';
 import { FlowEditor } from '@use-coordination/flow-editor';
 import { z } from 'zod';
@@ -18,7 +18,7 @@ const pluginCoordinationTypes = {
   barSelection: z.array(z.string()).nullable(),
 };
 
-const initialConfig = defineConfig({
+const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     "barSelection": {
@@ -51,7 +51,7 @@ const initialConfig = defineConfig({
 
 export function PlotsExample(props: any) {
   const { showFlowEditor } = props;
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [spec, setSpec] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`
@@ -62,13 +62,13 @@ export function PlotsExample(props: any) {
         }
       `}</style>
       {showFlowEditor ? (
-        <FlowEditor config={config} onConfigChange={setConfig} />
+        <FlowEditor spec={spec} onSpecChange={setSpec} />
       ) : null}
-      <ZodErrorBoundary key={config.key}>
+      <ZodErrorBoundary key={spec.key}>
         <ZodCoordinationProvider
-          config={config}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onConfigChange={setConfig}
+          onSpecChange={setSpec}
         >
           <div className="multiplot-container">
             <div className="plot-container">
@@ -86,7 +86,7 @@ export function PlotsExample(props: any) {
           </div>
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

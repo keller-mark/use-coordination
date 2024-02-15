@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import {
-  ViewConfigProvider,
-  createViewConfigStore,
+  CoordinationStoreProvider,
+  createCoordinationStore,
 } from './hooks.js';
 import ViewWrapper from './ViewWrapper.js';
 import CallbackPublisher from './CallbackPublisher.js';
@@ -9,62 +9,62 @@ import { CoordinationProviderProps } from './prop-types.js';
 
 export function CoordinationProvider(props: CoordinationProviderProps) {
   const {
-    config,
-    onConfigChange,
-    validateOnConfigChange = false,
+    spec,
+    onSpecChange,
+    validateOnSpecChange = false,
     validater,
     initializer,
     children,
     onCreateStore,
-    diffByKey = true,
-    emitInitialConfigChange = true,
+    remountOnKeyChange = true,
+    emitInitialSpecChange = true,
   } = props;
 
-  // If config.key exists, then use it for hook dependencies to detect changes
-  // (controlled component case). If not, then use the config object itself
+  // If spec.key exists, then use it for hook dependencies to detect changes
+  // (controlled component case). If not, then use the spec object itself
   // and assume the un-controlled component case.
-  const configKey = useMemo(() => {
-    if (config?.key) {
-      return config.key;
+  const specKey = useMemo(() => {
+    if (spec?.key) {
+      return spec.key;
     }
-    // Stringify the config object so it can be used as a key
+    // Stringify the spec object so it can be used as a key
     // Otherwise, the key will be [object Object]
-    return JSON.stringify(config);
-  }, [config]);
+    return JSON.stringify(spec);
+  }, [spec]);
 
 
-  // Emit the upgraded/initialized view config
-  // to onConfigChange if necessary.
+  // Emit the upgraded/initialized spec
+  // to onSpecChange if necessary.
   useEffect(() => {
-    if (onConfigChange && emitInitialConfigChange) {
-      onConfigChange(config);
+    if (onSpecChange && emitInitialSpecChange) {
+      onSpecChange(spec);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, onConfigChange, emitInitialConfigChange]);
+  }, [specKey, onSpecChange, emitInitialSpecChange]);
 
-  // Initialize the view config and loaders in the global state.
-  const createViewConfigStoreClosure = useCallback(() => {
-    const initializedConfig = initializer
-      ? initializer(config)
-      : config;
-    return createViewConfigStore(initializedConfig, onCreateStore);
+  // Initialize the spec and loaders in the global state.
+  const createCoordinationStoreClosure = useCallback(() => {
+    const initializedSpec = initializer
+      ? initializer(spec)
+      : spec;
+    return createCoordinationStore(initializedSpec, onCreateStore);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, initializer, onCreateStore]);
+  }, [specKey, initializer, onCreateStore]);
 
   return (
     /* @ts-ignore */
-    <ViewConfigProvider createStore={createViewConfigStoreClosure} {...(diffByKey ? ({ key: configKey }) : {})}>
+    <CoordinationStoreProvider createStore={createCoordinationStoreClosure} {...(remountOnKeyChange ? ({ key: specKey }) : {})}>
         <ViewWrapper
-          configKey={configKey}
-          config={config}
+          specKey={specKey}
+          spec={spec}
         >
           {children}
         </ViewWrapper>
         <CallbackPublisher
-          onConfigChange={onConfigChange}
-          validateOnConfigChange={validateOnConfigChange}
+          onSpecChange={onSpecChange}
+          validateOnSpecChange={validateOnSpecChange}
           validater={validater}
         />
-    </ViewConfigProvider>
+    </CoordinationStoreProvider>
   );
 }
