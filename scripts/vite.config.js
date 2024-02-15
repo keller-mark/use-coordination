@@ -7,7 +7,7 @@ const cwd = process.cwd();
 
 // Need to make vit-s external for dependents (but vit-s is not dependent on itself),
 // otherwise there will be issues with Zustand stores.
-const moreExternals = basename(cwd) === 'provider' ? [] : ['@use-coordination/provider'];
+const moreExternals = basename(cwd) === 'core' ? [] : ['@use-coordination/core'];
 
 const mainFiles = [
   'index.tsx',

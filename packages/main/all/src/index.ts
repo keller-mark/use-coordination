@@ -1,4 +1,4 @@
-export * from '@use-coordination/provider';
+export * from '@use-coordination/core';
 export * from '@use-coordination/schemas';
 export * from '@use-coordination/config';
 export * from '@use-coordination/utils';
