@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  defineConfig,
+  defineSpec,
   ZodCoordinationProvider,
   ZodErrorBoundary,
   z,
@@ -19,7 +19,7 @@ const pluginCoordinationTypes = {
   barSelection: z.array(z.string()).nullable(),
 };
 
-const initialConfig = defineConfig({
+const initialConfig = defineSpec({
   coordinationSpace: {
     "barSelection": {
       "A": [],

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import {
-  ViewConfigProvider,
-  createViewConfigStore,
+  CoordinationStoreProvider,
+  createCoordinationStore,
 } from './hooks.js';
 import ViewWrapper from './ViewWrapper.js';
 import CallbackPublisher from './CallbackPublisher.js';
@@ -43,17 +43,17 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
   }, [configKey, onConfigChange, emitInitialConfigChange]);
 
   // Initialize the view config and loaders in the global state.
-  const createViewConfigStoreClosure = useCallback(() => {
+  const createCoordinationStoreClosure = useCallback(() => {
     const initializedConfig = initializer
       ? initializer(config)
       : config;
-    return createViewConfigStore(initializedConfig, onCreateStore);
+    return createCoordinationStore(initializedConfig, onCreateStore);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey, initializer, onCreateStore]);
 
   return (
     /* @ts-ignore */
-    <ViewConfigProvider createStore={createViewConfigStoreClosure} {...(diffByKey ? ({ key: configKey }) : {})}>
+    <CoordinationStoreProvider createStore={createCoordinationStoreClosure} {...(diffByKey ? ({ key: configKey }) : {})}>
         <ViewWrapper
           configKey={configKey}
           config={config}
@@ -65,6 +65,6 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
           validateOnConfigChange={validateOnConfigChange}
           validater={validater}
         />
-    </ViewConfigProvider>
+    </CoordinationStoreProvider>
   );
 }

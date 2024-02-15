@@ -2,13 +2,13 @@ import React from 'react';
 import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
-  defineConfig,
+  defineSpec,
   META_COORDINATION_SCOPES,
   META_COORDINATION_SCOPES_BY,
   getMetaScope,
   getMetaScopeBy,
   createPrefixedGetNextScopeNumeric,
-  useViewConfigStore,
+  useCoordinationStore,
 } from '@use-coordination/all';
 import { z } from 'zod';
 import { letterFrequency } from '@visx/mock-data';
@@ -25,7 +25,7 @@ const pluginCoordinationTypes = {
   barColor: z.string().nullable(),
 };
 
-const initialConfig = defineConfig({
+const initialConfig = defineSpec({
   key: 1,
   coordinationSpace: {
     barSelection: {
@@ -199,10 +199,10 @@ function unselectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, l
 function onCreateStore(set: Function) {
   return {
     selectBar: (viewUid: string, letter: string) => set((state: any) => {
-      const { coordinationSpace, viewCoordination } = state.viewConfig;
+      const { coordinationSpace, viewCoordination } = state.spec;
       const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
       const newConfig = {
-        ...state.viewConfig,
+        ...state.spec,
         coordinationSpace: selectBarInMetaCoordinationScopesHelper(
           coordinationScopesRaw,
           letter,
@@ -210,14 +210,14 @@ function onCreateStore(set: Function) {
         ),
       };
       return {
-        viewConfig: newConfig,
+        spec: newConfig,
       };
     }),
     unselectBar: (viewUid: string, letter: string) => set((state: any) => {
-      const { coordinationSpace, viewCoordination } = state.viewConfig;
+      const { coordinationSpace, viewCoordination } = state.spec;
       const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
       const newConfig = {
-        ...state.viewConfig,
+        ...state.spec,
         coordinationSpace: unselectBarInMetaCoordinationScopesHelper(
           coordinationScopesRaw,
           letter,
@@ -225,7 +225,7 @@ function onCreateStore(set: Function) {
         ),
       };
       return {
-        viewConfig: newConfig,
+        spec: newConfig,
       };
     }),
   };
@@ -234,11 +234,11 @@ function onCreateStore(set: Function) {
 // Export custom hook functions that expose the custom store actions
 // that were defined in the `onCreateStore` function.
 export function useSelectBar() {
-  return useViewConfigStore((state: any) => state.selectBar);
+  return useCoordinationStore((state: any) => state.selectBar);
 }
 
 export function useUnselectBar() {
-  return useViewConfigStore((state: any) => state.unselectBar);
+  return useCoordinationStore((state: any) => state.unselectBar);
 }
 
 export function MultiLevelPlotsExample() {

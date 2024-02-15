@@ -246,14 +246,14 @@ First, define custom action(s) in the Zustand store using the `onCreateStore` [p
 function onCreateStore(set) {
   return {
     selectBar: (viewUid, letter) => set((state) => {
-      const { coordinationSpace, viewCoordination } = state.viewConfig;
-      const newConfig = // ... custom logic
-      return { viewConfig: newConfig };
+      const { coordinationSpace, viewCoordination } = state.spec;
+      const newSpec = // ... custom logic
+      return { spec: newSpec };
     }),
     unselectBar: (viewUid, letter) => set((state) => {
-      const { coordinationSpace, viewCoordination } = state.viewConfig;
-      const newConfig = // ... custom logic
-      return { viewConfig: newConfig };
+      const { coordinationSpace, viewCoordination } = state.spec;
+      const newSpec = // ... custom logic
+      return { spec: newSpec };
     }),
   };
 }
@@ -262,14 +262,14 @@ function onCreateStore(set) {
 Then, wrap the custom actions in custom hook functions:
 
 ```js
-import { useViewConfigStore } from '@use-coordination/all';
+import { useCoordinationStore } from '@use-coordination/all';
 
 export function useSelectBar() {
-  return useViewConfigStore(state => state.selectBar);
+  return useCoordinationStore(state => state.selectBar);
 }
 
 export function useUnselectBar() {
-  return useViewConfigStore(state => state.unselectBar);
+  return useCoordinationStore(state => state.unselectBar);
 }
 ```
 

@@ -3,7 +3,7 @@ import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
-  defineConfig,
+  defineSpec,
 } from '@use-coordination/all';
 import { FlowEditor } from '@use-coordination/flow-editor';
 import { z } from 'zod';
@@ -18,7 +18,7 @@ const pluginCoordinationTypes = {
   barSelection: z.array(z.string()).nullable(),
 };
 
-const initialConfig = defineConfig({
+const initialConfig = defineSpec({
   key: 1,
   coordinationSpace: {
     "barSelection": {

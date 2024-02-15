@@ -13,14 +13,14 @@ import { CmvConfigObject } from './prop-types.js';
 // Reference: https://github.com/pmndrs/zustand#react-context
 // Reference: https://github.com/pmndrs/zustand/blob/e47ea03/tests/context.test.tsx#L60
 const {
-  Provider: ViewConfigProviderLocal,
-  useStore: useViewConfigStoreLocal,
-  useStoreApi: useViewConfigStoreApiLocal,
+  Provider: CoordinationStoreProviderLocal,
+  useStore: useCoordinationStoreLocal,
+  useStoreApi: useCoordinationStoreApiLocal,
 } = createContext();
 
-export const ViewConfigProvider = ViewConfigProviderLocal;
-export const useViewConfigStore = useViewConfigStoreLocal;
-export const useViewConfigStoreApi = useViewConfigStoreApiLocal;
+export const CoordinationStoreProvider = CoordinationStoreProviderLocal;
+export const useCoordinationStore = useCoordinationStoreLocal;
+export const useCoordinationStoreApi = useCoordinationStoreApiLocal;
 
 // Guidelines for parameter ordering:
 // - viewUid
@@ -225,7 +225,7 @@ export function getParameterScopeBy(
 
 
 /**
- * The useViewConfigStore hook is initialized via the zustand
+ * The useCoordinationStore hook is initialized via the zustand
  * create() function, which sets up both the state variables
  * and the reducer-type functions.
  * References:
@@ -234,23 +234,23 @@ export function getParameterScopeBy(
  * - https://github.com/pmndrs/zustand#using-subscribe-with-selector
  * @returns {function} The useStore hook.
  */
-export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateStore: Function | undefined) => create(set => ({
+export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateStore: Function | undefined) => create(set => ({
   // State:
-  // The viewConfig is an object which must conform to the schema
+  // The spec is an object which must conform to the schema
   // found in src/schemas/config.schema.json.
-  viewConfig: initialConfig,
+  spec: initialSpec,
   // Store the initial config so that its values can be used for resetting.
-  initialViewConfig: cloneDeep(initialConfig),
+  initialSpec: cloneDeep(initialSpec),
   // The loaders object is a mapping from dataset ID to
   // data type to loader object instance.
   // Reducer functions which update the state
   // (although technically also part of state):
-  setViewConfig: (viewConfig: CmvConfigObject) => set({ viewConfig, initialViewConfig: viewConfig }),
+  setSpec: (spec: CmvConfigObject) => set({ spec, initialSpec: spec }),
   setCoordinationValue: ({
     parameter, value, coordinationScopes,
     byType, typeScope, coordinationScopesBy,
   }: { parameter: string, value: any, coordinationScopes: Record<string, any>, byType: string, typeScope: string, coordinationScopesBy: Record<string, any> }) => set((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+    const { coordinationSpace } = state.spec;
     let scope;
     if (!byType) {
       scope = getParameterScope(coordinationScopes, parameter);
@@ -264,8 +264,8 @@ export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateSt
       }
     }
     return {
-      viewConfig: {
-        ...state.viewConfig,
+      spec: {
+        ...state.spec,
         coordinationSpace: {
           ...coordinationSpace,
           [parameter]: {
@@ -277,7 +277,7 @@ export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateSt
     };
   }),
   mergeCoordination: (newCoordinationValues: Record<string, any>, scopePrefix: string, viewUid: string) => set((state: any) => {
-    const { coordinationSpace, viewCoordination } = state.viewConfig;
+    const { coordinationSpace, viewCoordination } = state.spec;
     const {
       coordinationSpace: newCoordinationSpace,
       coordinationScopes,
@@ -326,8 +326,8 @@ export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateSt
       }
     });
 
-    const newViewConfig = {
-      ...state.viewConfig,
+    const newSpec = {
+      ...state.spec,
       coordinationSpace: {
         ...coordinationSpace,
       },
@@ -349,9 +349,8 @@ export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateSt
         },
       },
     };
-    // console.log('newViewConfig', newViewConfig);
     return {
-      viewConfig: newViewConfig,
+      spec: newSpec,
     };
   }),
   ...(onCreateStore ? onCreateStore(set) : {}),
@@ -363,8 +362,8 @@ export const createViewConfigStore = (initialConfig: CmvConfigObject, onCreateSt
  * @returns {[coordinationScopes, coordinationScopesBy]}
  */
 export function useRawViewMapping(viewUid: string) {
-  const viewCoordination = useViewConfigStore((state: any) => {
-    const { viewCoordination } = state.viewConfig;
+  const viewCoordination = useCoordinationStore((state: any) => {
+    const { viewCoordination } = state.spec;
     return viewCoordination;
   }, shallow);
 
@@ -385,8 +384,8 @@ export function useRawViewMapping(viewUid: string) {
 export function useViewMapping(viewUid: string) {
   const [coordinationScopesRaw, coordinationScopesByRaw] = useRawViewMapping(viewUid);
 
-  const metaSpace = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+  const metaSpace = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.spec;
     return coordinationSpace?.[META_COORDINATION_SCOPES];
   }, shallow);
 
@@ -400,8 +399,8 @@ export function useViewMapping(viewUid: string) {
     return scopes;
   }, [coordinationScopesRaw, metaSpace]);
 
-  const metaSpaceBy = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+  const metaSpaceBy = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.spec;
     return coordinationSpace?.[META_COORDINATION_SCOPES_BY];
   }, shallow);
   const coordinationScopesBy = useMemo(() => {
@@ -427,8 +426,8 @@ export function useViewMapping(viewUid: string) {
  * @returns {object} Object containing all coordination values.
  */
 export function _useInitialCoordination(coordinationScopes: Record<string, any>, parameters: string[]) {
-  const values = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.initialViewConfig;
+  const values = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.initialSpec;
     return fromEntries(parameters.map((parameter) => {
       if (coordinationSpace && coordinationSpace[parameter]) {
         const value = coordinationSpace[parameter][coordinationScopes[parameter]];
@@ -470,10 +469,10 @@ export function useInitialCoordination(viewUid: string, parameters: string[]) {
  * prefix.
  */
 export function _useCoordination(coordinationScopes: Record<string, string | string[]>, parameters: string[]) {
-  const setCoordinationValue = useViewConfigStore((state: any) => state.setCoordinationValue);
+  const setCoordinationValue = useCoordinationStore((state: any) => state.setCoordinationValue);
 
-  const values = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+  const values = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.spec;
     return fromEntries(parameters.map((parameter) => {
       if (coordinationSpace) {
         const parameterScope = getParameterScope(coordinationScopes, parameter);
@@ -522,8 +521,8 @@ export function _useCoordinationScopes(coordinationScopes: Record<string, string
 
   // Return array of coordination scopes,
   // but filter out any whose value is null / falsey.
-  const parameterSpace = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+  const parameterSpace = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.spec;
     return coordinationSpace?.[parameter];
   }, shallow);
   const nonNullScopes = useMemo(() => {
@@ -587,12 +586,12 @@ export function _useCoordinationScopesL1(
 ) {
   const scopes = getParameterScope(coordinationScopes, byType);
 
-  const parameterSpace = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+  const parameterSpace = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.spec;
     return coordinationSpace?.[parameter];
   }, shallow);
-  const byTypeSpace = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+  const byTypeSpace = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.spec;
     return coordinationSpace?.[byType];
   }, shallow);
 
@@ -659,8 +658,8 @@ export function _useCoordinationObject(coordinationScopes: Record<string, string
   const scopes = getParameterScope(coordinationScopes, parameter);
 
   // Mapping from dataset coordination scope name to dataset uid
-  const vals = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+  const vals = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.spec;
     // Convert a single scope to an array of scopes to be consistent.
     const scopesArr = Array.isArray(scopes) ? scopes : [scopes];
     return fromEntries(scopesArr.map((scope) => {
@@ -699,10 +698,10 @@ export function _useCoordinationL1(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, Record<string, any>>,
   byType: string, parameters: string[],
 ) {
-  const setCoordinationValue = useViewConfigStore((state: any) => state.setCoordinationValue);
+  const setCoordinationValue = useCoordinationStore((state: any) => state.setCoordinationValue);
 
-  const parameterSpaces = useViewConfigStore((state: any) => {
-    const { coordinationSpace } = state.viewConfig;
+  const parameterSpaces = useCoordinationStore((state: any) => {
+    const { coordinationSpace } = state.spec;
     return parameters.map(parameter => coordinationSpace[parameter]);
   }, shallow);
 
@@ -880,20 +879,20 @@ export function useCoordinationL2(viewUid: string, primaryType: string, secondar
  * Obtain the view config setter function from
  * the global app state.
  * @returns {function} The view config setter function
- * in the `useViewConfigStore` store.
+ * in the `useCoordinationStore` store.
  */
-export function useSetViewConfig(viewConfigStoreApi: any) {
-  const setViewConfigRef = useRef(viewConfigStoreApi.getState().setViewConfig);
-  const setViewConfig = setViewConfigRef.current;
-  return setViewConfig;
+export function useSetSpec(storeApi: any) {
+  const setSpecRef = useRef(storeApi.getState().setSpec);
+  const setSpec = setSpecRef.current;
+  return setSpec;
 }
 
 /**
  * Obtain the loaders setter function from
  * the global app state.
  * @returns {function} The loaders setter function
- * in the `useViewConfigStore` store.
+ * in the `useCoordinationStore` store.
  */
 export function useMergeCoordination() {
-  return useViewConfigStore((state: any) => state.mergeCoordination);
+  return useCoordinationStore((state: any) => state.mergeCoordination);
 }

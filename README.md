@@ -54,7 +54,7 @@ import { CoordinationProvider } from 'use-coordination';
 // ...
 
 // Alternatively, use the object-oriented API.
-const initialConfig = defineConfig({
+const initialConfig = defineSpec({
   coordinationSpace: {
     myValue: {
       myValueScope1: 99,

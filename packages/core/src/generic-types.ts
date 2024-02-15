@@ -32,7 +32,7 @@ type Config<
   viewCoordination?: ViewCoordinationT;
 };
 
-export function defineConfig<
+export function defineSpec<
   CoordinationSpaceT extends CoordinationSpace,
   ViewCoordinationT extends ViewCoordination<CoordinationSpaceT>,
 >(
