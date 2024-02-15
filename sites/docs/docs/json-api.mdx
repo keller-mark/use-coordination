@@ -1,11 +1,11 @@
 ---
-id: config-json
-title: Configs via JSON
-slug: /config-json
+id: spec-json
+title: Specs via JSON
+slug: /spec-json
 ---
 import { GenericSpecJsonSchema } from '../src/pages/_JsonSchema.js';
 
-The CMV config stores the coordination space (i.e., the state of the views) and defines which views and properties are coordinated.
+The CMV specification stores the coordination space (i.e., the state of the views) and defines which views and properties are coordinated.
 
 ## Optional properties
 
@@ -13,10 +13,10 @@ The CMV config stores the coordination space (i.e., the state of the views) and 
 
 - Type: `string`
 
-A unique ID for the config. Optional.
+A unique ID for the specification. Optional.
 
-Intended to be used in situations where `<CoordinationProvider/>` is used as a controlled component (i.e., a parent component is the source of truth for the config prop and likely also uses the `onSpecChange` prop).
-For example, if a change in `config.key` is detected, the configuration will be re-validated (which might not occur on other changes to config for performance reasons). 
+Intended to be used in situations where `<CoordinationProvider/>` is used as a controlled component (i.e., a parent component is the source of truth for the specification prop and likely also uses the `onSpecChange` prop).
+For example, if a change in `spec.key` is detected, the specification will be re-validated (which might not occur on other changes to specification for performance reasons). 
 
 ### `coordinationSpace`
 

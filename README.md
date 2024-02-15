@@ -11,7 +11,7 @@ npm install use-coordination
 
 ### Quick start
 
-- Define a coordination specification (i.e., representation of the coordinated state of your app) using the [declarative](https://keller-mark.github.io/use-coordination/docs/config-json/) or [imperative](https://keller-mark.github.io/use-coordination/docs/config-js/) API.
+- Define a coordination specification (i.e., representation of the coordinated state of your app) using the [declarative](https://keller-mark.github.io/use-coordination/docs/spec-json/) or [imperative](https://keller-mark.github.io/use-coordination/docs/spec-js/) API.
 - Get and set coordinated state via the `useCoordination` [hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/) within React components (i.e., views).
 - Wrap the views with a [coordination provider](https://keller-mark.github.io/use-coordination/docs/provider-components/).
 
@@ -94,8 +94,8 @@ function MyApp(props) {
 To learn more, please visit the [documentation](https://keller-mark.github.io/use-coordination/):
 - [List of available hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/)
 - [List of available providers](https://keller-mark.github.io/use-coordination/docs/provider-components/)
-- [JSON schema](https://keller-mark.github.io/use-coordination/docs/config-json/)
-- [Object-oriented config API](https://keller-mark.github.io/use-coordination/docs/config-js/)
+- [JSON schema](https://keller-mark.github.io/use-coordination/docs/spec-json/)
+- [Object-oriented config API](https://keller-mark.github.io/use-coordination/docs/spec-js/)
 
 
 ## Development
