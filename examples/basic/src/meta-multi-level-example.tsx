@@ -111,7 +111,7 @@ const pluginCoordinationTypes = {
   channelValue: z.number(),
 };
 
-const initialConfig = {
+const initialSpec = {
   key: 1,
   coordinationSpace: {
     "channel": {
@@ -188,7 +188,7 @@ const initialConfig = {
 };
 
 export function MetaMultiLevelExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [config, setConfig] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`

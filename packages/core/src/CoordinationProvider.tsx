@@ -16,8 +16,8 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
     initializer,
     children,
     onCreateStore,
-    diffByKey = true,
-    emitInitialConfigChange = true,
+    remountOnKeyChange = true,
+    emitInitialSpecChange = true,
   } = props;
 
   // If config.key exists, then use it for hook dependencies to detect changes
@@ -36,11 +36,11 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
   // Emit the upgraded/initialized view config
   // to onConfigChange if necessary.
   useEffect(() => {
-    if (onConfigChange && emitInitialConfigChange) {
+    if (onConfigChange && emitInitialSpecChange) {
       onConfigChange(config);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey, onConfigChange, emitInitialConfigChange]);
+  }, [configKey, onConfigChange, emitInitialSpecChange]);
 
   // Initialize the view config and loaders in the global state.
   const createCoordinationStoreClosure = useCallback(() => {
@@ -53,7 +53,7 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
 
   return (
     /* @ts-ignore */
-    <CoordinationStoreProvider createStore={createCoordinationStoreClosure} {...(diffByKey ? ({ key: configKey }) : {})}>
+    <CoordinationStoreProvider createStore={createCoordinationStoreClosure} {...(remountOnKeyChange ? ({ key: configKey }) : {})}>
         <ViewWrapper
           configKey={configKey}
           config={config}

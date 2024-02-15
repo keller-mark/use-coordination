@@ -76,7 +76,7 @@ const pluginCoordinationTypes = {
 };
 
 
-const initialConfig = {
+const initialSpec = {
   key: 1,
   coordinationSpace: {
     "value": {
@@ -113,7 +113,7 @@ const initialConfig = {
 };
 
 export function MultiCoordinationTypeExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [config, setConfig] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`

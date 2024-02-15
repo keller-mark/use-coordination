@@ -54,7 +54,7 @@ import { CoordinationProvider } from 'use-coordination';
 // ...
 
 // Alternatively, use the object-oriented API.
-const initialConfig = defineSpec({
+const initialSpec = defineSpec({
   coordinationSpace: {
     myValue: {
       myValueScope1: 99,
@@ -82,7 +82,7 @@ const initialConfig = defineSpec({
 
 function MyApp(props) {
   return (
-    <CoordinationProvider config={initialConfig}>
+    <CoordinationProvider config={initialSpec}>
       <SomeViewType viewUid="v1" />
       <SomeViewType viewUid="v2" />
       <AnotherViewType viewUid="v3" />

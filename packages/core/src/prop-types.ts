@@ -38,8 +38,8 @@ export type CoordinationProviderProps = {
     validateOnConfigChange?: boolean;
     children: ReactNode;
     onCreateStore?: OnCreateStoreFunction;
-    diffByKey?: boolean;
-    emitInitialConfigChange?: boolean;
+    remountOnKeyChange?: boolean;
+    emitInitialSpecChange?: boolean;
 };
 
 export type ZodCoordinationProviderProps = {
@@ -51,8 +51,8 @@ export type ZodCoordinationProviderProps = {
     coordinationTypes: Record<string, z.ZodTypeAny>;
     children: ReactNode;
     onCreateStore?: OnCreateStoreFunction;
-    diffByKey?: boolean;
-    emitInitialConfigChange?: boolean;
+    remountOnKeyChange?: boolean;
+    emitInitialSpecChange?: boolean;
 };
 
 export type CallbackPublisherProps = {

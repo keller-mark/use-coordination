@@ -17,8 +17,8 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
     initializer,
     children,
     onCreateStore,
-    diffByKey,
-    emitInitialConfigChange,
+    remountOnKeyChange,
+    emitInitialSpecChange,
   } = props;
 
   const coordinationTypes = useMemo(
@@ -64,7 +64,7 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
   // Emit the upgraded/initialized view config
   // to onConfigChange if necessary.
   useEffect(() => {
-    if (!isEqual(validConfig, config) && onConfigChange && emitInitialConfigChange) {
+    if (!isEqual(validConfig, config) && onConfigChange && emitInitialSpecChange) {
       onConfigChange(validConfig);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,8 +89,8 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
       validater={validater}
       initializer={initializer}
       onCreateStore={onCreateStore}
-      diffByKey={diffByKey}
-      emitInitialConfigChange={emitInitialConfigChange}
+      remountOnKeyChange={remountOnKeyChange}
+      emitInitialSpecChange={emitInitialSpecChange}
     >
       {children}
     </CoordinationProvider>

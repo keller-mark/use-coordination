@@ -40,7 +40,7 @@ const pluginCoordinationTypes = {
   sliderValue: z.number(),
 };
 
-const initialConfig = {
+const initialSpec = {
   key: 1,
   coordinationSpace: {
     "sliderValue": {
@@ -69,7 +69,7 @@ const initialConfig = {
 };
 
 export function BaseExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [config, setConfig] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`

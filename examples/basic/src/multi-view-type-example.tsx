@@ -69,7 +69,7 @@ const pluginCoordinationTypes = {
   value: z.number(),
 }
 
-const initialConfig2 = {
+const initialSpec2 = {
   key: 1,
   coordinationSpace: {
     "value": {
@@ -104,7 +104,7 @@ const initialConfig2 = {
 };
 
 export function MultiViewTypeExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig2);
+  const [config, setConfig] = React.useState<any>(initialSpec2);
   return (
     <>
       <style>{`

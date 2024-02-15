@@ -18,7 +18,7 @@ const pluginCoordinationTypes = {
   barSelection: z.array(z.string()).nullable(),
 };
 
-const initialConfig = defineSpec({
+const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     "barSelection": {
@@ -51,7 +51,7 @@ const initialConfig = defineSpec({
 
 export function PlotsExample(props: any) {
   const { showFlowEditor } = props;
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [config, setConfig] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`

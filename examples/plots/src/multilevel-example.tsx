@@ -25,7 +25,7 @@ const pluginCoordinationTypes = {
   barColor: z.string().nullable(),
 };
 
-const initialConfig = defineSpec({
+const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     barSelection: {
@@ -242,7 +242,7 @@ export function useUnselectBar() {
 }
 
 export function MultiLevelPlotsExample() {
-  const [config, setConfig] = React.useState<any>(initialConfig);
+  const [config, setConfig] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`

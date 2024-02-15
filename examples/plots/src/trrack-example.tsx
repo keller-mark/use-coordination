@@ -19,7 +19,7 @@ const pluginCoordinationTypes = {
   barSelection: z.array(z.string()).nullable(),
 };
 
-const initialConfig = defineSpec({
+const initialSpec = defineSpec({
   coordinationSpace: {
     "barSelection": {
       "A": [],
@@ -59,7 +59,7 @@ export function TrrackExample(props: any) {
     config: configToUse,
     onConfigChange: setConfig,
     onChangeCurrent,
-  } = useTrrack(initialConfig);
+  } = useTrrack(initialSpec);
   
   return (
     <>
@@ -81,8 +81,8 @@ export function TrrackExample(props: any) {
               onConfigChange={(newConfig: any) => {
                 setConfig(newConfig);
               }}
-              diffByKey={false}
-              emitInitialConfigChange={false}
+              remountOnKeyChange={false}
+              emitInitialSpecChange={false}
             >
               <div className="multiplot-container">
                 <div className="plot-container">
