@@ -52,6 +52,47 @@ Returns `values` where the keys are the input `coordinationTypes`.
 const { someValue } = useInitialCoordination(viewUid, ["someValue"]);
 ```
 
+## Multi-coordination
+
+### `useCoordinationScopes`
+
+Get the ordered list of coordination scopes for a particular coordination type.
+Scopes are filtered out if their value in the coordination space is null.
+
+#### Parameters:
+
+- `viewUid` (`string`) - The unique identifier for a view.
+- `coordinationType` (`string`) - A single coordination type for a view.
+
+#### Returns:
+
+- Type: `string[]`
+
+The coordination scopes mapped to the specified coordination type for a view.
+
+```js
+const channelScopes = useCoordinationScopes(viewUid, "channel");
+```
+
+### `useCoordinationObject`
+
+Get a mapping from (multiple) coordination scopes to their values for a particular coordination type.
+
+#### Parameters:
+
+- `viewUid` (`string`) - The unique identifier for a view.
+- `coordinationType` (`string`) - A single coordination type for a view.
+
+#### Returns:
+
+- Type: `Record<string, any>`
+
+The mapping from coordination scopes (the keys of the returned object) to their values for the specified coordination type and view.
+
+```js
+const channelObject = useCoordinationObject(viewUid, "channel");
+```
+
 ## Multi-level coordination (First level)
 
 ### `useCoordinationL1`
@@ -80,22 +121,27 @@ const channelCoordination = useCoordinationL1(viewUid, "channel", ["channelValue
 
 ### `useCoordinationScopesL1`
 
-Get the ordered list of coordination scopes for a particular coordination type.
-Scopes are filtered out if their value in the coordination space is null.
+Filters out primary and secondary scopes from the results if their value in the coordination space is `null`.
+
 
 #### Parameters:
 
 - `viewUid` (`string`) - The unique identifier for a view.
-- `coordinationType` (`string`) - A single coordination type for a view.
+- `primaryType` (`string`)
+- `secondaryType` (`string`)
 
 #### Returns:
 
-- Type: `string[]`
+- Type: `[string[], Record<string, string[]>]`
 
-The coordination scopes mapped to the specified coordination type for a view.
+`[primaryScopesArr, primaryToSecondaryScopesArr]` where
+`primaryScopesArr` is an array of coordination scopes for the primary coordination type, and
+`primaryToSecondaryScopesArr` is a mapping from each of the primary scopes to a list of secondary scopes `{ [primaryScope]: secondaryScopesArr }`.
 
 ```js
-const channelScopes = useCoordinationScopesL1(viewUid, "channel");
+const [imageLayerScopes, imageChannelScopesByLayer] = useCoordinationScopesL1(
+    viewUid, "imageLayer", "imageChannel"
+);
 ```
 
 ## Multi-level coordination (Second level)
@@ -147,31 +193,6 @@ const imageChannelCoordination = useCoordinationL2(
 );
 ```
 
-### `useCoordinationScopesL2`
-
-Filters out primary and secondary scopes from the results if their value in the coordination space is `null`.
-
-
-#### Parameters:
-
-- `viewUid` (`string`) - The unique identifier for a view.
-- `primaryType` (`string`)
-- `secondaryType` (`string`)
-
-#### Returns:
-
-- Type: `[string[], Record<string, string[]>]`
-
-`[primaryScopesArr, primaryToSecondaryScopesArr]` where
-`primaryScopesArr` is an array of coordination scopes for the primary coordination type, and
-`primaryToSecondaryScopesArr` is a mapping from each of the primary scopes to a list of secondary scopes `{ [primaryScope]: secondaryScopesArr }`.
-
-```js
-const [imageLayerScopes, imageChannelScopesByLayer] = useCoordinationScopesL2(
-    viewUid, "imageLayer", "imageChannel"
-);
-```
-
 ## Advanced usage
 
 ### `useRawViewMapping`
@@ -194,7 +215,7 @@ const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
 ### Underscore-prefixed hooks
 
 Many of the above hooks internally call `useViewMapping` to get the coordination scope mapping information based on the `viewUid`.
-This is convenient, but using multiple hooks that call `useViewMapping` in the same view can be inefficient, as it results in redundant lookup (and meta-coordination resolution) operations.
+This is convenient, but using multiple hooks that call `useViewMapping` in the same view will result in redundant lookup (and meta-coordination resolution) operations.
 We provide a set of underscore-prefixed hooks that take the result of `useViewMapping` as input.
 
 ```js
@@ -209,7 +230,62 @@ The full list of underscore-prefixed hooks:
 
 - `_useCoordination(coordinationScopes, coordinationTypes)`
 - `_useInitialCoordination(coordinationScopes, coordinationTypes)`
+- `_useCoordinationScopes(coordinationScopes, coordinationType)`
 - `_useCoordinationL1(coordinationScopes, coordinationScopesBy, primaryType, secondaryTypes)`
 - `_useCoordinationL2(coordinationScopes, coordinationScopesBy, primaryType, secondaryType, tertiaryTypes)`
-- `_useCoordinationScopesL1(coordinationScopes, coordinationType)`
-- `_useCoordinationScopesL2(coordinationScopes, coordinationScopesBy, primaryType, secondaryType)`
+- `_useCoordinationScopesL1(coordinationScopes, coordinationScopesBy, primaryType, secondaryType)`
+
+### Definition of custom hooks
+
+Custom hooks can be defined to provide the lowest-level of control over the coordination implementation.
+This can be useful to define custom multi-level coordination logic.
+
+First, define custom action(s) in the Zustand store using the `onCreateStore` [prop](../provider-components/#oncreatestore) of the coordination provider.
+
+```js
+function onCreateStore(set) {
+  return {
+    selectBar: (viewUid, letter) => set((state) => {
+      const { coordinationSpace, viewCoordination } = state.viewConfig;
+      const newConfig = // ... custom logic
+      return { viewConfig: newConfig };
+    }),
+    unselectBar: (viewUid, letter) => set((state) => {
+      const { coordinationSpace, viewCoordination } = state.viewConfig;
+      const newConfig = // ... custom logic
+      return { viewConfig: newConfig };
+    }),
+  };
+}
+```
+
+Then, wrap the custom actions in custom hook functions:
+
+```js
+import { useViewConfigStore } from '@use-coordination/all';
+
+export function useSelectBar() {
+  return useViewConfigStore(state => state.selectBar);
+}
+
+export function useUnselectBar() {
+  return useViewConfigStore(state => state.unselectBar);
+}
+```
+
+Finally, import these into your view components to use:
+
+```js
+import { useSelectBar, useUnselectBar } from './path/to/my-custom-hooks.js';
+
+export function MyView(props) {
+  const { viewUid } = props;
+
+  const selectBar = useSelectBar();
+  const unselectBar = useUnselectBar();
+
+  return (
+    <button onClick={() => selectBar(viewUid, "A")}>Select the letter A</button>
+  );
+}
+```

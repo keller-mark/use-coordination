@@ -505,19 +505,19 @@ export function useCoordination(viewUid: string, parameters: string[]) {
   return _useCoordination(coordinationScopes, parameters);
 }
 
-export function _useCoordinationScopesL1All(coordinationScopes: Record<string, string | string[]>, parameter: string) {
+export function _useCoordinationScopesAll(coordinationScopes: Record<string, string | string[]>, parameter: string) {
   return useMemo(() => {
     const scopes = coordinationScopes[parameter];
     return Array.isArray(scopes) ? scopes : [scopes];
   }, [parameter, coordinationScopes]);
 }
 
-export function useCoordinationScopesL1All(viewUid: string, parameter: string) {
+export function useCoordinationScopesAll(viewUid: string, parameter: string) {
   const [coordinationScopes] = useViewMapping(viewUid);
-  return _useCoordinationScopesL1All(coordinationScopes, parameter);
+  return _useCoordinationScopesAll(coordinationScopes, parameter);
 }
 
-export function _useCoordinationScopesL1(coordinationScopes: Record<string, string | string[]>, parameter: string) {
+export function _useCoordinationScopes(coordinationScopes: Record<string, string | string[]>, parameter: string) {
   const scopes = getParameterScope(coordinationScopes, parameter);
 
   // Return array of coordination scopes,
@@ -540,12 +540,12 @@ export function _useCoordinationScopesL1(coordinationScopes: Record<string, stri
   return nonNullScopes;
 }
 
-export function useCoordinationScopesL1(viewUid: string, parameter: string) {
+export function useCoordinationScopes(viewUid: string, parameter: string) {
   const [coordinationScopes] = useViewMapping(viewUid);
-  return _useCoordinationScopesL1(coordinationScopes, parameter);
+  return _useCoordinationScopes(coordinationScopes, parameter);
 }
 
-export function _useCoordinationScopesL2All(
+export function _useCoordinationScopesL1All(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
   byType: string, parameter: string,
 ) {
@@ -576,12 +576,12 @@ export function _useCoordinationScopesL2All(
   }, [parameter, byType, coordinationScopes, coordinationScopesBy]);
 }
 
-export function useCoordinationScopesL2All(viewUid: string, byType: string, parameter: string) {
+export function useCoordinationScopesL1All(viewUid: string, byType: string, parameter: string) {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
-  return _useCoordinationScopesL2All(coordinationScopes, coordinationScopesBy, byType, parameter);
+  return _useCoordinationScopesL1All(coordinationScopes, coordinationScopesBy, byType, parameter);
 }
 
-export function _useCoordinationScopesL2(
+export function _useCoordinationScopesL1(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
   byType: string, parameter: string,
 ) {
@@ -650,12 +650,12 @@ export function _useCoordinationScopesL2(
   }, [parameter, byType, scopes, coordinationScopes, coordinationScopesBy, parameterSpace, byTypeSpace]);
 }
 
-export function useCoordinationScopesL2(viewUid: string, byType: string, parameter: string) {
+export function useCoordinationScopesL1(viewUid: string, byType: string, parameter: string) {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
-  return _useCoordinationScopesL2(coordinationScopes, coordinationScopesBy, byType, parameter);
+  return _useCoordinationScopesL1(coordinationScopes, coordinationScopesBy, byType, parameter);
 }
 
-export function _useMultiCoordinationValues(coordinationScopes: Record<string, string | string[]>, parameter: string) {
+export function _useCoordinationObject(coordinationScopes: Record<string, string | string[]>, parameter: string) {
   const scopes = getParameterScope(coordinationScopes, parameter);
 
   // Mapping from dataset coordination scope name to dataset uid
@@ -676,9 +676,9 @@ export function _useMultiCoordinationValues(coordinationScopes: Record<string, s
   return vals;
 }
 
-export function useMultiCoordinationValues(viewUid: string, parameter: string) {
+export function useCoordinationObject(viewUid: string, parameter: string) {
   const [coordinationScopes] = useViewMapping(viewUid);
-  return _useMultiCoordinationValues(coordinationScopes, parameter);
+  return _useCoordinationObject(coordinationScopes, parameter);
 }
 
 /**

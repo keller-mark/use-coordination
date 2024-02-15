@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCoordinationScopesL1, useCoordinationL1, useMultiCoordinationValues } from '@use-coordination/all';
+import { useCoordinationScopes, useCoordinationL1, useCoordinationObject } from '@use-coordination/all';
 
 function ColorPicker(props: any) {
   const {
@@ -21,8 +21,8 @@ export function MultilevelColors(props: any) {
     viewUid,
   } = props;
 
-  const selectionScopes = useCoordinationScopesL1(viewUid, "barSelection");
-  const selectionValues = useMultiCoordinationValues(viewUid, "barSelection");
+  const selectionScopes = useCoordinationScopes(viewUid, "barSelection");
+  const selectionValues = useCoordinationObject(viewUid, "barSelection");
   const selectionCoordination = useCoordinationL1(viewUid, "barSelection", ["barColor"]);
 
   return (

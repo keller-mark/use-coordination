@@ -3,7 +3,7 @@ import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
-  useCoordinationScopesL1,
+  useCoordinationScopes,
   useCoordinationL1,
 } from '@use-coordination/all';
 import { z } from 'zod';
@@ -92,7 +92,7 @@ const ColorfulSliderInputContainer = ({
 }: any) => {
 
   // Support meta-coordination.
-  const channelScopes = useCoordinationScopesL1(viewUid, "channel");
+  const channelScopes = useCoordinationScopes(viewUid, "channel");
   const channelCoordination = useCoordinationL1(viewUid, "channel", [
     "channelValue"
   ]);
