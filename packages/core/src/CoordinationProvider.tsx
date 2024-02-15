@@ -44,10 +44,10 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
 
   // Initialize the view config and loaders in the global state.
   const createCoordinationStoreClosure = useCallback(() => {
-    const initializedConfig = initializer
+    const initializedSpec = initializer
       ? initializer(config)
       : config;
-    return createCoordinationStore(initializedConfig, onCreateStore);
+    return createCoordinationStore(initializedSpec, onCreateStore);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [specKey, initializer, onCreateStore]);
 
