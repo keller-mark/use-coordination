@@ -5,7 +5,7 @@ import { existsSync } from 'fs';
 
 const cwd = process.cwd();
 
-// Need to make vit-s external for dependents (but vit-s is not dependent on itself),
+// Need to make core external for dependents (but core is not dependent on itself),
 // otherwise there will be issues with Zustand stores.
 const moreExternals = basename(cwd) === 'core' ? [] : ['@use-coordination/core'];
 

@@ -35,8 +35,3 @@ The container for a particular coordination type and its associated coordination
 ### Coordination Space
 The container for all coordination objects in a visualization system.
 In use-coordination, the coordination space is stored in a serializable JSON format.
-
-### Translation Function
-A function that translates values between the coordination space and a visualization implementation.
-Coordination values may be stored in an abstract format rather than the format required for any particular view. For this reason, coordinated views must define a translation function for each coordination type, which maps coordination values onto the native format used by the view. In the simplest case the identity function may be used.
-
