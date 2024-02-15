@@ -1,7 +1,9 @@
 import React from 'react';
 import {
-  CoordinationProvider,
   defineConfig,
+  ZodCoordinationProvider,
+  ZodErrorBoundary,
+  z,
 } from '@use-coordination/all';
 import {
   useTrrack,
@@ -13,6 +15,9 @@ import { D3BarPlotView } from './d3.js';
 import { VisxPlotView } from './visx.js';
 import { PlotlyBarPlotView } from './plotly.js';
 
+const pluginCoordinationTypes = {
+  barSelection: z.array(z.string()).nullable(),
+};
 
 const initialConfig = defineConfig({
   coordinationSpace: {
@@ -69,29 +74,32 @@ export function TrrackExample(props: any) {
         <div>
           <button onClick={onUndo} disabled={!canUndo}>Undo</button>
           <button onClick={onRedo} disabled={!canRedo}>Redo</button>
-          <CoordinationProvider
-            config={configToUse}
-            onConfigChange={(newConfig: any) => {
-              setConfig(newConfig);
-            }}
-            diffByKey={false}
-            emitInitialConfigChange={false}
-          >
-            <div className="multiplot-container">
-              <div className="plot-container">
-                <VegaLitePlotView viewUid="vegaLite" data={letterFrequency} />
+          <ZodErrorBoundary key={configToUse.key}>
+            <ZodCoordinationProvider
+              config={configToUse}
+              coordinationTypes={pluginCoordinationTypes}
+              onConfigChange={(newConfig: any) => {
+                setConfig(newConfig);
+              }}
+              diffByKey={false}
+              emitInitialConfigChange={false}
+            >
+              <div className="multiplot-container">
+                <div className="plot-container">
+                  <VegaLitePlotView viewUid="vegaLite" data={letterFrequency} />
+                </div>
+                <div className="plot-container">
+                  <D3BarPlotView viewUid="d3" data={letterFrequency} />
+                </div>
+                <div className="plot-container">
+                  <VisxPlotView viewUid="visx" data={letterFrequency} />
+                </div>
+                <div className="plot-container">
+                  <PlotlyBarPlotView viewUid="plotly" data={letterFrequency} />
+                </div>
               </div>
-              <div className="plot-container">
-                <D3BarPlotView viewUid="d3" data={letterFrequency} />
-              </div>
-              <div className="plot-container">
-                <VisxPlotView viewUid="visx" data={letterFrequency} />
-              </div>
-              <div className="plot-container">
-                <PlotlyBarPlotView viewUid="plotly" data={letterFrequency} />
-              </div>
-            </div>
-          </CoordinationProvider>
+            </ZodCoordinationProvider>
+          </ZodErrorBoundary>
           <pre>
             {JSON.stringify(configToUse, null, 2)}
           </pre>

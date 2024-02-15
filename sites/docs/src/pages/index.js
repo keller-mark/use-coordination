@@ -21,7 +21,7 @@ export default function Index() {
       <header className={'hero hero--primary'}>
         <div className={'container'}>
           <h1>use-coordination</h1>
-          <p className="hero__subtitle">Multi&#8211;level and meta&#8211; coordinated multiple views</p>
+          <p className="hero__subtitle">Easily implement coordinated multiple views</p>
         </div>
       </header>
       <main>
