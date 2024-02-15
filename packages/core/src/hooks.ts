@@ -6,7 +6,7 @@ import createContext from 'zustand/context';
 import shallow from 'zustand/shallow';
 import { cloneDeep } from 'lodash-es';
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
-import { fromEntries, capitalize } from '@use-coordination/utils';
+import { capitalize } from '@use-coordination/utils';
 import { getCoordinationSpaceAndScopes } from '@use-coordination/config';
 import { CmvConfigObject } from './prop-types.js';
 
@@ -427,7 +427,7 @@ export function useViewMapping(viewUid: string) {
 export function _useInitialCoordination(coordinationScopes: Record<string, any>, parameters: string[]) {
   const values = useCoordinationStore((state: any) => {
     const { coordinationSpace } = state.initialSpec;
-    return fromEntries(parameters.map((parameter) => {
+    return Object.fromEntries(parameters.map((parameter) => {
       if (coordinationSpace && coordinationSpace[parameter]) {
         const value = coordinationSpace[parameter][coordinationScopes[parameter]];
         return [parameter, value];
@@ -472,7 +472,7 @@ export function _useCoordination(coordinationScopes: Record<string, string | str
 
   const values = useCoordinationStore((state: any) => {
     const { coordinationSpace } = state.spec;
-    return fromEntries(parameters.map((parameter) => {
+    return Object.fromEntries(parameters.map((parameter) => {
       if (coordinationSpace) {
         const parameterScope = getParameterScope(coordinationScopes, parameter);
         if (coordinationSpace && coordinationSpace[parameter] && !Array.isArray(parameterScope)) {
@@ -484,7 +484,7 @@ export function _useCoordination(coordinationScopes: Record<string, string | str
     }));
   }, shallow);
 
-  const setters = useMemo(() => fromEntries(parameters.map((parameter) => {
+  const setters = useMemo(() => Object.fromEntries(parameters.map((parameter) => {
     const setterName = `set${capitalize(parameter)}`;
     const setterFunc = (value: any) => setCoordinationValue({
       parameter,
@@ -551,7 +551,7 @@ export function _useCoordinationScopesL1All(
     const scopes = getParameterScope(coordinationScopes, byType);
     if (scopes && coordinationScopesBy?.[byType]?.[parameter]) {
       const scopesArr = Array.isArray(scopes) ? scopes : [scopes];
-      return [scopesArr, fromEntries(scopesArr.map((scope) => {
+      return [scopesArr, Object.fromEntries(scopesArr.map((scope) => {
         const secondaryScopes = coordinationScopesBy[byType][parameter][scope];
         const secondaryScopesArr = Array.isArray(secondaryScopes)
           ? secondaryScopes
@@ -562,7 +562,7 @@ export function _useCoordinationScopesL1All(
     // Fallback from fine-grained to coarse-grained.
     if (scopes && !coordinationScopesBy?.[byType]?.[parameter] && coordinationScopes?.[parameter]) {
       const scopesArr = Array.isArray(scopes) ? scopes : [scopes];
-      return [scopesArr, fromEntries(scopesArr.map((scope) => {
+      return [scopesArr, Object.fromEntries(scopesArr.map((scope) => {
         const secondaryScopes = coordinationScopes?.[parameter];
         const secondaryScopesArr = Array.isArray(secondaryScopes)
           ? secondaryScopes
@@ -604,7 +604,7 @@ export function _useCoordinationScopesL1(
         }
         return false;
       });
-      return [scopesNonNull, fromEntries(scopesNonNull.map((scope) => {
+      return [scopesNonNull, Object.fromEntries(scopesNonNull.map((scope) => {
         const secondaryScopes = coordinationScopesBy[byType][parameter][scope];
         const secondaryScopesArr = Array.isArray(secondaryScopes)
           ? secondaryScopes
@@ -629,7 +629,7 @@ export function _useCoordinationScopesL1(
         }
         return false;
       });
-      return [scopesNonNull, fromEntries(scopesNonNull.map((scope) => {
+      return [scopesNonNull, Object.fromEntries(scopesNonNull.map((scope) => {
         const secondaryScopes = coordinationScopes?.[parameter];
         const secondaryScopesArr = Array.isArray(secondaryScopes)
           ? secondaryScopes
@@ -661,7 +661,7 @@ export function _useCoordinationObject(coordinationScopes: Record<string, string
     const { coordinationSpace } = state.spec;
     // Convert a single scope to an array of scopes to be consistent.
     const scopesArr = Array.isArray(scopes) ? scopes : [scopes];
-    return fromEntries(scopesArr.map((scope) => {
+    return Object.fromEntries(scopesArr.map((scope) => {
       if (coordinationSpace && coordinationSpace[parameter]) {
         const value = coordinationSpace[parameter][scope];
         return [scope, value] as [string, any];
@@ -709,8 +709,8 @@ export function _useCoordinationL1(
     if (typeScopes) {
       // Convert a single scope to an array of scopes to be consistent.
       const typeScopesArr = Array.isArray(typeScopes) ? typeScopes : [typeScopes];
-      return fromEntries(typeScopesArr.map((datasetScope) => {
-        const datasetValues = fromEntries(parameters.map((parameter, i) => {
+      return Object.fromEntries(typeScopesArr.map((datasetScope) => {
+        const datasetValues = Object.fromEntries(parameters.map((parameter, i) => {
           if (parameterSpaces[i]) {
             const parameterSpace = parameterSpaces[i];
             const parameterScope = getParameterScopeBy(
@@ -745,8 +745,8 @@ export function _useCoordinationL1(
     if (typeScopes) {
       // Convert a single scope to an array of scopes to be consistent.
       const typeScopesArr = Array.isArray(typeScopes) ? typeScopes : [typeScopes];
-      return fromEntries(typeScopesArr.map((datasetScope) => {
-        const datasetSetters = fromEntries(parameters.map((parameter) => {
+      return Object.fromEntries(typeScopesArr.map((datasetScope) => {
+        const datasetSetters = Object.fromEntries(parameters.map((parameter) => {
           const setterName = `set${capitalize(parameter)}`;
           const setterFunc = (value: any) => setCoordinationValue({
             parameter,

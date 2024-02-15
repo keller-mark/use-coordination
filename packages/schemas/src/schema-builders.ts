@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { fromEntries } from '@use-coordination/utils';
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import {
   componentCoordinationScopes,
@@ -66,7 +65,7 @@ export function buildSpecSchema<
   return buildSpecSchemaAux(
     z.object(
       // Wrap each value schema in z.record()
-      fromEntries(
+      Object.fromEntries(
         [
           ...Object.entries(baseCoordinationTypes),
           // Merge with coordination type schemas.

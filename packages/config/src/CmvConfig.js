@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
-import { fromEntries, getNextScope, createPrefixedGetNextScopeNumeric } from '@use-coordination/utils';
+import { getNextScope, createPrefixedGetNextScopeNumeric } from '@use-coordination/utils';
 
 function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationScopesBy) {
   // Set this.coordinationScopes and this.coordinationScopesBy by recursion on `scopes`.
@@ -666,10 +666,10 @@ export class CmvConfig {
   toJSON() {
     return {
       ...this.config,
-      coordinationSpace: fromEntries(
+      coordinationSpace: Object.fromEntries(
         Object.entries(this.config.coordinationSpace).map(([cType, cScopes]) => ([
           cType,
-          fromEntries(
+          Object.fromEntries(
             Object.entries(cScopes).map(([cScopeName, cScope]) => ([
               cScopeName,
               cScope.cValue,
@@ -677,7 +677,7 @@ export class CmvConfig {
           ),
         ])),
       ),
-      viewCoordination: fromEntries(
+      viewCoordination: Object.fromEntries(
         Object.entries(this.config.viewCoordination).map(([viewUid, viewObj]) => ([
           viewUid,
           viewObj.toJSON(),
