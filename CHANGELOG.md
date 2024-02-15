@@ -1,4 +1,19 @@
 
+## 0.0.9
+
+### Patch Changes
+
+- Add usage page to docs. (`docs`) ([`763abd7`](https://github.com/keller-mark/use-coordination/commit/763abd745e697a9e78a92748c8fe834bb540ea22))
+
+- Rename the hook functions to improve API. (`@use-coordination/core`) ([#73](https://github.com/keller-mark/use-coordination/pull/73))
+
+- Rename @use-coordination/provider to @use-coordination/core. (`@use-coordination/core`) ([#71](https://github.com/keller-mark/use-coordination/pull/71))
+
+- Implement multi-level example. (`@use-coordination/provider`, `@use-coordination/plots-example`) ([#69](https://github.com/keller-mark/use-coordination/pull/69))
+
+- Rename config to spec everywhere. (`@use-coordination/json-schema`, `@use-coordination/schemas`, `@use-coordination/core`) ([#74](https://github.com/keller-mark/use-coordination/pull/74))
+
+
 ## 0.0.8
 
 ### Patch Changes
