@@ -27,7 +27,7 @@
     { "path": "packages/trrack-helpers" },
     { "path": "packages/graphviz-renderer" },
     { "path": "packages/flow-editor" },
-    { "path": "packages/provider" },
+    { "path": "packages/core" },
     { "path": "packages/main/all" },
     { "path": "packages/main/dev" },
     { "path": "packages/main/prod" },

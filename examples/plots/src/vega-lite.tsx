@@ -125,6 +125,7 @@ function VegaLitePlot(props: any) {
         //tooltip={tooltipHandler}
         renderer="canvas"
         scaleFactor={3}
+        key={`${Math.random()}`}
       />
     ), [spec, data, signalListeners]);
 

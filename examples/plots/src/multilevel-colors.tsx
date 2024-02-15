@@ -30,6 +30,7 @@ export function MultilevelColors(props: any) {
     <h4>Color pickers for selected letters</h4>
     {selectionScopes.map((scope: string) => (
       <ColorPicker
+        key={scope}
         barValue={selectionValues[scope]}
         barColor={selectionCoordination[0][scope].barColor}
         setBarColor={selectionCoordination[1][scope].setBarColor}
