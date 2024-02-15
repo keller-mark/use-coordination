@@ -27,7 +27,7 @@
     "test": "pnpm exec vitest --run -r ../../../ --dir ."
   },
   "dependencies": {
-    "@use-coordination/provider": "workspace:*",
+    "@use-coordination/core": "workspace:*",
     "@use-coordination/schemas": "workspace:*",
     "@use-coordination/config": "workspace:*",
     "@use-coordination/utils": "workspace:*",
