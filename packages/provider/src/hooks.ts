@@ -159,10 +159,10 @@ export function getMetaScope(coordinationSpace: Record<string, Record<string, an
  * @param {*} coordinationScopes The coordinationScopes for a view.
  * @param {string} byParameter The byParameter for which to get the metaScope.
  * @param {string} parameter The parameter for which to get the metaScope.
- * @param {string} byScope The byScope for the byParameter in which to look for the metaScope.
+ * @param {string|null} byScope The byScope for the byParameter in which to look for the metaScope.
  * @returns {string|undefined} The metaCoordinationScopesBy coordination scope name.
  */
-export function getMetaScopeBy(coordinationSpace: Record<string, Record<string, any>>, coordinationScopes: Record<string, string | string[]>, byParameter: string, parameter: string, byScope: string) {
+export function getMetaScopeBy(coordinationSpace: Record<string, Record<string, any>>, coordinationScopes: Record<string, string | string[]>, byParameter: string, parameter: string, byScope: string | null) {
   let latestMetaScope;
   // Check if there is a matching meta-scope.
   if (coordinationSpace) {
@@ -176,8 +176,14 @@ export function getMetaScopeBy(coordinationSpace: Record<string, Record<string, 
       metaScopesArr.forEach((metaScope) => {
         // Merge the original coordinationScopesBy with the matching meta-coordinationScopesBy
         // from the coordinationSpace.
-        if (metaSpaceBy[metaScope]?.[byParameter]?.[parameter]?.[byScope]) {
-          latestMetaScope = metaScope;
+        if(byScope !== null) {
+          if (metaSpaceBy[metaScope]?.[byParameter]?.[parameter]?.[byScope]) {
+            latestMetaScope = metaScope;
+          }
+        } else {
+          if (metaSpaceBy[metaScope]?.[byParameter]?.[parameter]) {
+            latestMetaScope = metaScope;
+          }
         }
       });
     }

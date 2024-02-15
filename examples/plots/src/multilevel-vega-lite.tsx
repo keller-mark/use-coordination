@@ -1,6 +1,6 @@
-import React, { useMemo, useState, Suspense, useCallback } from 'react';
+import React, { useMemo, Suspense, useCallback } from 'react';
 import { clamp } from 'lodash-es';
-import { useCoordinationScopesL1, useCoordinationL1 } from '@use-coordination/all';
+import { useCoordinationScopesL1, useCoordinationL1, useMultiCoordinationValues } from '@use-coordination/all';
 import { Vega, VisualizationSpec } from 'react-vega';
 import { useSelectBar, useUnselectBar } from './multilevel-example.js';
 
@@ -24,7 +24,7 @@ const partialSpec = {
       select: {
         type: 'point',
         on: 'click',
-        fields: ['letter', 'isSelected'],
+        fields: ['letter'],
         empty: 'none',
         toggle: false,
       },
@@ -44,10 +44,6 @@ const partialSpec = {
     tooltip: {
       field: 'frequency',
       type: 'quantitative',
-    },
-    fillOpacity: {
-      field: 'isSelected',
-      type: 'nominal',
     },
     color: {
       field: 'letter',
@@ -95,7 +91,7 @@ function MultiLevelVegaLitePlot(props: any) {
             domain: Object.keys(barColors)
               .concat(data.map((d: any) => d.letter).filter((letter: any) => !Object.keys(barColors).includes(letter))),
             range: Object.values(barColors)
-              .concat(data.map((d: any) => d.letter).filter((letter: any) => !Object.keys(barColors).includes(letter)).map(() => 'lightblue')),
+              .concat(data.map((d: any) => d.letter).filter((letter: any) => !Object.keys(barColors).includes(letter)).map(() => '#cccccc')),
           },
         },
       },
@@ -141,7 +137,7 @@ function MultiLevelVegaLitePlot(props: any) {
 export function MultiLevelVegaLitePlotView(props: any) {
   const {
     viewUid,
-    data: dataProp,
+    data,
   } = props;
 
   const selectBar = useSelectBar();
@@ -149,19 +145,13 @@ export function MultiLevelVegaLitePlotView(props: any) {
 
   const selectionScopes = useCoordinationScopesL1(viewUid, "barSelection");
   const selectionCoordination = useCoordinationL1(viewUid, "barSelection", ["barColor", "barValue"]);
+  const selectionValues = useMultiCoordinationValues(viewUid, "barSelection");
 
-  const barSelection = selectionScopes.map(scope => selectionCoordination[0][scope].barValue);
+  const barSelection = selectionScopes.map(scope => selectionValues[scope]);
   const barColors = Object.fromEntries(selectionScopes.map(scope => ([
-    selectionCoordination[0][scope].barValue,
+    selectionValues[scope],
     selectionCoordination[0][scope].barColor,
   ])));
-  
-  const data = useMemo(() => {
-    return dataProp.map((d: any) => ({
-      ...d,
-      isSelected: barSelection?.includes(d.letter),
-    }));
-  }, [dataProp, barSelection]);
 
   const setBarSelection = useCallback((letter: string) => {
     if(!barSelection?.includes(letter)) {

@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { useCoordination, useCoordinationScopesL1, useCoordinationL1 } from '@use-coordination/all';
+import React from 'react';
+import { useCoordinationScopesL1, useCoordinationL1, useMultiCoordinationValues } from '@use-coordination/all';
 
 function ColorPicker(props: any) {
   const {
@@ -10,7 +10,7 @@ function ColorPicker(props: any) {
 
   return (
     <p>
-      {barValue}
+      <span style={{ fontSize: '18px', marginRight: '10px' }}>{barValue}</span>
       <input type="color" value={barColor} onChange={(e) => setBarColor(e.target.value)} />
     </p>
   )
@@ -22,17 +22,19 @@ export function MultilevelColors(props: any) {
   } = props;
 
   const selectionScopes = useCoordinationScopesL1(viewUid, "barSelection");
-  const selectionCoordination = useCoordinationL1(viewUid, "barSelection", ["barColor", "barValue"]);
+  const selectionValues = useMultiCoordinationValues(viewUid, "barSelection");
+  const selectionCoordination = useCoordinationL1(viewUid, "barSelection", ["barColor"]);
 
   return (
-    <>
+    <div>
+    <h4>Color pickers for selected letters</h4>
     {selectionScopes.map((scope: string) => (
       <ColorPicker
-        barValue={selectionCoordination[0][scope].barValue}
+        barValue={selectionValues[scope]}
         barColor={selectionCoordination[0][scope].barColor}
         setBarColor={selectionCoordination[1][scope].setBarColor}
       />
     ))}
-    </>
+    </div>
   );
 }

@@ -1,13 +1,10 @@
-import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react';
-import { clamp, set } from 'lodash-es';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { scaleLinear } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
-import {
-  max,
-} from 'd3-array';
+import { max } from 'd3-array';
 import { select } from 'd3-selection';
-import { useCoordinationScopesL1, useCoordinationL1 } from '@use-coordination/all';
+import { useCoordinationScopesL1, useCoordinationL1, useMultiCoordinationValues } from '@use-coordination/all';
 import { useSelectBar, useUnselectBar } from './multilevel-example.js';
 
 const scaleBand = vega_scale('band');
@@ -55,9 +52,6 @@ function MultiLevelD3BarPlot(props: any) {
 
     const yMax = max(data, (d: any) => d.frequency);
 
-    // For the y domain, use the yMin prop
-    // to support a use case such as 'Aspect Ratio',
-    // where the domain minimum should be 1 rather than 0.
     const yScale = scaleLinear()
       .domain([0, yMax])
       .range([innerHeight, marginTop]);
@@ -72,9 +66,10 @@ function MultiLevelD3BarPlot(props: any) {
           .attr('y', (d: any) => yScale(d.frequency))
           .attr('width', xScale.bandwidth())
           .attr('height', (d: any) => innerHeight - yScale(d.frequency))
+          .style('cursor', 'pointer')
           .style('fill', (d: any) => {
             const selectionColor = barColors?.[d.letter];
-            return selectionColor || 'rgba(0, 128, 0, .3)';
+            return selectionColor || '#cccccc';
           })
           .on('click', (event: any, d: any) => {
             setBarSelection(d.letter);
@@ -150,10 +145,11 @@ export function MultiLevelD3BarPlotView(props: any) {
 
   const selectionScopes = useCoordinationScopesL1(viewUid, "barSelection");
   const selectionCoordination = useCoordinationL1(viewUid, "barSelection", ["barColor", "barValue"]);
+  const selectionValues = useMultiCoordinationValues(viewUid, "barSelection");
 
-  const barSelection = selectionScopes.map(scope => selectionCoordination[0][scope].barValue);
+  const barSelection = selectionScopes.map(scope => selectionValues[scope]);
   const barColors = Object.fromEntries(selectionScopes.map(scope => ([
-    selectionCoordination[0][scope].barValue,
+    selectionValues[scope],
     selectionCoordination[0][scope].barColor,
   ])));
 
