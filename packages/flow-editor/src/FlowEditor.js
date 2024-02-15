@@ -285,7 +285,7 @@ export function FlowEditor(props) {
     // Changes should result in an updated config emitted via onSpecChange.
 
     const { nodeIdToInfo } = idToInfoMappings;
-    let newConfig = { ...config };
+    let newSpec = { ...config };
     let shouldEmit = false;
     changes.forEach((change) => {
       const { type, id } = change;
@@ -293,25 +293,25 @@ export function FlowEditor(props) {
       const nodeType = nodeInfoToNodeType(nodeInfo);
       if(type == 'remove') {
         if(nodeType === 'cType') {
-          newConfig = removeCoordinationType(newConfig, nodeInfo.cType);
+          newSpec = removeCoordinationType(newSpec, nodeInfo.cType);
           shouldEmit = true;
         }
         if(nodeType === 'view') {
-          newConfig = removeView(newConfig, nodeInfo.viewUid);
+          newSpec = removeView(newSpec, nodeInfo.viewUid);
           shouldEmit = true;
         }
         if(nodeType === 'cScope') {
-          newConfig = removeCoordinationScope(newConfig, nodeInfo.cType, nodeInfo.cScope);
+          newSpec = removeCoordinationScope(newSpec, nodeInfo.cType, nodeInfo.cScope);
           shouldEmit = true;
         }
       }
     });
     if(shouldEmit) {
-      newConfig = {
-        ...newConfig,
-        key: newConfig.key + 1,
+      newSpec = {
+        ...newSpec,
+        key: newSpec.key + 1,
       };
-      onSpecChange(newConfig);
+      onSpecChange(newSpec);
     }
   }, [config, onSpecChange, idToInfoMappings]);
 
@@ -319,7 +319,7 @@ export function FlowEditor(props) {
     // This is called on edge select and remove.
     // Changes should result in an updated config emitted via onSpecChange.
     const { edgeIdToInfo } = idToInfoMappings;
-    let newConfig = { ...config };
+    let newSpec = { ...config };
     let shouldEmit = false;
     changes.forEach((change) => {
       const { type, id } = change;
@@ -327,8 +327,8 @@ export function FlowEditor(props) {
       const edgeType = edgeInfoToEdgeType(edgeInfo);
       if(type == 'remove') {
         if(edgeType === 'cScope-view') {
-          newConfig = disconnectViewFromScope(
-            newConfig,
+          newSpec = disconnectViewFromScope(
+            newSpec,
             edgeInfo.viewUid,
             edgeInfo.cType,
           );
@@ -337,11 +337,11 @@ export function FlowEditor(props) {
       }
     });
     if(shouldEmit) {
-      newConfig = {
-        ...newConfig,
-        key: newConfig.key + 1,
+      newSpec = {
+        ...newSpec,
+        key: newSpec.key + 1,
       };
-      onSpecChange(newConfig);
+      onSpecChange(newSpec);
     }
   }, [config, onSpecChange, idToInfoMappings]);
 
@@ -358,7 +358,7 @@ export function FlowEditor(props) {
     const targetNodeType = nodeInfoToNodeType(targetNodeInfo);
 
     if(sourceNodeType == 'cScope' && targetNodeType == 'view') {
-      const newConfig = {
+      const newSpec = {
         ...connectViewToScope(
           config,
           targetNodeInfo.viewUid,
@@ -367,24 +367,24 @@ export function FlowEditor(props) {
         ),
         key: config.key + 1,
       };
-      onSpecChange(newConfig);
+      onSpecChange(newSpec);
     }
   }, [config, onSpecChange, idToInfoMappings]);
 
   const onAddType = useCallback(() => {
-    const newConfig = {
+    const newSpec = {
       ...addCoordinationType(config),
       key: config.key + 1,
     };
-    onSpecChange(newConfig);
+    onSpecChange(newSpec);
   }, [config]);
 
   const onAddView = useCallback(() => {
-    const newConfig = {
+    const newSpec = {
       ...addView(config),
       key: config.key + 1,
     };
-    onSpecChange(newConfig);
+    onSpecChange(newSpec);
   }, [config]);
 
   return (

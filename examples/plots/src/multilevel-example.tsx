@@ -201,7 +201,7 @@ function onCreateStore(set: Function) {
     selectBar: (viewUid: string, letter: string) => set((state: any) => {
       const { coordinationSpace, viewCoordination } = state.spec;
       const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
-      const newConfig = {
+      const newSpec = {
         ...state.spec,
         coordinationSpace: selectBarInMetaCoordinationScopesHelper(
           coordinationScopesRaw,
@@ -210,13 +210,13 @@ function onCreateStore(set: Function) {
         ),
       };
       return {
-        spec: newConfig,
+        spec: newSpec,
       };
     }),
     unselectBar: (viewUid: string, letter: string) => set((state: any) => {
       const { coordinationSpace, viewCoordination } = state.spec;
       const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
-      const newConfig = {
+      const newSpec = {
         ...state.spec,
         coordinationSpace: unselectBarInMetaCoordinationScopesHelper(
           coordinationScopesRaw,
@@ -225,7 +225,7 @@ function onCreateStore(set: Function) {
         ),
       };
       return {
-        spec: newConfig,
+        spec: newSpec,
       };
     }),
   };
@@ -242,7 +242,7 @@ export function useUnselectBar() {
 }
 
 export function MultiLevelPlotsExample() {
-  const [config, setConfig] = React.useState<any>(initialSpec);
+  const [spec, setSpec] = React.useState<any>(initialSpec);
   return (
     <>
       <style>{`
@@ -252,11 +252,11 @@ export function MultiLevelPlotsExample() {
           flex-wrap: wrap;
         }
       `}</style>
-      <ZodErrorBoundary key={config.key}>
+      <ZodErrorBoundary key={spec.key}>
         <ZodCoordinationProvider
-          config={config}
+          config={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onSpecChange={setConfig}
+          onSpecChange={setSpec}
           onCreateStore={onCreateStore}
         >
           <div className="multiplot-container">
@@ -270,7 +270,7 @@ export function MultiLevelPlotsExample() {
           <MultilevelColors viewUid="barColorPicker" />
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

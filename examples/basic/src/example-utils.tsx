@@ -13,7 +13,7 @@ export function SelectScope(props: any) {
 
   function handleChange(event: any) {
     const newScope = event.target.value;
-    const newConfig = {
+    const newSpec = {
       ...config,
       key: config.key + 1,
       viewCoordination: {
@@ -27,7 +27,7 @@ export function SelectScope(props: any) {
         },
       },
     };
-    onSpecChange(newConfig)
+    onSpecChange(newSpec)
   }
 
   return (
@@ -58,7 +58,7 @@ export function MetaSelectScope(props: any) {
     // Update the value of the coordination scope within the meta-scope.
     function handleMetaChange(event: any) {
       const newScope = event.target.value;
-      const newConfig = {
+      const newSpec = {
         ...config,
         key: config.key + 1,
         coordinationSpace: {
@@ -72,13 +72,13 @@ export function MetaSelectScope(props: any) {
           },
         },
       };
-      onSpecChange(newConfig)
+      onSpecChange(newSpec)
     }
       
     // Update the meta-scope for the view.
     function handleChange(event: any) {
       const newScope = event.target.value;
-      const newConfig = {
+      const newSpec = {
         ...config,
         key: config.key + 1,
         viewCoordination: {
@@ -92,7 +92,7 @@ export function MetaSelectScope(props: any) {
           },
         },
       };
-      onSpecChange(newConfig)
+      onSpecChange(newSpec)
     }
   
     return (

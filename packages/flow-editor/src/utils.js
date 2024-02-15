@@ -1,7 +1,7 @@
 import { getNextScope } from '@use-coordination/utils';
 
 export function connectViewToScope(config, viewUid, cType, cScope) {
-  const newConfig = {
+  const newSpec = {
     ...config,
     viewCoordination: {
       ...config.viewCoordination,
@@ -14,11 +14,11 @@ export function connectViewToScope(config, viewUid, cType, cScope) {
       },
     },
   };
-  return newConfig;
+  return newSpec;
 }
 
 export function disconnectViewFromScope(config, viewUid, cTypeOfScope) {
-  const newConfig = {
+  const newSpec = {
     ...config,
     viewCoordination: {
       ...config.viewCoordination,
@@ -31,7 +31,7 @@ export function disconnectViewFromScope(config, viewUid, cTypeOfScope) {
       },
     },
   };
-  return newConfig;
+  return newSpec;
 }
 
 export function addScopeForType(config, cType) {

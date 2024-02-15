@@ -78,8 +78,8 @@ export function TrrackExample(props: any) {
             <ZodCoordinationProvider
               config={specToUse}
               coordinationTypes={pluginCoordinationTypes}
-              onSpecChange={(newConfig: any) => {
-                setSpec(newConfig);
+              onSpecChange={(newSpec: any) => {
+                setSpec(newSpec);
               }}
               remountOnKeyChange={false}
               emitInitialSpecChange={false}

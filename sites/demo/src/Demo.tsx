@@ -28,7 +28,7 @@ function SelectScope(props: any) {
 
   function handleChange(event: any) {
     const newScope = event.target.value;
-    const newConfig = {
+    const newSpec = {
       ...config,
       key: config.key + 1,
       viewCoordination: {
@@ -42,7 +42,7 @@ function SelectScope(props: any) {
         },
       },
     };
-    onSpecChange(newConfig)
+    onSpecChange(newSpec)
   }
 
   return (
