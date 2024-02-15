@@ -21,16 +21,16 @@ export {
   useCoordinationL1,
   _useCoordinationL2,
   useCoordinationL2,
+  _useCoordinationScopesAll,
+  useCoordinationScopesAll,
+  _useCoordinationScopes,
+  useCoordinationScopes,
   _useCoordinationScopesL1All,
   useCoordinationScopesL1All,
   _useCoordinationScopesL1,
   useCoordinationScopesL1,
-  _useCoordinationScopesL2All,
-  useCoordinationScopesL2All,
-  _useCoordinationScopesL2,
-  useCoordinationScopesL2,
-  _useMultiCoordinationValues,
-  useMultiCoordinationValues,
+  _useCoordinationObject,
+  useCoordinationObject,
 } from './hooks.js';
 export { ZodCoordinationProvider } from './ZodCoordinationProvider.js';
 export { ZodErrorBoundary } from './ZodErrorBoundary.js';
