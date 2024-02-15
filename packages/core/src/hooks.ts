@@ -38,7 +38,7 @@ export const useCoordinationStoreApi = useCoordinationStoreApiLocal;
  * Get the "computed" coordinationScopes after accounting for
  * meta-coordination.
  * @param {*} coordinationScopes The coordinationScopes for a view.
- * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {*} coordinationSpace The coordinationSpace for a spec.
  * @returns {string|undefined} The coordinationScopesBy after meta-coordination.
  */
 export function getScopes(metaSpace: Record<string, Record<string, any>>, coordinationScopes: Record<string, string | string[]>) {
@@ -74,7 +74,7 @@ export function getScopes(metaSpace: Record<string, Record<string, any>>, coordi
  * meta-coordination.
  * @param {*} coordinationScopes The coordinationScopes for a view.
  * @param {*} coordinationScopesBy The coordinationScopesBy for a view.
- * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {*} coordinationSpace The coordinationSpace for a spec.
  * @returns {string|undefined} The coordinationScopesBy after meta-coordination.
  */
 export function getScopesBy(metaSpaceBy: Record<string, Record<string, any>>, coordinationScopes: Record<string, any>, coordinationScopesBy: Record<string, any>) {
@@ -123,7 +123,7 @@ export function getScopesBy(metaSpaceBy: Record<string, Record<string, any>>, co
  * Get the name of the metaCoordinationScopes coordination scope
  * for a particular non-meta coordination scope, after accounting for
  * meta-coordination.
- * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {*} coordinationSpace The coordinationSpace for a spec.
  * @param {*} coordinationScopes The coordinationScopes for a view.
  * @param {string} parameter The parameter for which to get the metaScope.
  * @returns {string|undefined} The metaCoordinationScopes coordination scope name.
@@ -155,7 +155,7 @@ export function getMetaScope(coordinationSpace: Record<string, Record<string, an
  * Get the name of the metaCoordinationScopesBy coordination scope
  * for a particular non-meta coordination scope, after accounting for
  * meta-coordination.
- * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {*} coordinationSpace The coordinationSpace for a spec.
  * @param {*} coordinationScopes The coordinationScopes for a view.
  * @param {string} byParameter The byParameter for which to get the metaScope.
  * @param {string} parameter The parameter for which to get the metaScope.
@@ -238,7 +238,7 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
   // State:
   // The spec is an object which must conform to the schema.
   spec: initialSpec,
-  // Store the initial config so that its values can be used for resetting.
+  // Store the initial spec so that its values can be used for resetting.
   initialSpec: cloneDeep(initialSpec),
   // The loaders object is a mapping from dataset ID to
   // data type to loader object instance.
@@ -417,8 +417,8 @@ export function useViewMapping(viewUid: string) {
 /**
  * This hook uses the same logic as for the `values` part of
  * the useCoordination hook, with the difference that it
- * gets its values from the _initial_ view config rather
- * than the current view config.
+ * gets its values from the _initial_ spec rather
+ * than the current spec.
  * @param {object} coordinationScopes Mapping of coordination types
  * @param {string[]} parameters Array of coordination types.
  * to scope names.
@@ -875,9 +875,9 @@ export function useCoordinationL2(viewUid: string, primaryType: string, secondar
 }
 
 /**
- * Obtain the view config setter function from
+ * Obtain the spec setter function from
  * the global app state.
- * @returns {function} The view config setter function
+ * @returns {function} The spec setter function
  * in the `useCoordinationStore` store.
  */
 export function useSetSpec(storeApi: any) {

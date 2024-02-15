@@ -3,13 +3,13 @@ import { isEqual } from 'lodash-es';
 import { buildSpecSchema } from '@use-coordination/schemas';
 import { CoordinationProvider } from './CoordinationProvider.js';
 import {
-  logConfig,
+  logSpec,
 } from './view-config-utils.js';
 import { ZodCoordinationProviderProps, CmvConfigObject } from './prop-types.js';
 
 export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
   const {
-    config,
+    spec,
     onSpecChange,
     validateConfig = true,
     validateOnSpecChange = false,
@@ -26,45 +26,45 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
     [coordinationTypesProp],
   );
 
-  // If config.key exists, then use it for hook dependencies to detect changes
-  // (controlled component case). If not, then use the config object itself
+  // If spec.key exists, then use it for hook dependencies to detect changes
+  // (controlled component case). If not, then use the spec object itself
   // and assume the un-controlled component case.
   const specKey = useMemo(() => {
-    if (config?.key) {
-      return config.key;
+    if (spec?.key) {
+      return spec.key;
     }
-    // Stringify the config object so it can be used as a key
+    // Stringify the spec object so it can be used as a key
     // Otherwise, the key will be [object Object]
-    return JSON.stringify(config);
-  }, [config]);
+    return JSON.stringify(spec);
+  }, [spec]);
 
   const pluginSpecificSpecSchema = useMemo(() => buildSpecSchema(
     coordinationTypes,
   ), [coordinationTypes]);
 
-  // Process the view config and memoize the result:
+  // Process the spec and memoize the result:
   // - Validate.
   // - Upgrade, if legacy schema.
   // - Validate after upgrade, if legacy schema.
   // - Initialize (based on initStrategy).
   const validConfig = useMemo(() => {
-    logConfig(config, 'ZodCoordinationProvider input config');
+    logSpec(spec, 'ZodCoordinationProvider input spec');
     if (!validateConfig) {
-      return config;
+      return spec;
     }
-    // Perform second round of parsing against plugin-specific config schema.
+    // Perform second round of parsing against plugin-specific spec schema.
     // TODO: use type from Zod infer and generics.
-    const parsedConfig = pluginSpecificSpecSchema.parse(config) as CmvConfigObject;
-    logConfig(parsedConfig, 'ZodCoordinationProvider parsed config');
+    const parsedConfig = pluginSpecificSpecSchema.parse(spec) as CmvConfigObject;
+    logSpec(parsedConfig, 'ZodCoordinationProvider parsed spec');
     return parsedConfig;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [specKey, pluginSpecificSpecSchema, validateConfig]);
 
 
-  // Emit the upgraded/initialized view config
+  // Emit the upgraded/initialized spec
   // to onSpecChange if necessary.
   useEffect(() => {
-    if (!isEqual(validConfig, config) && onSpecChange && emitInitialSpecChange) {
+    if (!isEqual(validConfig, spec) && onSpecChange && emitInitialSpecChange) {
       onSpecChange(validConfig);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,7 +83,7 @@ export function ZodCoordinationProvider(props: ZodCoordinationProviderProps) {
 
   return (
     <CoordinationProvider
-      config={validConfig}
+      spec={validConfig}
       onSpecChange={onSpecChange}
       validateOnSpecChange={validateOnSpecChange}
       validater={validater}

@@ -44,7 +44,7 @@ function SomeViewType(props) {
 ```
 
 Then, wrap the app (or a parent component of all views you would like to coordinate) in a [CoordinationProvider](https://keller-mark.github.io/use-coordination/docs/provider-components/#coordinationprovider) (or [ZodCoordinationProvider](https://keller-mark.github.io/use-coordination/docs/provider-components/#zodcoordinationprovider)).
-Pass a config to the provider to set the initial state of the coordination space and the view-coordination scope mappings.
+Pass a `spec` to the provider to set the initial state of the coordination space and the view-coordination scope mappings.
 
 
 ```js
@@ -82,7 +82,7 @@ const initialSpec = defineSpec({
 
 function MyApp(props) {
   return (
-    <CoordinationProvider config={initialSpec}>
+    <CoordinationProvider spec={initialSpec}>
       <SomeViewType viewUid="v1" />
       <SomeViewType viewUid="v2" />
       <AnotherViewType viewUid="v3" />
@@ -95,7 +95,7 @@ To learn more, please visit the [documentation](https://keller-mark.github.io/us
 - [List of available hooks](https://keller-mark.github.io/use-coordination/docs/view-hooks/)
 - [List of available providers](https://keller-mark.github.io/use-coordination/docs/provider-components/)
 - [JSON schema](https://keller-mark.github.io/use-coordination/docs/spec-json/)
-- [Object-oriented config API](https://keller-mark.github.io/use-coordination/docs/spec-js/)
+- [Object-oriented spec API](https://keller-mark.github.io/use-coordination/docs/spec-js/)
 
 
 ## Development

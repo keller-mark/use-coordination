@@ -4,7 +4,7 @@ import { CallbackPublisherProps } from './prop-types.js';
 
 /**
  * This is a dummy component which handles
- * publishing new view configs and loaders to
+ * publishing new specs and loaders to
  * the provided callbacks on changes.
  */
 export default function CallbackPublisher(props: CallbackPublisherProps) {
@@ -16,9 +16,9 @@ export default function CallbackPublisher(props: CallbackPublisherProps) {
 
   const storeApi = useCoordinationStoreApi();
 
-  // View config updates are often-occurring, so
+  // Spec updates are often-occurring, so
   // we want to use the "transient update" approach
-  // to subscribe to view config changes.
+  // to subscribe to spec changes.
   // Reference: https://github.com/react-spring/zustand#transient-updates-for-often-occuring-state-changes
   useEffect(() => storeApi.subscribe(
     // The function to run on each publish.

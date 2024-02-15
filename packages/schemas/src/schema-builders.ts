@@ -50,7 +50,7 @@ export const genericSpecSchema = buildSpecSchemaAux(
 );
 
 /**
- * Build a Zod schema for the latest Vitessce config,
+ * Build a Zod schema for the latest spec,
  * which is specific to any registered plugins.
  * The builder pattern allows the returned
  * Zod schema to be typed despite not knowing

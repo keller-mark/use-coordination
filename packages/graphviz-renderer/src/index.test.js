@@ -6,7 +6,7 @@ import {
 describe('Graphviz Rendering', () => {
   describe('toGraphviz', () => {
     it('works', () => {
-      const config = {
+      const spec = {
         key: 1,
         coordinationSpace: {
           "barSelection": {
@@ -37,7 +37,7 @@ describe('Graphviz Rendering', () => {
         },
       };
 
-      const dot = toGraphviz(config);
+      const dot = toGraphviz(spec);
       expect(dot).toEqual(`digraph {
   rankdir = "LR";
   "view_vegaLite" [

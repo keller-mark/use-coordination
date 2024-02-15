@@ -13,19 +13,19 @@ import { ViewWrapperProps } from './prop-types.js';
 export default function ViewWrapper(props: ViewWrapperProps) {
   const {
     specKey,
-    config,
+    spec,
     children,
   } = props;
 
   const storeApi = useCoordinationStoreApi();
   const setSpec = useSetSpec(storeApi);
 
-  // Update the view config and loaders in the global state.
+  // Update the spec and loaders in the global state.
   // This effect is needed for the controlled component case in which
-  // the store has already been initialized with a view config,
-  // and we want to replace it with a new view config.
+  // the store has already been initialized with a spec,
+  // and we want to replace it with a new spec.
   useEffect(() => {
-    setSpec(config);
+    setSpec(spec);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [specKey]);
 

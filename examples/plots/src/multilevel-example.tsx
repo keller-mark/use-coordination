@@ -16,7 +16,7 @@ import { MultiLevelVegaLitePlotView } from './multilevel-vega-lite.js';
 import { MultiLevelD3BarPlotView } from './multilevel-d3.js';
 import { MultilevelColors } from './multilevel-colors.js';
 
-// Define prefixed next-scope functions for improved readability of the config.
+// Define prefixed next-scope functions for improved readability of the spec.
 const getNextSelectionScope = createPrefixedGetNextScopeNumeric("S");
 const getNextColorScope = createPrefixedGetNextScopeNumeric("C");
 
@@ -254,7 +254,7 @@ export function MultiLevelPlotsExample() {
       `}</style>
       <ZodErrorBoundary key={spec.key}>
         <ZodCoordinationProvider
-          config={spec}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
           onSpecChange={setSpec}
           onCreateStore={onCreateStore}

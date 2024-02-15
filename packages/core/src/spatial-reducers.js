@@ -9,7 +9,7 @@ const CoordinationType = {};
  * for a particular non-meta coordination scope, after accounting for
  * meta-coordination.
  * @param {*} coordinationScopes The coordinationScopes for a view.
- * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {*} coordinationSpace The coordinationSpace for a spec.
  * @param {string} parameter The parameter for which to get the metaScope.
  * @returns {string|undefined} The metaCoordinationScopes coordination scope name.
  */
@@ -41,7 +41,7 @@ export function getMetaScope(coordinationScopes, coordinationSpace, parameter) {
  * for a particular non-meta coordination scope, after accounting for
  * meta-coordination.
  * @param {*} coordinationScopes The coordinationScopes for a view.
- * @param {*} coordinationSpace The coordinationSpace for a config.
+ * @param {*} coordinationSpace The coordinationSpace for a spec.
  * @param {string} byParameter The byParameter for which to get the metaScope.
  * @param {string} parameter The parameter for which to get the metaScope.
  * @param {string} byScope The byScope for the byParameter in which to look for the metaScope.

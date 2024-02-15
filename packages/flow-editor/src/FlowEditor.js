@@ -28,7 +28,7 @@ const nodeTypes = {
   viewNode: ViewNode,
 };
 
-function configToNodesAndEdges(config, width, height, eventHandlers) {
+function specToNodesAndEdges(spec, width, height, eventHandlers) {
   const {
     onAddScope,
     onChangeCoordinationTypeName,
@@ -45,8 +45,8 @@ function configToNodesAndEdges(config, width, height, eventHandlers) {
   const nodeInfoToId = new InternMap([], JSON.stringify);
   const edgeInfoToId = new InternMap([], JSON.stringify);
 
-  if (config) {
-    const { coordinationSpace = {}, viewCoordination = {} } = config;
+  if (spec) {
+    const { coordinationSpace = {}, viewCoordination = {} } = spec;
     
     const xScale = scaleBand()
       .domain(["cType", "cScope", "view"])
@@ -187,7 +187,7 @@ export function FlowEditor(props) {
   const {
     width = 800,
     height = 600,
-    config,
+    spec,
     onSpecChange,
 
     coordinationTypesAddable = true,
@@ -206,50 +206,50 @@ export function FlowEditor(props) {
     nodesDraggable = false,
   } = props;
 
-  console.log(config);
+  console.log(spec);
 
-  // TODO: compute initial node positions based on config.key
+  // TODO: compute initial node positions based on spec.key
   // and then assume that the user will drag them around.
 
   // Additional nodes that are added should not affect the initial positions.
   // Instead, the scales should be extended so that the new nodes do not affect the initial positions.
   const onAddScope = useCallback((cType) => {
     onSpecChange({
-      ...addScopeForType(config, cType),
-      key: config.key + 1,
+      ...addScopeForType(spec, cType),
+      key: spec.key + 1,
     });
-  }, [config]);
+  }, [spec]);
 
   const onChangeCoordinationTypeName = useCallback((prevName, newName) => {
     onSpecChange({
-      ...changeCoordinationTypeName(config, prevName, newName),
-      key: config.key + 1,
+      ...changeCoordinationTypeName(spec, prevName, newName),
+      key: spec.key + 1,
     });
-  }, [config, onSpecChange]);
+  }, [spec, onSpecChange]);
 
   const onChangeCoordinationScopeName = useCallback((cType, prevName, newName) => {
     onSpecChange({
-      ...changeCoordinationScopeName(config, cType, prevName, newName),
-      key: config.key + 1,
+      ...changeCoordinationScopeName(spec, cType, prevName, newName),
+      key: spec.key + 1,
     });
-  }, [config, onSpecChange]);
+  }, [spec, onSpecChange]);
 
   const onChangeCoordinationScopeValue = useCallback((cType, cScope, newValue) => {
     onSpecChange({
-      ...changeCoordinationScopeValue(config, cType, cScope, newValue),
-      key: config.key + 1,
+      ...changeCoordinationScopeValue(spec, cType, cScope, newValue),
+      key: spec.key + 1,
     });
-  }, [config, onSpecChange]);
+  }, [spec, onSpecChange]);
 
   const onChangeViewUid = useCallback((prevUid, newUid) => {
     onSpecChange({
-      ...changeViewUid(config, prevUid, newUid),
-      key: config.key + 1,
+      ...changeViewUid(spec, prevUid, newUid),
+      key: spec.key + 1,
     });
-  }, [config, onSpecChange]);
+  }, [spec, onSpecChange]);
 
-  const [nodes, edges, idToInfoMappings] = useMemo(() => configToNodesAndEdges(
-    config, width, height,
+  const [nodes, edges, idToInfoMappings] = useMemo(() => specToNodesAndEdges(
+    spec, width, height,
     {
       onAddScope,
       onChangeCoordinationTypeName,
@@ -257,7 +257,7 @@ export function FlowEditor(props) {
       onChangeCoordinationScopeValue,
       onChangeViewUid,
     },
-  ), [config, width, height]);
+  ), [spec, width, height]);
 
   const isValidConnection = useCallback((connection) => {
     const { nodeIdToInfo } = idToInfoMappings;
@@ -282,10 +282,10 @@ export function FlowEditor(props) {
 
   const onNodesChange = useCallback((changes) => {
     // This is called on node drag, select, and move.
-    // Changes should result in an updated config emitted via onSpecChange.
+    // Changes should result in an updated spec emitted via onSpecChange.
 
     const { nodeIdToInfo } = idToInfoMappings;
-    let newSpec = { ...config };
+    let newSpec = { ...spec };
     let shouldEmit = false;
     changes.forEach((change) => {
       const { type, id } = change;
@@ -313,13 +313,13 @@ export function FlowEditor(props) {
       };
       onSpecChange(newSpec);
     }
-  }, [config, onSpecChange, idToInfoMappings]);
+  }, [spec, onSpecChange, idToInfoMappings]);
 
   const onEdgesChange = useCallback((changes) => {
     // This is called on edge select and remove.
-    // Changes should result in an updated config emitted via onSpecChange.
+    // Changes should result in an updated spec emitted via onSpecChange.
     const { edgeIdToInfo } = idToInfoMappings;
-    let newSpec = { ...config };
+    let newSpec = { ...spec };
     let shouldEmit = false;
     changes.forEach((change) => {
       const { type, id } = change;
@@ -343,7 +343,7 @@ export function FlowEditor(props) {
       };
       onSpecChange(newSpec);
     }
-  }, [config, onSpecChange, idToInfoMappings]);
+  }, [spec, onSpecChange, idToInfoMappings]);
 
   const onConnect = useCallback((connection) => {
     // When a connection line is completed and two nodes are
@@ -360,32 +360,32 @@ export function FlowEditor(props) {
     if(sourceNodeType == 'cScope' && targetNodeType == 'view') {
       const newSpec = {
         ...connectViewToScope(
-          config,
+          spec,
           targetNodeInfo.viewUid,
           sourceNodeInfo.cType,
           sourceNodeInfo.cScope,
         ),
-        key: config.key + 1,
+        key: spec.key + 1,
       };
       onSpecChange(newSpec);
     }
-  }, [config, onSpecChange, idToInfoMappings]);
+  }, [spec, onSpecChange, idToInfoMappings]);
 
   const onAddType = useCallback(() => {
     const newSpec = {
-      ...addCoordinationType(config),
-      key: config.key + 1,
+      ...addCoordinationType(spec),
+      key: spec.key + 1,
     };
     onSpecChange(newSpec);
-  }, [config]);
+  }, [spec]);
 
   const onAddView = useCallback(() => {
     const newSpec = {
-      ...addView(config),
-      key: config.key + 1,
+      ...addView(spec),
+      key: spec.key + 1,
     };
     onSpecChange(newSpec);
-  }, [config]);
+  }, [spec]);
 
   return (
     <>

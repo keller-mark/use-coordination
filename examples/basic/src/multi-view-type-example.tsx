@@ -104,7 +104,7 @@ const initialSpec2 = {
 };
 
 export function MultiViewTypeExample() {
-  const [config, setConfig] = React.useState<any>(initialSpec2);
+  const [spec, setSpec] = React.useState<any>(initialSpec2);
   return (
     <>
       <style>{`
@@ -115,29 +115,29 @@ export function MultiViewTypeExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={config}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
-          onSpecChange={setConfig}
+          onSpecChange={setSpec}
         >
           <div className="slider-container">
             <SliderInputContainer viewUid="view1" />
-            <SelectScope config={config} viewUid="view1" onSpecChange={setConfig} cType="value" />
+            <SelectScope spec={spec} viewUid="view1" onSpecChange={setSpec} cType="value" />
           </div>
           <div className="slider-container">
             <NumericInputContainer viewUid="view2" />
-            <SelectScope config={config} viewUid="view2" onSpecChange={setConfig} cType="value" />
+            <SelectScope spec={spec} viewUid="view2" onSpecChange={setSpec} cType="value" />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="view3" />
-            <SelectScope config={config} viewUid="view3" onSpecChange={setConfig} cType="value" />
+            <SelectScope spec={spec} viewUid="view3" onSpecChange={setSpec} cType="value" />
           </div>
           <div className="slider-container">
             <NumericInputContainer viewUid="view4" />
-            <SelectScope config={config} viewUid="view4" onSpecChange={setConfig} cType="value" />
+            <SelectScope spec={spec} viewUid="view4" onSpecChange={setSpec} cType="value" />
           </div>
         </ZodCoordinationProvider>
         <pre>
-          {JSON.stringify(config, null, 2)}
+          {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
     </>

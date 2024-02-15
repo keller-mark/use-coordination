@@ -62,11 +62,11 @@ export function PlotsExample(props: any) {
         }
       `}</style>
       {showFlowEditor ? (
-        <FlowEditor config={spec} onSpecChange={setSpec} />
+        <FlowEditor spec={spec} onSpecChange={setSpec} />
       ) : null}
       <ZodErrorBoundary key={spec.key}>
         <ZodCoordinationProvider
-          config={spec}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
           onSpecChange={setSpec}
         >

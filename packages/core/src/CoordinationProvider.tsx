@@ -9,7 +9,7 @@ import { CoordinationProviderProps } from './prop-types.js';
 
 export function CoordinationProvider(props: CoordinationProviderProps) {
   const {
-    config,
+    spec,
     onSpecChange,
     validateOnSpecChange = false,
     validater,
@@ -20,33 +20,33 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
     emitInitialSpecChange = true,
   } = props;
 
-  // If config.key exists, then use it for hook dependencies to detect changes
-  // (controlled component case). If not, then use the config object itself
+  // If spec.key exists, then use it for hook dependencies to detect changes
+  // (controlled component case). If not, then use the spec object itself
   // and assume the un-controlled component case.
   const specKey = useMemo(() => {
-    if (config?.key) {
-      return config.key;
+    if (spec?.key) {
+      return spec.key;
     }
-    // Stringify the config object so it can be used as a key
+    // Stringify the spec object so it can be used as a key
     // Otherwise, the key will be [object Object]
-    return JSON.stringify(config);
-  }, [config]);
+    return JSON.stringify(spec);
+  }, [spec]);
 
 
-  // Emit the upgraded/initialized view config
+  // Emit the upgraded/initialized spec
   // to onSpecChange if necessary.
   useEffect(() => {
     if (onSpecChange && emitInitialSpecChange) {
-      onSpecChange(config);
+      onSpecChange(spec);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [specKey, onSpecChange, emitInitialSpecChange]);
 
-  // Initialize the view config and loaders in the global state.
+  // Initialize the spec and loaders in the global state.
   const createCoordinationStoreClosure = useCallback(() => {
     const initializedSpec = initializer
-      ? initializer(config)
-      : config;
+      ? initializer(spec)
+      : spec;
     return createCoordinationStore(initializedSpec, onCreateStore);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [specKey, initializer, onCreateStore]);
@@ -56,7 +56,7 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
     <CoordinationStoreProvider createStore={createCoordinationStoreClosure} {...(remountOnKeyChange ? ({ key: specKey }) : {})}>
         <ViewWrapper
           specKey={specKey}
-          config={config}
+          spec={spec}
         >
           {children}
         </ViewWrapper>

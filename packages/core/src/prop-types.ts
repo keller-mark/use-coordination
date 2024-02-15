@@ -24,14 +24,14 @@ export type CmvConfigObject = {
     };
 };
 
-type OnSpecChangeFunction = (config: CmvConfigObject) => void;
-type ValidaterFunction = (config: CmvConfigObject) => void;
-type InitializerFunction = (config: CmvConfigObject) => CmvConfigObject;
+type OnSpecChangeFunction = (spec: CmvConfigObject) => void;
+type ValidaterFunction = (spec: CmvConfigObject) => void;
+type InitializerFunction = (spec: CmvConfigObject) => CmvConfigObject;
 
 type OnCreateStoreFunction = (set: Function) => object;
 
 export type CoordinationProviderProps = {
-    config: CmvConfigObject;
+    spec: CmvConfigObject;
     onSpecChange?: OnSpecChangeFunction;
     validater?: ValidaterFunction;
     initializer?: InitializerFunction;
@@ -43,7 +43,7 @@ export type CoordinationProviderProps = {
 };
 
 export type ZodCoordinationProviderProps = {
-    config: CmvConfigObject;
+    spec: CmvConfigObject;
     onSpecChange?: OnSpecChangeFunction;
     initializer?: InitializerFunction;
     validateOnSpecChange?: boolean;
@@ -62,7 +62,7 @@ export type CallbackPublisherProps = {
 };
 
 export type ViewWrapperProps = {
-    config: CmvConfigObject;
+    spec: CmvConfigObject;
     specKey: string | number;
     children: ReactNode;
 };

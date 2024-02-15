@@ -80,21 +80,21 @@ export function BaseExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={spec}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
           onSpecChange={setSpec}
         >
           <div className="slider-container">
             <SliderInputContainer viewUid="slider1" />
-            <SelectScope config={spec} viewUid="slider1" onSpecChange={setSpec} />
+            <SelectScope spec={spec} viewUid="slider1" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider2" />
-            <SelectScope config={spec} viewUid="slider2" onSpecChange={setSpec} />
+            <SelectScope spec={spec} viewUid="slider2" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider3" />
-            <SelectScope config={spec} viewUid="slider3" onSpecChange={setSpec} />
+            <SelectScope spec={spec} viewUid="slider3" onSpecChange={setSpec} />
           </div>
         </ZodCoordinationProvider>
         <pre>

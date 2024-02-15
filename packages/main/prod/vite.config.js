@@ -17,7 +17,7 @@ export default defineConfig({
     sourcemap: false,
     lib: {
       entry: resolve(__dirname, 'src/index.js'),
-      name: 'vitessce',
+      name: 'useCoordination',
       fileName: isProduction ? 'index.min' : 'index',
       formats: ['es', 'umd'],
     },

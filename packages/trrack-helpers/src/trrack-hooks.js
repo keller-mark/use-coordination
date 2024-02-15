@@ -76,7 +76,7 @@ export function useTrrack(initialSpec) {
     onRedo,
     canUndo,
     canRedo,
-    config: specToUse,
+    spec: specToUse,
     onSpecChange: setSpec,
     onChangeCurrent,
   };

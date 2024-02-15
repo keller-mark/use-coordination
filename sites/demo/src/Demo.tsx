@@ -17,26 +17,26 @@ const NavBarGrid = styled(Grid)`
 
 function SelectScope(props: any) {
   const {
-    config,
+    spec,
     viewUid,
     cType = "sliderValue",
     onSpecChange,
     showType = false,
   } = props;
 
-  const allScopes = Object.keys(config.coordinationSpace[cType]);
+  const allScopes = Object.keys(spec.coordinationSpace[cType]);
 
   function handleChange(event: any) {
     const newScope = event.target.value;
     const newSpec = {
-      ...config,
-      key: config.key + 1,
+      ...spec,
+      key: spec.key + 1,
       viewCoordination: {
-        ...config.viewCoordination,
+        ...spec.viewCoordination,
         [viewUid]: {
-          ...config.viewCoordination[viewUid],
+          ...spec.viewCoordination[viewUid],
           coordinationScopes: {
-            ...config.viewCoordination[viewUid].coordinationScopes,
+            ...spec.viewCoordination[viewUid].coordinationScopes,
             [cType]: newScope,
           },
         },
@@ -48,7 +48,7 @@ function SelectScope(props: any) {
   return (
     <>
       <label>{showType ? cType : "Coordination"} scope for {viewUid}:&nbsp;</label>
-      <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]} title={`select-${viewUid}`}>
+      <select onChange={handleChange} value={spec.viewCoordination[viewUid].coordinationScopes[cType]} title={`select-${viewUid}`}>
         {allScopes.map((scope: any) => (
           <option key={scope} value={scope}>{scope}</option>
         ))}
@@ -171,21 +171,21 @@ function BaseExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={spec}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
           onSpecChange={setSpec}
         >
           <div className="slider-container">
             <SliderInputContainer viewUid="slider1" />
-            <SelectScope config={spec} viewUid="slider1" onSpecChange={setSpec} />
+            <SelectScope spec={spec} viewUid="slider1" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider2" />
-            <SelectScope config={spec} viewUid="slider2" onSpecChange={setSpec} />
+            <SelectScope spec={spec} viewUid="slider2" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider3" />
-            <SelectScope config={spec} viewUid="slider3" onSpecChange={setSpec} />
+            <SelectScope spec={spec} viewUid="slider3" onSpecChange={setSpec} />
           </div>
         </ZodCoordinationProvider>
         <pre>

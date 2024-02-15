@@ -90,21 +90,21 @@ export function MetaCoordinationExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={spec}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
           onSpecChange={setSpec}
         >
           <div className="slider-container">
             <SliderInputContainer viewUid="slider1" />
-            <MetaSelectScope config={spec} viewUid="slider1" onSpecChange={setSpec} />
+            <MetaSelectScope spec={spec} viewUid="slider1" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider2" />
-            <MetaSelectScope config={spec} viewUid="slider2" onSpecChange={setSpec} />
+            <MetaSelectScope spec={spec} viewUid="slider2" onSpecChange={setSpec} />
           </div>
           <div className="slider-container">
             <SliderInputContainer viewUid="slider3" />
-            <MetaSelectScope config={spec} viewUid="slider3" onSpecChange={setSpec} />
+            <MetaSelectScope spec={spec} viewUid="slider3" onSpecChange={setSpec} />
           </div>
         </ZodCoordinationProvider>
         <pre>

@@ -208,7 +208,7 @@ export function MetaMultiLevelExample() {
       `}</style>
       <ZodErrorBoundary>
         <ZodCoordinationProvider
-          config={spec}
+          spec={spec}
           coordinationTypes={pluginCoordinationTypes}
           onSpecChange={setSpec}
         >

@@ -14,7 +14,7 @@ fi
 # but is not intended to be committed to the repo.
 
 # Temporarily copy the root README.md to packages/main/prod/README.md,
-# since the file at packages/main/prod will be shown for the main 'vitessce'
+# since the file at packages/main/prod will be shown for the main 'use-coordination'
 # package on NPM.
 mv ./packages/main/prod/README.md ./packages/main/prod/README.temp.md
 cp ./README.md ./packages/main/prod/README.md

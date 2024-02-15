@@ -2,26 +2,26 @@ import React from 'react';
 
 export function SelectScope(props: any) {
   const {
-    config,
+    spec,
     viewUid,
     cType = "sliderValue",
     onSpecChange,
     showType = false,
   } = props;
 
-  const allScopes = Object.keys(config.coordinationSpace[cType]);
+  const allScopes = Object.keys(spec.coordinationSpace[cType]);
 
   function handleChange(event: any) {
     const newScope = event.target.value;
     const newSpec = {
-      ...config,
-      key: config.key + 1,
+      ...spec,
+      key: spec.key + 1,
       viewCoordination: {
-        ...config.viewCoordination,
+        ...spec.viewCoordination,
         [viewUid]: {
-          ...config.viewCoordination[viewUid],
+          ...spec.viewCoordination[viewUid],
           coordinationScopes: {
-            ...config.viewCoordination[viewUid].coordinationScopes,
+            ...spec.viewCoordination[viewUid].coordinationScopes,
             [cType]: newScope,
           },
         },
@@ -33,7 +33,7 @@ export function SelectScope(props: any) {
   return (
     <>
       <label>{showType ? cType : "Coordination"} scope for {viewUid}:&nbsp;</label>
-      <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes[cType]}>
+      <select onChange={handleChange} value={spec.viewCoordination[viewUid].coordinationScopes[cType]}>
         {allScopes.map((scope: any) => (
           <option key={scope} value={scope}>{scope}</option>
         ))}
@@ -44,29 +44,29 @@ export function SelectScope(props: any) {
 
 export function MetaSelectScope(props: any) {
     const {
-      config,
+      spec,
       viewUid,
       cType = "sliderValue",
       onSpecChange,
     } = props;
     
-    const allMetaScopes = Object.keys(config.coordinationSpace["metaCoordinationScopes"]);
-    const allScopes = Object.keys(config.coordinationSpace[cType]);
+    const allMetaScopes = Object.keys(spec.coordinationSpace["metaCoordinationScopes"]);
+    const allScopes = Object.keys(spec.coordinationSpace[cType]);
 
-    const currMetaScope = config.viewCoordination[viewUid].coordinationScopes["metaCoordinationScopes"];
+    const currMetaScope = spec.viewCoordination[viewUid].coordinationScopes["metaCoordinationScopes"];
 
     // Update the value of the coordination scope within the meta-scope.
     function handleMetaChange(event: any) {
       const newScope = event.target.value;
       const newSpec = {
-        ...config,
-        key: config.key + 1,
+        ...spec,
+        key: spec.key + 1,
         coordinationSpace: {
-          ...config.coordinationSpace,
+          ...spec.coordinationSpace,
           "metaCoordinationScopes": {
-            ...config.coordinationSpace["metaCoordinationScopes"],
+            ...spec.coordinationSpace["metaCoordinationScopes"],
             [currMetaScope]: {
-              ...config.coordinationSpace["metaCoordinationScopes"][currMetaScope],
+              ...spec.coordinationSpace["metaCoordinationScopes"][currMetaScope],
               [cType]: newScope,
             },
           },
@@ -79,14 +79,14 @@ export function MetaSelectScope(props: any) {
     function handleChange(event: any) {
       const newScope = event.target.value;
       const newSpec = {
-        ...config,
-        key: config.key + 1,
+        ...spec,
+        key: spec.key + 1,
         viewCoordination: {
-            ...config.viewCoordination,
+            ...spec.viewCoordination,
           [viewUid]: {
-            ...config.viewCoordination[viewUid],
+            ...spec.viewCoordination[viewUid],
             coordinationScopes: {
-              ...config.viewCoordination[viewUid].coordinationScopes,
+              ...spec.viewCoordination[viewUid].coordinationScopes,
               ["metaCoordinationScopes"]: newScope,
             },
           },
@@ -98,13 +98,13 @@ export function MetaSelectScope(props: any) {
     return (
       <>
         <label>Meta-scope for {viewUid}:&nbsp;</label>
-        <select onChange={handleChange} value={config.viewCoordination[viewUid].coordinationScopes["metaCoordinationScopes"]}>
+        <select onChange={handleChange} value={spec.viewCoordination[viewUid].coordinationScopes["metaCoordinationScopes"]}>
           {allMetaScopes.map((scope: any) => (
             <option key={scope} value={scope}>{scope}</option>
           ))}
         </select>
         <label>&nbsp; {cType} scope for meta-scope {currMetaScope}:&nbsp;</label>
-        <select onChange={handleMetaChange} value={config.coordinationSpace["metaCoordinationScopes"][currMetaScope][cType]}>
+        <select onChange={handleMetaChange} value={spec.coordinationSpace["metaCoordinationScopes"][currMetaScope][cType]}>
           {allScopes.map((scope: any) => (
             <option key={scope} value={scope}>{scope}</option>
           ))}
