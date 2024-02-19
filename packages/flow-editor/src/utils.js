@@ -72,17 +72,17 @@ export function removeCoordinationType(spec, cTypeToRemove) {
   return {
     ...spec,
     coordinationSpace: Object.fromEntries(
-      Object.entries(spec.coordinationSpace)
+      Object.entries(spec.coordinationSpace || {})
         .filter(([cType, cScope]) => (cType !== cTypeToRemove))
       // TODO: removal within meta-coordination scopes
     ),
     viewCoordination: Object.fromEntries(
-      Object.entries(spec.viewCoordination)
+      Object.entries(spec.viewCoordination || {})
         .map(([viewUid, view]) => {
           return [viewUid, {
             ...view,
             coordinationScopes: Object.fromEntries(
-              Object.entries(view.coordinationScopes)
+              Object.entries(view.coordinationScopes || {})
                 .filter(([cType, cScope]) => (cType !== cTypeToRemove))
             ),
             // TODO: coordinationScopesBy
@@ -96,7 +96,7 @@ export function removeView(spec, viewUidToRemove) {
   return {
     ...spec,
     viewCoordination: Object.fromEntries(
-      Object.entries(spec.viewCoordination)
+      Object.entries(spec.viewCoordination || {})
         .filter(([viewUid]) => {
           return viewUid !== viewUidToRemove;
         })
@@ -124,7 +124,7 @@ export function changeCoordinationTypeName(spec, prevName, newName) {
           return [viewUid, {
             ...view,
             coordinationScopes: Object.fromEntries(
-              Object.entries(view.coordinationScopes)
+              Object.entries(view.coordinationScopes || {})
                 .map(([cType, cScope]) => {
                   if(cType === prevName) {
                     return [newName, cScope];
@@ -144,7 +144,7 @@ export function changeCoordinationScopeName(spec, cTypeForScope, prevName, newNa
   return {
     ...spec,
     coordinationSpace: Object.fromEntries(
-      Object.entries(spec.coordinationSpace)
+      Object.entries(spec.coordinationSpace || {})
         .map(([cType, cObj]) => {
           if(cType === cTypeForScope) {
             return [cType, Object.fromEntries(
@@ -162,12 +162,12 @@ export function changeCoordinationScopeName(spec, cTypeForScope, prevName, newNa
       // TODO: change name within meta-coordination scopes
     ),
     viewCoordination: Object.fromEntries(
-      Object.entries(spec.viewCoordination)
+      Object.entries(spec.viewCoordination || {})
         .map(([viewUid, view]) => {
           return [viewUid, {
             ...view,
             coordinationScopes: Object.fromEntries(
-              Object.entries(view.coordinationScopes)
+              Object.entries(view.coordinationScopes || {})
                 .map(([cType, cScope]) => {
                   if(cType === cTypeForScope && cScope === prevName) {
                     return [cType, newName];
@@ -214,7 +214,7 @@ export function removeCoordinationScope(spec, cTypeForScope, cScopeToRemove) {
   return {
     ...spec,
     coordinationSpace: Object.fromEntries(
-      Object.entries(spec.coordinationSpace)
+      Object.entries(spec.coordinationSpace || {})
         .map(([cType, cObj]) => {
           if(cType === cTypeForScope) {
             return [cType, Object.fromEntries(
@@ -226,12 +226,12 @@ export function removeCoordinationScope(spec, cTypeForScope, cScopeToRemove) {
         }),
     ),
     viewCoordination: Object.fromEntries(
-      Object.entries(spec.viewCoordination)
+      Object.entries(spec.viewCoordination || {})
         .map(([viewUid, view]) => {
           return [viewUid, {
             ...view,
             coordinationScopes: Object.fromEntries(
-              Object.entries(view.coordinationScopes)
+              Object.entries(view.coordinationScopes || {})
                 .filter(([cType, cScope]) => {
                   if(cType === cTypeForScope && cScope === cScopeToRemove) {
                     return false;
