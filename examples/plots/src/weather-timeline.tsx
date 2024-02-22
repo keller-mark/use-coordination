@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { scaleLinear, scaleOrdinal } from 'd3-scale';
+import { scaleLinear, scaleOrdinal, scaleTime } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import {
@@ -42,18 +42,18 @@ function TimelinePlot(props: any) {
     if(!data) {
       return [null, null];
     }
-    const yMax = max(data, (d: any) => d.precipitation);
+    const yExtent = extent(data, (d: any) => d.temp_max);
 
     const yScaleInner = scaleLinear()
       .range([innerHeight, marginTop])
-      .domain([0, yMax]);
-
-    const xExtent = extent(data, (d: any) => d.temp_max);
+      .domain(yExtent);
+    
+    const xExtent = extent(data, (d: any) => d.date);
 
     // For the y domain, use the yMin prop
     // to support a use case such as 'Aspect Ratio',
     // where the domain minimum should be 1 rather than 0.
-    const xScaleInner = scaleLinear()
+    const xScaleInner = scaleTime()
       .domain(xExtent)
       .range([marginLeft, width - marginRight]);
     
@@ -76,15 +76,15 @@ function TimelinePlot(props: any) {
         const rangeX = ([xScale.invert(x1), xScale.invert(x2)] as any).toSorted(compareNumbers);
         const rangeY = ([yScale.invert(y1), yScale.invert(y2)] as any).toSorted(compareNumbers);
 
-        setMaxTempSelection(rangeX);
-        setPrecipitationSelection(rangeY);
+        setMaxTempSelection(rangeY);
+        //setPrecipitationSelection(rangeY);
       }
     }
     // Brush handlers
     function onBrushEnd(e: any) {
       if(!e.selection) {
         setMaxTempSelection(null);
-        setPrecipitationSelection(null);
+        //setPrecipitationSelection(null);
       }
     }
     const brushInner = d3_brush()
@@ -108,13 +108,17 @@ function TimelinePlot(props: any) {
     const brushG = select(brushElement);
 
     // Set the initial brush
-    const [x1, x2] = (maxTempSelection ? [xScale(maxTempSelection[0]), xScale(maxTempSelection[1])] : xScale.range()).toSorted(compareNumbers);
-    const [y1, y2] = (precipitationSelection ? [yScale(precipitationSelection[0]), yScale(precipitationSelection[1])] : yScale.range()).toSorted(compareNumbers);
+    const [x1, x2] = (null ? [xScale(maxTempSelection[0]), xScale(maxTempSelection[1])] : xScale.range()).toSorted(compareNumbers);
+    const [y1, y2] = (maxTempSelection ? [yScale(maxTempSelection[0]), yScale(maxTempSelection[1])] : yScale.range()).toSorted(compareNumbers);
     const initialSelection = [
       [x1, y1],
       [x2, y2],
     ];
-    brushG.call(brush.move, initialSelection);
+    if(!maxTempSelection) {
+      brushG.call(brush.clear);
+    } else {
+      brushG.call(brush.move, initialSelection);
+    }
   }, [brush, xScale, yScale, maxTempSelection, precipitationSelection])
 
   useEffect(() => {
@@ -131,8 +135,8 @@ function TimelinePlot(props: any) {
       .attr('width', width)
       .attr('height', height);
 
-    const yTitle = 'Precip. (in.)';
-    const xTitle = 'Max. temp.';
+    const yTitle = 'Max. Daily Temp. (c)';
+    const xTitle = 'Date';
 
     if(!data) {
       return;
@@ -148,8 +152,8 @@ function TimelinePlot(props: any) {
       .data(data)
       .enter()
         .append('circle')
-          .attr('cx', (d: any) => xScale(d.temp_max))
-          .attr('cy', (d: any) => yScale(d.precipitation))
+          .attr('cx', (d: any) => xScale(d.date))
+          .attr('cy', (d: any) => yScale(d.temp_max))
           .attr('r', 3)
           .style('opacity', 0.5)
           .style('fill', (d: any) => {

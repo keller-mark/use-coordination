@@ -114,7 +114,11 @@ function TempPrecipPlot(props: any) {
       [x1, y1],
       [x2, y2],
     ];
-    brushG.call(brush.move, initialSelection);
+    if(!maxTempSelection && !precipitationSelection) {
+      brushG.call(brush.clear);
+    } else {
+      brushG.call(brush.move, initialSelection);
+    }
   }, [brush, xScale, yScale, maxTempSelection, precipitationSelection])
 
   useEffect(() => {

@@ -17,7 +17,7 @@ function WeatherBars(props: any) {
     data,
     maxTempSelection,
     precipitationSelection,
-    width = 360,
+    width = 200,
     height = 400,
     marginBottom = 60,
     marginLeft = 60,
