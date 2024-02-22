@@ -138,8 +138,8 @@ function TempPrecipPlot(props: any) {
     }
 
     const colorScale = scaleOrdinal()
-        .domain(['drizzle', 'fog', 'rain', 'snow', 'sun'])
-        .range(['red', 'orange', 'green', 'blue', 'purple']);
+      .domain(['drizzle', 'fog', 'rain', 'snow', 'sun'])
+      .range(['#DD8442', '#F3BF44', '#56B184', '#4DACF1', '#DD8BEF']);
 
     // Bar areas
     g

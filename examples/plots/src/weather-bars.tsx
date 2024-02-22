@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { scaleLinear } from 'd3-scale';
+import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import {
@@ -77,7 +77,7 @@ function WeatherBars(props: any) {
       (d: any) => d.weather
     );
 
-    const barKeys = Array.from(barData.keys());
+    const barKeys = (Array.from(barData.keys()) as any).toSorted();
     const yScale = scaleBand()
       .range([innerHeight, marginTop])
       .domain(barKeys)
@@ -91,6 +91,10 @@ function WeatherBars(props: any) {
     const xScale = scaleLinear()
       .domain([0, xMax])
       .range([marginLeft, width - marginRight]);
+    
+    const colorScale = scaleOrdinal()
+      .domain(['drizzle', 'fog', 'rain', 'snow', 'sun'])
+      .range(['#DD8442', '#F3BF44', '#56B184', '#4DACF1', '#DD8BEF']);
 
     // Bar areas
     g
@@ -102,10 +106,8 @@ function WeatherBars(props: any) {
           .attr('y', (d: any) => yScale(d[0]))
           .attr('height', yScale.bandwidth())
           .attr('width', (d: any) => xScale(d[1]) - xScale(0))
-          .style('fill', (d: any) => {
-            const isSelected = true;
-            return isSelected ? 'rgba(0, 128, 0, 1.0)' : 'rgba(0, 128, 0, .3)';
-          });
+          .style('fill', (d: any) => colorScale(d[0]))
+          .style('opacity', 1.0);
     
     g
       .selectAll('bar')
@@ -116,10 +118,8 @@ function WeatherBars(props: any) {
           .attr('y', (d: any) => yScale(d[0]))
           .attr('height', yScale.bandwidth())
           .attr('width', (d: any) => xScale(d[1]) - xScale(0))
-          .style('fill', (d: any) => {
-            const isSelected = false;
-            return isSelected ? 'rgba(0, 128, 0, 1.0)' : 'rgba(0, 128, 0, .3)';
-          });
+          .style('fill', (d: any) => colorScale(d[0]))
+          .style('opacity', 0.3);
     // Y-axis ticks
     g
       .append('g')
