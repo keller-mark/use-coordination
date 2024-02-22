@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { default as vegaData } from 'vega-datasets';
 import { WeatherBarsView } from './weather-bars.js';
 import { TempPrecipView } from './weather-temp-precip.js';
+import { TimelineView } from './weather-timeline.js';
 
 const pluginCoordinationTypes = {
   maxTempSelection: z.array(z.number()).length(2).nullable(),
@@ -83,6 +84,9 @@ export function WeatherExample(props: any) {
             </div>
             <div className="plot-container">
               <TempPrecipView viewUid="tempPrecipScatter" data={data} />
+            </div>
+            <div className="plot-container">
+              <TimelineView viewUid="dateTempScatter" data={data} />
             </div>
           </div>
         </ZodCoordinationProvider>

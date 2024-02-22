@@ -17,7 +17,7 @@ const scaleBand = vega_scale('band');
 
 const compareNumbers = (a: number, b: number) => a - b;
 
-function TempPrecipPlot(props: any) {
+function TimelinePlot(props: any) {
   const {
     data,
     maxTempSelection,
@@ -213,7 +213,7 @@ function TempPrecipPlot(props: any) {
   );
 }
 
-export function TempPrecipView(props: any) {
+export function TimelineView(props: any) {
   const {
     viewUid,
     data,
@@ -224,7 +224,7 @@ export function TempPrecipView(props: any) {
   ] = useCoordination(viewUid, ["maxTempSelection", "precipitationSelection"]);
 
   return (
-    <TempPrecipPlot
+    <TimelinePlot
       data={data}
       maxTempSelection={maxTempSelection}
       setMaxTempSelection={setMaxTempSelection}
