@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
-  useCoordination,
   defineSpec,
 } from '@use-coordination/all';
 import { FlowEditor } from '@use-coordination/flow-editor';
@@ -21,11 +20,11 @@ const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     maxTempSelection: {
-      "A": [0, 15],
+      A: [-1.5, 15],
     },
     precipitationSelection: {
-        A: [18, 40],
-    },
+      A: [13, 40],
+    }
   },
   viewCoordination: {
     precipitationBars: {

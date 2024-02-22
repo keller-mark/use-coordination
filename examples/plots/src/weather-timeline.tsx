@@ -1,21 +1,12 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import { scaleLinear, scaleOrdinal, scaleTime } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import {
-  min,
-  max,
   extent,
-  sum,
-  rollup as d3_rollup,
 } from 'd3-array';
-import { brush as d3_brush } from 'd3-brush';
 import { select } from 'd3-selection';
 import { useCoordination } from '@use-coordination/all';
-
-const scaleBand = vega_scale('band');
-
-const compareNumbers = (a: number, b: number) => a - b;
 
 function TimelinePlot(props: any) {
   const {
@@ -33,7 +24,6 @@ function TimelinePlot(props: any) {
   } = props;
 
   const svgRef = useRef(null);
-  const brushRef = useRef(null);
 
   const innerWidth = width - marginLeft;
   const innerHeight = height - marginBottom;
@@ -60,67 +50,6 @@ function TimelinePlot(props: any) {
     return [xScaleInner, yScaleInner]
   }, [data]);
 
-  const brush = useMemo(() => {
-    if(!xScale || !yScale) {
-      return null;
-    }
-    const brushElement = brushRef.current;
-    const brushG = select(brushElement);
-
-    function onBrush(e: any) {
-      // Check if there was a sourceEvent
-      // (if not then this was triggered by brush.move)
-      if(e.sourceEvent) {
-        const [x1, y1] = e.selection[0];
-        const [x2, y2] = e.selection[1];
-        const rangeX = ([xScale.invert(x1), xScale.invert(x2)] as any).toSorted(compareNumbers);
-        const rangeY = ([yScale.invert(y1), yScale.invert(y2)] as any).toSorted(compareNumbers);
-
-        setMaxTempSelection(rangeY);
-        //setPrecipitationSelection(rangeY);
-      }
-    }
-    // Brush handlers
-    function onBrushEnd(e: any) {
-      if(!e.selection) {
-        setMaxTempSelection(null);
-        //setPrecipitationSelection(null);
-      }
-    }
-    const brushInner = d3_brush()
-      .extent([
-        [marginLeft, marginTop],
-        [width - marginRight, height - marginBottom],
-      ])
-      .on('brush', onBrush)
-      .on('end', onBrushEnd);
-    // Set up brushing
-    brushG.call(brushInner);
-    // TODO: prevent from initializing twice.
-    return brushInner;
-  }, [xScale, yScale]);
-
-  useEffect(() => {
-    if(!brush) {
-      return;
-    }
-    const brushElement = brushRef.current;
-    const brushG = select(brushElement);
-
-    // Set the initial brush
-    const [x1, x2] = (null ? [xScale(maxTempSelection[0]), xScale(maxTempSelection[1])] : xScale.range()).toSorted(compareNumbers);
-    const [y1, y2] = (maxTempSelection ? [yScale(maxTempSelection[0]), yScale(maxTempSelection[1])] : yScale.range()).toSorted(compareNumbers);
-    const initialSelection = [
-      [x1, y1],
-      [x2, y2],
-    ];
-    if(!maxTempSelection) {
-      brushG.call(brush.clear);
-    } else {
-      brushG.call(brush.move, initialSelection);
-    }
-  }, [brush, xScale, yScale, maxTempSelection, precipitationSelection])
-
   useEffect(() => {
     const domElement = svgRef.current;
 
@@ -143,8 +72,8 @@ function TimelinePlot(props: any) {
     }
 
     const colorScale = scaleOrdinal()
-        .domain(['drizzle', 'fog', 'rain', 'snow', 'sun'])
-        .range(['red', 'orange', 'green', 'blue', 'purple']);
+      .domain(['drizzle', 'fog', 'rain', 'snow', 'sun'])
+      .range(['red', 'orange', 'green', 'blue', 'purple']);
 
     // Bar areas
     g
@@ -155,11 +84,21 @@ function TimelinePlot(props: any) {
           .attr('cx', (d: any) => xScale(d.date))
           .attr('cy', (d: any) => yScale(d.temp_max))
           .attr('r', 3)
-          .style('opacity', 0.5)
+          .style('opacity', (d: any) => {
+            let inMaxTemp = true;
+            let inPrecip = true;
+            if(Array.isArray(maxTempSelection)) {
+              inMaxTemp = d.temp_max >= maxTempSelection[0] && d.temp_max <= maxTempSelection[1];
+            }
+            if(Array.isArray(precipitationSelection)) {
+              inPrecip = d.precipitation >= precipitationSelection[0] && d.precipitation <= precipitationSelection[1];
+            }
+            const isSelected = inMaxTemp && inPrecip;
+            return isSelected ? 0.7 : 0.08;
+          })
           .style('fill', (d: any) => {
             return colorScale(d.weather);
           });
-
     
     // Y-axis ticks
     g
@@ -174,7 +113,13 @@ function TimelinePlot(props: any) {
       .append('g')
         .attr('transform', `translate(0,${innerHeight})`)
         .style('font-size', '14px')
-      .call(axisBottom(xScale));
+      .call(axisBottom(xScale))
+      .selectAll('text')
+        .style('font-size', '11px')
+        .attr('dx', '-6px')
+        .attr('dy', '6px')
+        .attr('transform', 'rotate(-45)')
+        .style('text-anchor', 'end');
 
     // Y-axis title
     g
@@ -211,9 +156,7 @@ function TimelinePlot(props: any) {
         height: `${height}px`,
         position: 'relative',
       }}
-    >
-      <g className="brush" ref={brushRef}></g>
-    </svg>
+    />
   );
 }
 

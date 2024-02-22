@@ -1,19 +1,14 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import { scaleLinear, scaleOrdinal } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
 import {
-  min,
   max,
   extent,
-  sum,
-  rollup as d3_rollup,
 } from 'd3-array';
 import { brush as d3_brush } from 'd3-brush';
 import { select } from 'd3-selection';
 import { useCoordination } from '@use-coordination/all';
-
-const scaleBand = vega_scale('band');
 
 const compareNumbers = (a: number, b: number) => a - b;
 

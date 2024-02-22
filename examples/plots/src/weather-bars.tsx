@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { scaleLinear } from 'd3-scale';
 import { scale as vega_scale } from 'vega-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
@@ -51,7 +51,6 @@ function WeatherBars(props: any) {
       return;
     }
 
-    // TODO: filter for data matching selections here 
     const barData = d3_rollup(
       data,
       // Reducer
