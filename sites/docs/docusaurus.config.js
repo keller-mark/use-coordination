@@ -60,4 +60,7 @@ module.exports = {
       },
     ],
   ],
+  plugins: [
+    './plugins/use-coordination-plugin',
+  ],
 };
