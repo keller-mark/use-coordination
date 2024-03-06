@@ -48,6 +48,7 @@ module.exports = {
         'flow-editor-example',
         'provenance-example',
         'multilevel-example',
+        'weather-example',
       ]
     }
   ]

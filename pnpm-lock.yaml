@@ -216,6 +216,9 @@ importers:
       d3-axis:
         specifier: ^3.0.0
         version: 3.0.0
+      d3-brush:
+        specifier: ^3.0.0
+        version: 3.0.0
       d3-scale:
         specifier: ^4.0.0
         version: 4.0.0
@@ -240,6 +243,9 @@ importers:
       vega:
         specifier: ^5.21.0
         version: 5.21.0
+      vega-datasets:
+        specifier: ^2.8.0
+        version: 2.8.0
       vega-lite:
         specifier: ^5.1.1
         version: 5.1.1(vega@5.21.0)
@@ -9928,7 +9934,7 @@ packages:
     resolution: {integrity: sha512-pWbUJLdETVA8lQNJecMxoXfH6x+mO2UQo8rSmZ+QqxcbyA3hfeprFgIT//HW2nlHChWeIIMwS2Fq+gEARkhTkg==}
     engines: {node: '>=12'}
     dependencies:
-      d3-dispatch: 2.0.0
+      d3-dispatch: 3.0.1
       d3-selection: 3.0.0
     dev: false
 
@@ -10233,18 +10239,18 @@ packages:
       d3-selection: 2 - 3
     dependencies:
       d3-color: 3.1.0
-      d3-dispatch: 2.0.0
+      d3-dispatch: 3.0.1
       d3-ease: 3.0.1
       d3-interpolate: 3.0.1
       d3-selection: 3.0.0
-      d3-timer: 2.0.0
+      d3-timer: 3.0.1
     dev: false
 
   /d3-zoom@3.0.0:
     resolution: {integrity: sha512-b8AmV3kfQaqWAuacbPuNbL6vahnOJflOhexLzMMNLga62+/nh0JzvJ0aO/5a5MVgUFGS7Hu1P9P03o3fJkDCyw==}
     engines: {node: '>=12'}
     dependencies:
-      d3-dispatch: 2.0.0
+      d3-dispatch: 3.0.1
       d3-drag: 3.0.0
       d3-interpolate: 3.0.1
       d3-selection: 3.0.0
@@ -19188,6 +19194,10 @@ packages:
       vega-util: 1.17.2
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /vega-datasets@2.8.0:
+    resolution: {integrity: sha512-pIoP8Cqtq/3Y4rPgtuCle4QWrK2DidmqQzwoNjVVhnNO3H4OWki7vzvDD4/CzWg9wVjoDN98plb3EpJfLcQ5Tw==}
     dev: false
 
   /vega-embed@6.23.0(vega-lite@5.1.1)(vega@5.21.0):
