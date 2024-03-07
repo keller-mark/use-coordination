@@ -1,4 +1,19 @@
 
+## 0.0.10
+
+### Patch Changes
+
+- Improve examples: add plot library titles. Add color scale legend for Seattle weather example. (`@use-coordination/plots-example`) ([#84](https://github.com/keller-mark/use-coordination/pull/84))
+
+- Fix flow editor bugs and fix docs for hooks. (`@use-coordination/flow-editor`, `docs`) ([#77](https://github.com/keller-mark/use-coordination/pull/77))
+
+- Move usage guidance section into docs page (out of manuscript). (`docs`) ([#85](https://github.com/keller-mark/use-coordination/pull/85))
+
+- Implement Seattle weather example. (`@use-coordination/plots-example`) ([#79](https://github.com/keller-mark/use-coordination/pull/79))
+
+- Adds a volume visualization example using Niivue. (`@use-coordination/volumetric-example`) ([#82](https://github.com/keller-mark/use-coordination/pull/82))
+
+
 ## 0.0.9
 
 ### Patch Changes
