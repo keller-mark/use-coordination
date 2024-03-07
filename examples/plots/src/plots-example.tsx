@@ -60,6 +60,11 @@ export function PlotsExample(props: any) {
           flex-direction: row;
           flex-wrap: wrap;
         }
+        .plot-lib-title {
+          font-size: 20px;
+          font-weight: bold;
+          margin: 10px;
+        }
       `}</style>
       {showFlowEditor ? (
         <FlowEditor spec={spec} onSpecChange={setSpec} />

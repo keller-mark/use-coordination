@@ -147,10 +147,13 @@ export function D3BarPlotView(props: any) {
   ] = useCoordination(viewUid, ["barSelection"]);
 
   return (
-    <D3BarPlot
-      data={data}
-      barSelection={barSelection}
-      setBarSelection={setBarSelection}
-    />
+    <>
+      <p className="plot-lib-title">D3</p>
+      <D3BarPlot
+        data={data}
+        barSelection={barSelection}
+        setBarSelection={setBarSelection}
+      />
+    </>
   )
 }
