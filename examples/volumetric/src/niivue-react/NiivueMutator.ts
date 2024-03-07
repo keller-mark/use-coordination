@@ -43,12 +43,7 @@ class NiivueMutator {
   public applyOptions(options: NVROptions) {
     let needGLVolumeUpdate = false;
     Object.entries(options)
-      // some TypeScript BS
-      .map(<T>([k, v]: [string, T]): [keyof NVROptions, T] => [
-        k as keyof NVROptions,
-        v,
-      ])
-      .forEach(([key, value]) => {
+      .forEach(([key, value]: [any, any]) => {
         /*
          * Some options have setter methods, some options don't.
          *
@@ -56,7 +51,7 @@ class NiivueMutator {
          * 2. If a property can be set on nv.opts.*, set that, then call nv.updateGLVolume()
          * 3. If a property can be set on nv.*, set that, then call nv.updateGLVolume()
          */
-        const setter = this.optionUpdateFunctionMap[key];
+        const setter = (this.optionUpdateFunctionMap as any)[key];
         if (setter !== undefined) {
           try {
             setter(value);
