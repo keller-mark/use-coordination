@@ -1,0 +1,38 @@
+---
+id: guidance
+title: Usage guidance
+slug: /guidance
+---
+
+Through our experience implementing tools with `use-coordination`, we have compiled recommendations about how to define coordination types and their value schema:
+
+
+Types of coordination types:
+
+- **Visual properties.** These properties define visual marks or encoding-related information, such as colormaps or zoom levels.
+- **Dataset identifiers.** When there are multiple datasets available within a visualization system, a dataset parameter can indicate which dataset to use when rendering a particular visualization. A dataset parameter may also indicate a user-selected feature or subset of the data, such as a column of a dataframe to display in a histogram.
+- **User-defined data annotations.** (i.e., direct manipulations). User interactions may result in data annotations such as subsets of interesting rows in a dataframe or regions of interest drawn on an image.
+- **Ephemeral interaction parameters.** These coordination types can be used upon interactions such as hovers or clicks, and then can be used to render tooltips or highlights. The values are typically identifiers that originate from a dataset.
+- **Behavior modifiers.** These values can be combined with other coordination types to determine how values should be used. For example, if a coordination type defines a range [low, high] to use for filtering values, a second behavior modifier coordination type might specify whether to interpret these values as relative or absolute.
+- **Interface properties.** These properties store state that is used to render the user interface, such as whether a dropdown is open.
+
+Granularity of coordination types:
+
+- **Generality of coordination types.** In the most extreme case of generality, coordination types could correspond to primitives like "string" or "integer". However, in the base coordination model, each view can only be mapped to a single scope per coordination type, preventing specification of multiple string- or integer-type values for the same view. Therefore, we recommend coordination types that are as general as possible while remaining semantically meaningful.
+- **Specificity of coordination types.** When defining coordination types, the developer must think outside the box to envision use cases in which coordination would make sense. It should not make sense for the values for two separate coordination types to be coordinated (in any envisioned use case); otherwise, these coordination types would be too specific and should have been merged into a single more general coordination type.
+
+Coordination values:
+
+- **Value complexity should consider the smallest reasonable atomic unit to coordinate.** System developers may be tempted to nest values such as image channel settings within a coordinated object. However, this prevents 1) coordination of a subset of sub-values and 2) corresponds to more re-renders than necessary.
+- **Start with base model.** It is easiest to implement views that support the base (non-multi, non-hierarchical) coordination model. In complex visual analytics applications, the need for multi- and multi-level coordination can be identified via views that contain conceptual sub-views. Conceptual sub-views can take the form of juxtaposition or superposition, as in genome browser tracks or image layers, which each may have their own set of properties that make sense to coordinate independently of their sibling sub-views.
+- **Globality/stability of data element references.** References to data elements that appear in coordination values should avoid exposing implementation details such as internal indices. McDonald et al. (1990) articulate this point well: 
+
+    > Nearly all implementations of brushing scatterplots of which we are aware, including our own early work, share the essential feature (and failing)...that the correspondence between plots is represented by matching array indices.
+    Unfortunately, it precludes even the most trivial extensions.
+    For example, suppose the user wishes to simultaneously analyze three data sets:
+    all the patients in a clinical trial of some drug, the male patients in the trial, and the female patients.
+    Typical commercial implementations of brushing scatterplots either restrict the user to a single data set, or brush separate data sets separately,
+    i.e., brushing in a plot of all patients has no effect on plots of male patients or plots of female patients.
+    If we think of brushing scatterplots in terms of direct manipulation, then it's obvious what wrong with the "standard" implementation:
+    There's no **reliable representation for the identity of the underlying entity** that's being brushed. - [McDonald et al. 1990](https://dl.acm.org/doi/10.1145/97946.97975)
+
