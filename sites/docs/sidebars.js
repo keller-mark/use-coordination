@@ -30,6 +30,10 @@ module.exports = {
     },
     {
       type: 'doc',
+      id: 'guidance',
+    },
+    {
+      type: 'doc',
       id: 'flow-editor',
     },
     {
