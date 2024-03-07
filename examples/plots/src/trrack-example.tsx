@@ -69,6 +69,9 @@ export function TrrackExample(props: any) {
           flex-direction: row;
           flex-wrap: wrap;
         }
+        .plot-lib-title {
+          display: none;
+        }
       `}</style>
       <div style={{ display: 'flex' }}>
         <div>

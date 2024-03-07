@@ -141,6 +141,39 @@ function TempPrecipPlot(props: any) {
       .domain(['drizzle', 'fog', 'rain', 'snow', 'sun'])
       .range(['#DD8442', '#F3BF44', '#56B184', '#4DACF1', '#DD8BEF']);
 
+    
+    const legendWidth = width / 4;
+    const legendHeight = height / 3;
+    const legendG = g.append('g')
+      .attr('transform', `translate(${width - legendWidth},${marginTop + 20})`)
+      .attr('width', legendWidth)
+      .attr('height', legendHeight);
+
+    legendG.append('text')
+      .text('Weather')
+      .style('font-size', '14px');
+    
+    const colorRectSize = 10;
+
+    const legend = legendG
+      .selectAll('legend')
+      .data(colorScale.domain())
+      .enter()
+        .append('g')
+        .attr('transform', (d: any, i: number) => `translate(4,${6 + i * (colorRectSize+4)})`);
+    legend.append('rect')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', colorRectSize)
+          .attr('height', colorRectSize)
+          .style('fill', (d: any) => colorScale(d));
+    legend.append('text')
+          .text((d: any) => d)
+          .attr('x', colorRectSize + 5)
+          .attr('y', colorRectSize / 2 + 4)
+          .style('font-size', '12px');
+      
+
     // Bar areas
     g
       .selectAll('point')

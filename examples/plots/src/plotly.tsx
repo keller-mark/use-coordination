@@ -68,10 +68,13 @@ export function PlotlyBarPlotView(props: any) {
   ] = useCoordination(viewUid, ["barSelection"]);
 
   return (
-    <PlotlyBarPlot
-      data={data}
-      barSelection={barSelection}
-      setBarSelection={setBarSelection}
-    />
-  )
+    <>
+      <p className="plot-lib-title">Plotly</p>
+      <PlotlyBarPlot
+        data={data}
+        barSelection={barSelection}
+        setBarSelection={setBarSelection}
+      />
+    </>
+  );
 }

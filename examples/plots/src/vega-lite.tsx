@@ -157,10 +157,13 @@ export function VegaLitePlotView(props: any) {
 
 
   return (
-    <VegaLitePlot
-      data={data}
-      barSelection={barSelection}
-      setBarSelection={setBarSelection}
-    />
+    <>
+      <p className="plot-lib-title">Vega-Lite</p>
+      <VegaLitePlot
+        data={data}
+        barSelection={barSelection}
+        setBarSelection={setBarSelection}
+      />
+    </>
   )
 }

@@ -107,10 +107,13 @@ export function VisxPlotView(props: any) {
   ] = useCoordination(viewUid, ["barSelection"]);
 
   return (
-    <VisxPlot
-      data={data}
-      barSelection={barSelection}
-      setBarSelection={setBarSelection}
-    />
+    <>
+      <p className="plot-lib-title">Visx</p>
+      <VisxPlot
+        data={data}
+        barSelection={barSelection}
+        setBarSelection={setBarSelection}
+      />
+    </>
   );
 }

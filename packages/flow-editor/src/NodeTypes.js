@@ -14,6 +14,12 @@ function arePropsEqual(prevProps, nextProps) {
   );
 }
 
+const handleStyle = {
+  background: '#555',
+  width: '10px',
+  height: '10px',
+};
+
 export const CTypeNode = memo(({ data, isConnectable }) => {
   const [label, setLabel] = useState(data.label);
   return (
@@ -29,7 +35,7 @@ export const CTypeNode = memo(({ data, isConnectable }) => {
       <Handle
         type="source"
         position={Position.Right}
-        style={{ background: '#555' }}
+        style={handleStyle}
         isConnectable={isConnectable}
       />
     </div>
@@ -44,7 +50,7 @@ export const CScopeNode = memo(({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{ background: '#555' }}
+        style={handleStyle}
         isConnectable={isConnectable}
       />
       <div>
@@ -62,7 +68,7 @@ export const CScopeNode = memo(({ data, isConnectable }) => {
       <Handle
         type="source"
         position={Position.Right}
-        style={{ background: '#555' }}
+        style={handleStyle}
         isConnectable={isConnectable}
       />
     </div>
@@ -76,7 +82,7 @@ export const ViewNode = memo(({ data, isConnectable }) => {
       <Handle
         type="target"
         position={Position.Left}
-        style={{ background: '#555' }}
+        style={handleStyle}
         isConnectable={isConnectable}
       />
       <div>
