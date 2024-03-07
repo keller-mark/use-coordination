@@ -8,81 +8,102 @@ import { z } from 'zod';
 import { NiivueCanvas, NVROptions, NVRVolume } from "./niivue-react/index.js";
 import {useImmer} from "use-immer";
 
-function ReadmeExample() {
+function NiivueView(props: any) {
+  const {
+    viewUid
+  } = props;
   const [volumes, setVolumes] = useImmer<{[key: string]: NVRVolume}>({
     brain: {
       url: 'https://storage.googleapis.com/vitessce-demo-data/use-coordination/mni152.nii.gz',
     },
   });
+
+  const [
+    {
+      crosshairPosX,
+      crosshairPosY,
+      crosshairPosZ,
+      renderAzimuth,
+      renderElevation,
+    },
+    {
+      setCrosshairPosX,
+      setCrosshairPosY,
+      setCrosshairPosZ,
+      setRenderAzimuth,
+      setRenderElevation,
+    },
+  ] = useCoordination(viewUid, ['crosshairPosX', 'crosshairPosY', 'crosshairPosZ', 'renderAzimuth', 'renderElevation']);
+
   const [options, setOptions] = useImmer<NVROptions>({
     isOrientCube: true,
-    onLocationChange: console.log
   });
 
-  const setOpacity = (value: number) => {
-    setVolumes((draft) => {
-      draft.brain.opacity = value;
-    });
-  };
-
-  const setOrientCube = (value: boolean) => {
-    setOptions((draft) => {
-      draft.isOrientCube = !value;
-    });
-  };
-
-  return (<>
-    <div>
-      <label>
-        Show Orient Cube
-        <input
-          type="checkbox"
-          onChange={(e) => setOrientCube(!e.target.checked)}
-          checked={options.isOrientCube}
-        />
-      </label>
-      <label>
-        Brain Opacity
-        <input
-          type="range" min="0.0" max="1.0" step="0.1"
-          onChange={(e: any) => setOpacity(e.target.value)}
-          value={volumes.brain.opacity}
-        />
-      </label>
-    </div>
+  return (
     <div className="niivue-canvas">
-      <NiivueCanvas options={options} volumes={Object.values(volumes)} onChanged={console.log} />
+      <NiivueCanvas
+        options={options}
+        volumes={Object.values(volumes)}
+        crosshairPosX={crosshairPosX}
+        setCrosshairPosX={setCrosshairPosX}
+        crosshairPosY={crosshairPosY}
+        setCrosshairPosY={setCrosshairPosY}
+        crosshairPosZ={crosshairPosZ}
+        setCrosshairPosZ={setCrosshairPosZ}
+        renderAzimuth={renderAzimuth}
+        setRenderAzimuth={setRenderAzimuth}
+        renderElevation={renderElevation}
+        setRenderElevation={setRenderElevation}
+      />
     </div>
-  </>);
+  );
 }
 
 const pluginCoordinationTypes = {
-  sliderValue: z.number(),
+  crosshairPosX: z.number(),
+  crosshairPosY: z.number(),
+  crosshairPosZ: z.number(),
+  renderAzimuth: z.number().nullable(),
+  renderElevation: z.number(),
 };
 
 const initialSpec = {
   key: 1,
   coordinationSpace: {
-    "sliderValue": {
+    crosshairPosX: {
+      "A": 0.6554589867591858
+    },
+    crosshairPosY: {
+      "A": 0.3514062762260437,
+      "B": 0.3514062762260437,
+    },
+    crosshairPosZ: {
+      "A": 0.48532092571258545
+    },
+    renderAzimuth: {
       "A": 0.5,
-      "B": 0.75,
-      "C": 0.25
-    }
+    },
+    renderElevation: {
+      "A": 2,
+    },
   },
   viewCoordination: {
-    slider1: {
+    niivue1: {
       coordinationScopes: {
-        sliderValue: "A",
+        crosshairPosX: "A",
+        crosshairPosY: "A",
+        crosshairPosZ: "A",
+        renderAzimuth: "A",
+        renderElevation: "A",
       },
     },
-    slider2: {
+    niivue2: {
       coordinationScopes: {
-        sliderValue: "B",
-      },
-    },
-    slider3: {
-      coordinationScopes: {
-        sliderValue: "C",
+        crosshairPosX: "A",
+        crosshairPosY: "B",
+        crosshairPosZ: "A",
+        renderAzimuth: "A",
+        renderElevation: "A",
       },
     },
   },
@@ -109,7 +130,8 @@ export function NiivueExample() {
           onSpecChange={setSpec}
         >
           <div className="niivue-container">
-            <ReadmeExample />
+            <NiivueView viewUid="niivue1" />
+            <NiivueView viewUid="niivue2" />
           </div>
         </ZodCoordinationProvider>
         <pre>

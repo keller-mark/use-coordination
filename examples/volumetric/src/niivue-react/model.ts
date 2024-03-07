@@ -104,9 +104,6 @@ type NVROptions = NiiVueOptions & {
   crosshairColor?: number[];
   crosshairWidth?: number;
   volScaleMultiplier?: number;
-
-  // New
-  onLocationChange?: (location: any) => void;
 };
 
 export type {

@@ -29,13 +29,23 @@ type NiivueCanvasProps = {
  *                data are loaded.
  * @param onChanged Called each time a mutation happens to the Niivue instance.
  */
-const NiivueCanvas: React.FC<NiivueCanvasProps> = ({
+const NiivueCanvas: React.FC<any> = ({
   meshes,
   volumes,
   options,
   onStart,
   onChanged,
-}: NiivueCanvasProps) => {
+  crosshairPosX,
+  setCrosshairPosX,
+  crosshairPosY,
+  setCrosshairPosY,
+  crosshairPosZ,
+  setCrosshairPosZ,
+  renderAzimuth,
+  setRenderAzimuth,
+  renderElevation,
+  setRenderElevation,
+}: any) => {
   if (meshes) {
     throw new Error("NiivueCanvas does not yet support meshes!");
   }
@@ -55,23 +65,47 @@ const NiivueCanvas: React.FC<NiivueCanvasProps> = ({
     onStart && onStart(nv);
   };
 
-  const setLocation = () => {
-    // Reference:  https://github.com/niivue/niivue/blob/424c1b1948b4d31f9177f035c30d4167be87907a/src/niivue/index.ts#L1056C56-L1056C63
-    nv.scene.crosshairPos = [
-      // As frac units
-      0.2208695262670517,
-      0.7496875524520874,
-      0.6364650726318359
-    ];
-    nv.drawScene()
-    nv.createOnLocationChange()
-  };
+  useEffect(() => {
+    if(ready && nv.gl) {
+      nv.scene.crosshairPos = [
+        // As frac units
+        crosshairPosX,
+        crosshairPosY,
+        crosshairPosZ,
+      ];
+      nv.drawScene();
+      try {
+        nv.createOnLocationChange();
+      } catch (e) {
+
+      }
+    }
+  }, [ready, crosshairPosX, crosshairPosY, crosshairPosZ]);
+  
+  useEffect(() => {
+    if(ready && nv.gl) {
+      nv.scene.renderAzimuth = renderAzimuth;
+      nv.scene.renderElevation = renderElevation;
+      nv.drawScene();
+      
+    }
+  }, [ready, renderAzimuth, renderElevation]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setLocation();
-    }, 5000);
-  }, [nv]);
+    if(ready && nv.gl) {
+      nv.onAzimuthElevationChange = (azimuth: number, elevation: number) => {
+        setRenderAzimuth(azimuth);
+        setRenderElevation(elevation);
+      };
+
+      nv.onLocationChange = (location: any) => {
+        setCrosshairPosX(location.frac[0]);
+        setCrosshairPosY(location.frac[1]);
+        setCrosshairPosZ(location.frac[2]);
+      };
+    }
+  }, [ready]);
+
 
   const syncStateWithProps = async () => {
     const configChanged = syncConfig();
