@@ -49,6 +49,7 @@ module.exports = {
         'provenance-example',
         'multilevel-example',
         'weather-example',
+        'volumetric-example',
       ]
     }
   ]

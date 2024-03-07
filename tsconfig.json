@@ -32,7 +32,8 @@
     { "path": "packages/main/dev" },
     { "path": "packages/main/prod" },
     { "path": "examples/basic" },
-    { "path": "examples/plots" }
+    { "path": "examples/plots" },
+    { "path": "examples/volumetric" }
   ],
   "files": []
 }
