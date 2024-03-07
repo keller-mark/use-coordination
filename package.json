@@ -34,7 +34,11 @@
     "changeset-publish-dummy": "git tag v$(cat ./package.json | jq -r .version) && git push --follow-tags && node .changeset/get-release-notes.mjs && echo \"should-release=true\" >> $GITHUB_OUTPUT"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.17.0",
+    "@changesets/get-github-info": "^0.5.2",
+    "@playwright/test": "^1.40.1",
     "@pnpm/meta-updater": "^0.0.6",
+    "@svitejs/changesets-changelog-github-compact": "^1.1.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/react-hooks": "^8.0.1",
@@ -43,37 +47,33 @@
     "@typescript-eslint/parser": "^5.59.2",
     "@vitejs/plugin-react": "^4.0.0",
     "@vitest/ui": "^0.16.0",
+    "cross-env": "^7.0.0",
     "eslint": "^8.18.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
-    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-require-extensions": "^0.1.3",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "gray-matter": "^4.0.3",
     "jest-canvas-mock": "^2.3.0",
     "jsdom": "^20.0.0",
     "jsdom-worker": "^0.3.0",
+    "json-diff-ts": "^1.2.5",
+    "lodash-es": "^4.17.21",
+    "mdast-util-to-string": "^1.0.6",
+    "publint": "^0.1.11",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "remark-parse": "^7.0.1",
+    "remark-stringify": "^7.0.3",
     "sass": "^1.55.0",
     "serve-static": "^1.15.0",
     "terser": "^5.15.0",
     "typescript": "^4.7.4",
-    "vite": "^4.3.0",
-    "vitest": "^0.23.4",
-    "cross-env": "^7.0.0",
-    "json-diff-ts": "^1.2.5",
-    "lodash-es": "^4.17.21",
-    "publint": "^0.1.11",
-    "@changesets/cli": "^2.17.0",
-    "@changesets/get-github-info": "^0.5.2",
-    "@svitejs/changesets-changelog-github-compact": "^1.1.0",
-    "gray-matter": "^4.0.3",
-    "mdast-util-to-string": "^1.0.6",
-    "remark-parse": "^7.0.1",
-    "remark-stringify": "^7.0.3",
     "unified": "^8.3.2",
-    "@playwright/test": "^1.40.1"
+    "vite": "^4.3.0",
+    "vitest": "^0.23.4"
   },
   "pnpm": {
     "peerDependencyRules": {
@@ -81,6 +81,9 @@
         "react": "18",
         "react-dom": "18"
       }
+    },
+    "patchedDependencies": {
+      "@niivue/niivue@0.40.0": "patches/@niivue__niivue@0.40.0.patch"
     }
   },
   "keywords": [],

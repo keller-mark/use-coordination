@@ -1,0 +1,12 @@
+diff --git a/build/index.js b/build/index.js
+index 6f551e2c2b58075b7dbdf18ab3270b112a578781..7f84f4ba3b7af277af117ae9fbd97fce3b2c6a52 100644
+--- a/build/index.js
++++ b/build/index.js
+@@ -25467,6 +25467,7 @@ var Niivue = class _Niivue {
+     }
+     this.scene.renderAzimuth += dx;
+     this.scene.renderElevation += dy;
++    this.onAzimuthElevationChange(this.scene.renderAzimuth, this.scene.renderElevation);
+     this.drawScene();
+   }
+   /**

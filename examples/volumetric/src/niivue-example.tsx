@@ -78,13 +78,15 @@ const initialSpec = {
       "B": 0.3514062762260437,
     },
     crosshairPosZ: {
-      "A": 0.48532092571258545
+      "A": 0.48532092571258545,
+      "B": 0.48532092571258545,
     },
     renderAzimuth: {
       "A": 0.5,
     },
     renderElevation: {
       "A": 2,
+      "B": 3,
     },
   },
   viewCoordination: {
@@ -101,9 +103,9 @@ const initialSpec = {
       coordinationScopes: {
         crosshairPosX: "A",
         crosshairPosY: "B",
-        crosshairPosZ: "A",
+        crosshairPosZ: "B",
         renderAzimuth: "A",
-        renderElevation: "A",
+        renderElevation: "B",
       },
     },
   },
@@ -120,7 +122,7 @@ export function NiivueExample() {
         .niivue-container .niivue-canvas {
           height: 200px;
           width: 100%;
-          margin: 0;
+          margin-top: 10px;
         }
       `}</style>
       <ZodErrorBoundary>

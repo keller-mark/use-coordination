@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@niivue/niivue@0.40.0':
+    hash: qayzjrv7344krwh3ncghczkts4
+    path: patches/@niivue__niivue@0.40.0.patch
+
 importers:
 
   .:
@@ -273,7 +278,7 @@ importers:
     dependencies:
       '@niivue/niivue':
         specifier: ^0.40.0
-        version: 0.40.0
+        version: 0.40.0(patch_hash=qayzjrv7344krwh3ncghczkts4)
       '@use-coordination/all':
         specifier: workspace:*
         version: link:../../packages/main/all
@@ -5456,7 +5461,7 @@ packages:
       - '@types/react'
     dev: false
 
-  /@niivue/niivue@0.40.0:
+  /@niivue/niivue@0.40.0(patch_hash=qayzjrv7344krwh3ncghczkts4):
     resolution: {integrity: sha512-+QiLLYQvrnLx+uDl4Otp2XAuJkF7UYh+r2rRtujJG91gu8OyQNYa/A76jp9hHKPOztT1tAkBmszXUbpTqCewkA==}
     dependencies:
       '@lukeed/uuid': 2.0.1
@@ -5470,6 +5475,7 @@ packages:
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.12.1
     dev: false
+    patched: true
 
   /@nodelib/fs.scandir@2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
