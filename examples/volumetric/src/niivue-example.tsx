@@ -3,10 +3,11 @@ import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
+  defineSpec,
 } from '@use-coordination/all';
 import { z } from 'zod';
 import { NiivueCanvas, NVROptions, NVRVolume } from "./niivue-react/index.js";
-import {useImmer} from "use-immer";
+import { useImmer } from "use-immer";
 
 function NiivueView(props: any) {
   const {
@@ -20,20 +21,20 @@ function NiivueView(props: any) {
 
   const [
     {
-      crosshairPosX,
-      crosshairPosY,
-      crosshairPosZ,
-      renderAzimuth,
-      renderElevation,
+      crosshairX,
+      crosshairY,
+      crosshairZ,
+      azimuth,
+      elevation,
     },
     {
-      setCrosshairPosX,
-      setCrosshairPosY,
-      setCrosshairPosZ,
-      setRenderAzimuth,
-      setRenderElevation,
+      setCrosshairX,
+      setCrosshairY,
+      setCrosshairZ,
+      setAzimuth,
+      setElevation,
     },
-  ] = useCoordination(viewUid, ['crosshairPosX', 'crosshairPosY', 'crosshairPosZ', 'renderAzimuth', 'renderElevation']);
+  ] = useCoordination(viewUid, ['crosshairX', 'crosshairY', 'crosshairZ', 'azimuth', 'elevation']);
 
   const [options, setOptions] = useImmer<NVROptions>({
     isOrientCube: true,
@@ -44,72 +45,72 @@ function NiivueView(props: any) {
       <NiivueCanvas
         options={options}
         volumes={Object.values(volumes)}
-        crosshairPosX={crosshairPosX}
-        setCrosshairPosX={setCrosshairPosX}
-        crosshairPosY={crosshairPosY}
-        setCrosshairPosY={setCrosshairPosY}
-        crosshairPosZ={crosshairPosZ}
-        setCrosshairPosZ={setCrosshairPosZ}
-        renderAzimuth={renderAzimuth}
-        setRenderAzimuth={setRenderAzimuth}
-        renderElevation={renderElevation}
-        setRenderElevation={setRenderElevation}
+        crosshairPosX={crosshairX}
+        setCrosshairPosX={setCrosshairX}
+        crosshairPosY={crosshairY}
+        setCrosshairPosY={setCrosshairY}
+        crosshairPosZ={crosshairZ}
+        setCrosshairPosZ={setCrosshairZ}
+        renderAzimuth={azimuth}
+        setRenderAzimuth={setAzimuth}
+        renderElevation={elevation}
+        setRenderElevation={setElevation}
       />
     </div>
   );
 }
 
 const pluginCoordinationTypes = {
-  crosshairPosX: z.number(),
-  crosshairPosY: z.number(),
-  crosshairPosZ: z.number(),
-  renderAzimuth: z.number().nullable(),
-  renderElevation: z.number(),
+  crosshairX: z.number(),
+  crosshairY: z.number(),
+  crosshairZ: z.number(),
+  azimuth: z.number(),
+  elevation: z.number(),
 };
 
-const initialSpec = {
+const initialSpec = defineSpec({
   key: 1,
-  coordinationSpace: {
-    crosshairPosX: {
-      "A": 0.6554589867591858
+  "coordinationSpace": {
+    "crosshairX": {
+      "A": 0.5084058046340942
     },
-    crosshairPosY: {
-      "A": 0.3514062762260437,
-      "B": 0.3514062762260437,
+    "crosshairY": {
+      "A": 0.3867500424385071,
+      "B": 0.7817501425743103
     },
-    crosshairPosZ: {
-      "A": 0.48532092571258545,
-      "B": 0.48532092571258545,
+    "crosshairZ": {
+      "A": 0.21622326970100403,
+      "B": 0.43054866790771484
     },
-    renderAzimuth: {
-      "A": 0.5,
+    "azimuth": {
+      "A": 216.5
     },
-    renderElevation: {
-      "A": 2,
-      "B": 3,
-    },
+    "elevation": {
+      "A": 27,
+      "B": -10
+    }
   },
   viewCoordination: {
     niivue1: {
       coordinationScopes: {
-        crosshairPosX: "A",
-        crosshairPosY: "A",
-        crosshairPosZ: "A",
-        renderAzimuth: "A",
-        renderElevation: "A",
+        crosshairX: "A",
+        crosshairY: "A",
+        crosshairZ: "A",
+        azimuth: "A",
+        elevation: "A",
       },
     },
     niivue2: {
       coordinationScopes: {
-        crosshairPosX: "A",
-        crosshairPosY: "B",
-        crosshairPosZ: "B",
-        renderAzimuth: "A",
-        renderElevation: "B",
+        crosshairX: "A",
+        crosshairY: "B",
+        crosshairZ: "B",
+        azimuth: "A",
+        elevation: "B",
       },
     },
   },
-};
+});
 
 export function NiivueExample() {
   const [spec, setSpec] = React.useState<any>(initialSpec);
