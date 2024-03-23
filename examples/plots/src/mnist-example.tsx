@@ -21,189 +21,80 @@ const pluginCoordinationTypes = {
   zoomOffset: z.number().nullable(),
   targetX: z.number().nullable(),
   targetY: z.number().nullable(),
-  digitSelection: z.number().nullable(),
-  defaultRadius: z.number().nullable(),
-  selectionRadius: z.number().nullable(),
-  defaultOpacity: z.number().nullable(),
-  selectionOpacity: z.number().nullable(),
 };
 
 const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     "zoomLevel": {
-      "A": 3.408081577867634
+      "shared": 3.408081577867634
     },
     "zoomOffset": {
       "overview": 0,
       "detail": 2
     },
     "targetX": {
-      "A": -1.3737042750595396,
-      "B": -0.8421135500796049
+      "umap": -1.3737042750595396,
+      "densmap": -0.8421135500796049
     },
     "targetY": {
-      "A": 0.789629088169244,
-      "B": 1.4172548435372825
-    },
-    digitSelection: {
-      "A": 1,
-    },
-    defaultRadius: {
-      "A": 0.35,
-    },
-    selectionRadius: {
-      "A": 0.35,
-    },
-    defaultOpacity: {
-      "A": 0.9,
-    },
-    selectionOpacity: {
-      "A": 0.9,
+      "umap": 0.789629088169244,
+      "densmap": 1.4172548435372825
     },
   },
   viewCoordination: {
     umap: {
       coordinationScopes: {
-        zoomLevel: "A",
+        zoomLevel: "shared",
         zoomOffset: "overview",
-        targetX: "A",
-        targetY: "A",
-        digitSelection: "A",
-        defaultRadius: "A",
-        selectionRadius: "A",
-        defaultOpacity: "A",
-        selectionOpacity: "A",
+        targetX: "umap",
+        targetY: "umap",
       },
     },
     densmap: {
       coordinationScopes: {
-        zoomLevel: "A",
+        zoomLevel: "shared",
         zoomOffset: "overview",
-        targetX: "B",
-        targetY: "B",
-        digitSelection: "A",
-        defaultRadius: "A",
-        selectionRadius: "A",
-        defaultOpacity: "A",
-        selectionOpacity: "A",
+        targetX: "densmap",
+        targetY: "densmap",
       },
     },
     umapDetail: {
       coordinationScopes: {
-        zoomLevel: "A",
+        zoomLevel: "shared",
         zoomOffset: "detail",
-        targetX: "A",
-        targetY: "A",
-        digitSelection: "A",
-        defaultRadius: "A",
-        selectionRadius: "A",
-        defaultOpacity: "A",
-        selectionOpacity: "A",
+        targetX: "umap",
+        targetY: "umap",
       },
     },
     densmapDetail: {
       coordinationScopes: {
-        zoomLevel: "A",
+        zoomLevel: "shared",
         zoomOffset: "detail",
-        targetX: "B",
-        targetY: "B",
-        digitSelection: "A",
-        defaultRadius: "A",
-        selectionRadius: "A",
-        defaultOpacity: "A",
-        selectionOpacity: "A",
-      },
-    },
-    legend: {
-      coordinationScopes: {
-        digitSelection: "A",
-      },
-    },
-    controls: {
-      coordinationScopes: {
-        defaultRadius: "A",
-        selectionRadius: "A",
-        defaultOpacity: "A",
-        selectionOpacity: "A",
+        targetX: "densmap",
+        targetY: "densmap",
       },
     },
   },
 });
 
-function MnistControls(props: any) {
-  const { viewUid } = props;
-
-  const [{
-    defaultRadius,
-    selectionRadius,
-    defaultOpacity,
-    selectionOpacity,
-  }, {
-    setDefaultRadius,
-    setSelectionRadius,
-    setDefaultOpacity,
-    setSelectionOpacity,
-  }] = useCoordination(viewUid, ["defaultRadius", "selectionRadius", "defaultOpacity", "selectionOpacity"]);
-
-
-  const onDefaultRadiusChange = (e: any) => {
-    const value = Number(e.target.value);
-    setDefaultRadius(value);
-  };
-
-  const onSelectionRadiusChange = (e: any) => {
-    const value = Number(e.target.value);
-    setSelectionRadius(value);
-  };
-
-  return (
-    <div className="mnist-controls">
-      <label>
-        Default Radius:
-        <input type="range" min="0.01" max="10" step="0.01" value={defaultRadius} onChange={onDefaultRadiusChange} />
-      </label>
-      <label>
-        Selection Radius:
-        <input type="range" min="0.01" max="10" step="0.01" value={selectionRadius} onChange={onSelectionRadiusChange} />
-      </label>
-      <br/>
-      <label>
-        Default Opacity:
-        <input type="range" min="0.01" max="1" step="0.01" value={defaultOpacity} onChange={(e) => setDefaultOpacity(Number(e.target.value))} />
-      </label>
-      <label>
-        Selection Opacity:
-        <input type="range" min="0.01" max="1" step="0.01" value={selectionOpacity} onChange={(e) => setSelectionOpacity(Number(e.target.value))} />
-      </label>
-    </div>
-  )
-}
-
 function MnistLegend(props: any) {
-  const { viewUid } = props;
-
-  const [{
-    digitSelection,
-  }, {
-    setDigitSelection,
-  }] = useCoordination(viewUid, ["digitSelection"]);
 
   return (
     <div className="mnist-legend">
-      <svg width="100" height="405">
+      <p>MNIST Digit</p>
+      <svg width="100" height="385">
         {colors.map((color, i) => (
           <>
             <rect
               key={i}
-              x={(i === digitSelection ? 0 : 5)}
-              y={i * 25 + (i === digitSelection ? 0 : 5)}
-              width={digitSelection === i ? 20 : 10}
-              height={digitSelection === i ? 20 : 10}
+              x={0}
+              y={i * 25}
+              width={20}
+              height={20}
               fill={`rgb(${color.join(',')})`}
-              onClick={() => setDigitSelection(i)}
             />
-            <text x={25} y={i * 25 + 15} onClick={() => setDigitSelection(i)}>{i}</text>
+            <text x={25} y={i * 25 + 15}>{i}</text>
           </>
         ))}
       </svg>
@@ -212,7 +103,7 @@ function MnistLegend(props: any) {
 }
 
 function MnistScatterplot(props: any) {
-  const { data, viewUid } = props;
+  const { data, viewUid, name } = props;
 
   const [{
     zoomLevel,
@@ -275,13 +166,10 @@ function MnistScatterplot(props: any) {
         getFillColor: (object: any, {index, data}: { data: any, index: number }) => {
           const digit = data.src.targetData.data[index];
           const color = colors[digit];
-          color[3] = digit === digitSelection ? selectionOpacity * 255 : defaultOpacity * 255;
+          color[3] = 0.9 * 255;
           return color;
         },
-        getRadius: (object: any, {index, data}: { data: any, index: number }) => {
-          const digit = data.src.targetData.data[index];
-          return digit === digitSelection ? selectionRadius : defaultRadius;
-        },
+        getRadius: 0.35,
       }),
     ];
   }, [data, digitSelection, defaultRadius, selectionRadius, defaultOpacity, selectionOpacity]);
@@ -300,8 +188,8 @@ function MnistScatterplot(props: any) {
         views={views}
         useDevicePixels
         glOptions={GL_OPTIONS}
-
       />
+      <span className="plot-name">{name}</span>
     </div>
   )
 }
@@ -347,9 +235,18 @@ export function MnistExample(props: any) {
           border: 1px solid gray;
           margin: 5px;
         }
+        .deckgl-scatterplot .plot-name {
+          position: absolute;
+          bottom: 0;
+          right: 5px;
+          font-size: 20px;
+        }
         .mnist-legend {
           display: inline-block;
           position: relative;
+        }
+        .mnist-legend p {
+          margin-bottom: 0;
         }
         .mnist-legend rect, .mnist-legend text {
           cursor: pointer;
@@ -366,12 +263,11 @@ export function MnistExample(props: any) {
           coordinationTypes={pluginCoordinationTypes}
           onSpecChange={setSpec}
         >
-          <MnistScatterplot data={mnistData} viewUid="umap" />
-          <MnistScatterplot data={mnistData} viewUid="densmap" />
-          <MnistLegend viewUid="legend" />
-          <MnistScatterplot data={mnistData} viewUid="umapDetail" />
-          <MnistScatterplot data={mnistData} viewUid="densmapDetail" />
-          <MnistControls viewUid="controls" />
+          <MnistScatterplot data={mnistData} viewUid="umap" name="UMAP (overview)" />
+          <MnistScatterplot data={mnistData} viewUid="densmap" name="densMAP (overview)" />
+          <MnistLegend />
+          <MnistScatterplot data={mnistData} viewUid="umapDetail" name="UMAP (detail)"/>
+          <MnistScatterplot data={mnistData} viewUid="densmapDetail" name="densMAP (detail)" />
         </ZodCoordinationProvider>
         <pre>
           {JSON.stringify(spec, null, 2)}
