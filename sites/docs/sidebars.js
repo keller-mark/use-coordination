@@ -54,6 +54,7 @@ module.exports = {
         'multilevel-example',
         'weather-example',
         'volumetric-example',
+        'mnist-example',
       ]
     }
   ]

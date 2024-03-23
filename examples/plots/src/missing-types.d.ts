@@ -6,3 +6,7 @@ declare module 'd3-selection';
 declare module 'd3-brush';
 declare module 'vega-scale';
 declare module 'react-plotly.js';
+
+declare module '@deck.gl/core';
+declare module '@deck.gl/react';
+declare module '@deck.gl/layers';
