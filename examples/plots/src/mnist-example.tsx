@@ -10,6 +10,8 @@ import DeckGL from '@deck.gl/react';
 import { COORDINATE_SYSTEM, OrthographicView } from '@deck.gl/core';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { FetchStore, open as zarrOpen, root as zarrRoot, get as zarrGet } from 'zarrita';
+import { FlowEditor } from '@use-coordination/flow-editor';
+
 
 const GL_OPTIONS = { webgl2: true };
 const baseUrl = 'https://storage.googleapis.com/vitessce-demo-data/use-coordination/mnist.zarr';
@@ -27,20 +29,20 @@ const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     "zoomLevel": {
-      "shared": 3.408081577867634
+      "shared": 3.282928374353915
     },
     "zoomOffset": {
       "overview": 0,
       "detail": 2
     },
     "targetX": {
-      "umap": -1.3737042750595396,
-      "densmap": -0.8421135500796049
+      "umap": 0.5722378595673838,
+      "densmap": 0.19160931736478615
     },
     "targetY": {
-      "umap": 0.789629088169244,
-      "densmap": 1.4172548435372825
-    },
+      "umap": -0.24042483622122024,
+      "densmap": -0.01400468369125818
+    }
   },
   viewCoordination: {
     umap: {
@@ -248,14 +250,6 @@ export function MnistExample(props: any) {
         .mnist-legend p {
           margin-bottom: 0;
         }
-        .mnist-legend rect, .mnist-legend text {
-          cursor: pointer;
-        }
-        .plot-lib-title {
-          font-size: 20px;
-          font-weight: bold;
-          margin: 10px;
-        }
       `}</style>
       <ZodErrorBoundary key={spec.key}>
         <ZodCoordinationProvider
@@ -273,6 +267,7 @@ export function MnistExample(props: any) {
           {JSON.stringify(spec, null, 2)}
         </pre>
       </ZodErrorBoundary>
+      <FlowEditor spec={spec} onSpecChange={setSpec} />
     </>
   );
 }
