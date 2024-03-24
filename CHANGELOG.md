@@ -1,4 +1,13 @@
 
+## 0.0.11
+
+### Patch Changes
+
+- Add MNIST example comparing UMAP and DensMAP" (`@use-coordination/plots-example`) ([#88](https://github.com/keller-mark/use-coordination/pull/88))
+
+- Fix bug preventing successful bundle step by removing pinned version of @loaders.gl dependency. (`@use-coordination/plots-example`) ([#89](https://github.com/keller-mark/use-coordination/pull/89))
+
+
 ## 0.0.10
 
 ### Patch Changes
