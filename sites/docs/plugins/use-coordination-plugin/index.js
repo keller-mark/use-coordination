@@ -14,6 +14,7 @@ module.exports = function(context, options) {
             fs: false,
             path: false,
             util: false,
+            child_process: false,
           },
         },
       };
