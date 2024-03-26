@@ -21,71 +21,61 @@ const colors = [[78,121,167, 255],[242,142,44, 255],[225,87,89, 255],[118,183,17
 const pluginCoordinationTypes = {
   zoomLevel: z.number().nullable(),
   zoomOffset: z.number().nullable(),
-  targetX: z.number().nullable(),
-  targetY: z.number().nullable(),
+  target: z.array(z.number()).length(2).nullable(),
 };
 
 const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     "zoomLevel": {
-      "shared": 3.282928374353915
+      "shared": 3.3
     },
     "zoomOffset": {
       "overview": 0,
       "detail": 2
     },
-    "targetX": {
-      "umap": 0.5722378595673838,
-      "densmap": 0.19160931736478615
+    "target": {
+      "umap": [0.57, -0.24],
+      "densmap": [0.19, -0.01],
     },
-    "targetY": {
-      "umap": -0.24042483622122024,
-      "densmap": -0.01400468369125818
-    }
   },
   viewCoordination: {
-    umap: {
+    umapOverview: {
       coordinationScopes: {
         zoomLevel: "shared",
         zoomOffset: "overview",
-        targetX: "umap",
-        targetY: "umap",
+        target: "umap",
       },
     },
-    densmap: {
+    densmapOverview: {
       coordinationScopes: {
         zoomLevel: "shared",
         zoomOffset: "overview",
-        targetX: "densmap",
-        targetY: "densmap",
+        target: "densmap",
       },
     },
     umapDetail: {
       coordinationScopes: {
         zoomLevel: "shared",
         zoomOffset: "detail",
-        targetX: "umap",
-        targetY: "umap",
+        target: "umap",
       },
     },
     densmapDetail: {
       coordinationScopes: {
         zoomLevel: "shared",
         zoomOffset: "detail",
-        targetX: "densmap",
-        targetY: "densmap",
+        target: "densmap",
       },
     },
   },
 });
 
 function MnistLegend(props: any) {
-
   return (
     <div className="mnist-legend">
       <p>MNIST Digit</p>
-      <svg width="100" height="385">
+      <svg width="100" height="375">
         {colors.map((color, i) => (
           <>
             <rect
@@ -96,7 +86,7 @@ function MnistLegend(props: any) {
               height={20}
               fill={`rgb(${color.join(',')})`}
             />
-            <text x={25} y={i * 25 + 15}>{i}</text>
+            <text x={25} y={i * 25 + 18}>{i}</text>
           </>
         ))}
       </svg>
@@ -110,23 +100,15 @@ function MnistScatterplot(props: any) {
   const [{
     zoomLevel,
     zoomOffset,
-    targetX,
-    targetY,
-    digitSelection,
-    defaultRadius,
-    selectionRadius,
-    defaultOpacity,
-    selectionOpacity,
+    target,
   }, {
     setZoomLevel,
-    setTargetX,
-    setTargetY,
-  }] = useCoordination(viewUid, ["zoomLevel", "zoomOffset", "targetX", "targetY", "digitSelection", "defaultRadius", "selectionRadius", "defaultOpacity", "selectionOpacity"]);
+    setTarget,
+  }] = useCoordination(viewUid, ["zoomLevel", "zoomOffset", "target"]);
 
   const onViewStateChange = useCallback(({viewState}: any) => {
     setZoomLevel(viewState.zoom - zoomOffset);
-    setTargetX(viewState.target[0]);
-    setTargetY(viewState.target[1]);
+    setTarget([viewState.target[0], viewState.target[1]]);
   }, []);
   const views = useMemo(() => {
     return [
@@ -174,7 +156,7 @@ function MnistScatterplot(props: any) {
         getRadius: 0.35,
       }),
     ];
-  }, [data, digitSelection, defaultRadius, selectionRadius, defaultOpacity, selectionOpacity]);
+  }, [data]);
   return (
     <div className="deckgl-scatterplot">
       <DeckGL
@@ -183,7 +165,7 @@ function MnistScatterplot(props: any) {
         controller={true}
         layers={layers}
         viewState={{
-          target: [targetX, targetY, 0],
+          target: [target[0], target[1], 0],
           zoom: zoomLevel + zoomOffset,
         }}
         onViewStateChange={onViewStateChange}
@@ -241,7 +223,7 @@ export function MnistExample(props: any) {
           position: absolute;
           bottom: 0;
           right: 5px;
-          font-size: 20px;
+          font-size: 24px;
         }
         .mnist-legend {
           display: inline-block;
@@ -249,6 +231,10 @@ export function MnistExample(props: any) {
         }
         .mnist-legend p {
           margin-bottom: 0;
+          font-size: 24px;
+        }
+        .mnist-legend svg text {
+          font-size: 24px;
         }
       `}</style>
       <ZodErrorBoundary key={spec.key}>
@@ -257,8 +243,8 @@ export function MnistExample(props: any) {
           coordinationTypes={pluginCoordinationTypes}
           onSpecChange={setSpec}
         >
-          <MnistScatterplot data={mnistData} viewUid="umap" name="UMAP (overview)" />
-          <MnistScatterplot data={mnistData} viewUid="densmap" name="densMAP (overview)" />
+          <MnistScatterplot data={mnistData} viewUid="umapOverview" name="UMAP (overview)" />
+          <MnistScatterplot data={mnistData} viewUid="densmapOverview" name="densMAP (overview)" />
           <MnistLegend />
           <MnistScatterplot data={mnistData} viewUid="umapDetail" name="UMAP (detail)"/>
           <MnistScatterplot data={mnistData} viewUid="densmapDetail" name="densMAP (detail)" />
