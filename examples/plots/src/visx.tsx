@@ -53,7 +53,6 @@ function VisxPlot(props: any) {
 
   return (
     <svg width={width} height={height}>
-      <rect width={width} height={height} fill="url(#teal)" rx={14} />
       <Group top={marginTop}>
         {data.map((d: any) => {
           const letter = getLetter(d);
