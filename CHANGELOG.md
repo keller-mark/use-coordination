@@ -1,4 +1,13 @@
 
+## 0.0.12
+
+### Patch Changes
+
+- Update coordination types for MNIST example (targetX/targetY -> target [x, y]) (`@use-coordination/plots-example`) ([#91](https://github.com/keller-mark/use-coordination/pull/91))
+
+- Remove unused <rect> element from Visx bar plot. (`@use-coordination/plots-example`) ([#93](https://github.com/keller-mark/use-coordination/pull/93))
+
+
 ## 0.0.11
 
 ### Patch Changes
