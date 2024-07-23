@@ -87,5 +87,6 @@
     }
   },
   "keywords": [],
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "pnpm@9.5.0"
 }
