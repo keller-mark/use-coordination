@@ -4,7 +4,7 @@
   "version": "0.0.11",
   "description": "",
   "author": "Mark Keller",
-  "homepage": "https://keller-mark.github.io/use-coordination/",
+  "homepage": "https://use-coordination.com/",
   "repository": "https://github.com/keller-mark/use-coordination/",
   "scripts": {
     "start": "pnpm -r --parallel start",

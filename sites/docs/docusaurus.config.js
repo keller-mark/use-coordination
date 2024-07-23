@@ -2,8 +2,8 @@ const path = require('path');
 module.exports = {
   title: 'use-coordination',
   tagline: 'Example repo',
-  url: 'https://keller-mark.github.io',
-  baseUrl: '/use-coordination/',
+  url: 'https://use-coordination.com',
+  baseUrl: '/',
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
