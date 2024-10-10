@@ -5,16 +5,28 @@ import {
   useCoordination,
   defineSpec,
 } from '@use-coordination/all';
+import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { z } from 'zod';
 import { csv } from 'd3-fetch';
 import { select } from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
 import { axisBottom, axisLeft } from 'd3-axis';
+import { brush as d3_brush } from 'd3-brush';
 import { extent } from 'd3-array';
+import Plot from 'react-plotly.js';
 import { FlowEditor } from '@use-coordination/flow-editor';
 
+const compareNumbers = (a: number, b: number) => a - b;
 
 const baseUrl = 'https://storage.googleapis.com/vitessce-demo-data/use-coordination/penguins.csv';
+
+type PenguinRow = {
+  species: 'Adelie' | 'Chinstrap' | 'Gentoo',
+  bill_length_mm: number,
+  bill_depth_mm: number,
+  flipper_length_mm: number,
+  body_mass_g: number,
+};
 
 const colors = {
     "Adelie": [37, 118, 176],
@@ -230,17 +242,82 @@ const initialSpec = defineSpec({
   },
 });
 
+function usePenguinsData() {
+  return useQuery({
+    queryKey: ['penguins'],
+    queryFn: async () => {
+      return (await csv(baseUrl)).map((row: any) => ({
+        ...row,
+        bill_depth_mm: +row.bill_depth_mm,
+        bill_length_mm: +row.bill_length_mm,
+        body_mass_g: +row.body_mass_g,
+        flipper_length_mm: +row.flipper_length_mm,
+      }));
+    }
+  });
+}
+
+function usePlotData(dimX: string, dimY: string) {
+  const { data, isLoading, isSuccess } = usePenguinsData();
+  return useQuery({
+    enabled: !isLoading && isSuccess,
+    queryKey: ['penguins', 'plotData', dimX, dimY],
+    queryFn: async () => {
+      return data.map((d: any) => ({
+        ...d,
+        x: d[dimX],
+        y: d[dimY],
+      }));
+    }
+  });
+}
+
+function useScale(dimName: string, range: [number, number]) {
+  const { data, isLoading, isSuccess } = usePenguinsData();
+  return useQuery({
+    enabled: !isLoading && isSuccess,
+    queryKey: ['penguins', 'scale', dimName, range],
+    queryFn: async () => {
+      const valExtent = extent(data, (d: any) => d[dimName]);
+      return scaleLinear()
+        .domain(valExtent)
+        .range(range);
+    }
+  });
+}
+
+function useSelectedPlotData(selectionDimX: string, selectionDimY: string, selectionRangeX: [number, number], selectionRangeY: [number, number]) {
+  const { data, isLoading, isSuccess } = usePenguinsData();
+  return useQuery({
+    enabled: !isLoading && isSuccess,
+    queryKey: ['penguins', 'selectedPlotData', selectionDimX, selectionDimY, selectionRangeX, selectionRangeY],
+    queryFn: async () => {
+      return data.map((d: any) => ({
+        ...d,
+        inSelection: (
+          (selectionDimX && selectionRangeX && d[selectionDimX] >= selectionRangeX[0] && d[selectionDimX] <= selectionRangeX[1]) &&
+          (selectionDimY && selectionRangeY && d[selectionDimY] >= selectionRangeY[0] && d[selectionDimY] <= selectionRangeY[1])
+        ),
+      }));
+    }
+  });
+}
 
 
-function Scatterplot(props: any) {
-  const { data, viewUid } = props;
 
-  const width = 250;
-  const height = 250;
-  const marginLeft = 25;
-  const marginBottom = 25;
+function D3Scatterplot(props: any) {
+  const {
+    viewUid,
+    width = 250,
+    height = 250,
+    marginLeft = 25,
+    marginBottom = 25,
+    marginRight = 10,
+    marginTop = 10,
+  } = props;
 
   const svgRef = React.useRef(null);
+  const brushRef = useRef(null);
 
   const [{
     dimX,
@@ -263,37 +340,101 @@ function Scatterplot(props: any) {
     "selectionRangeY",
   ]);
 
+  const setBrushSelection = useCallback((rangeX: null|[number, number], rangeY: null|[number, number]) => {
+    setSelectionRangeX(rangeX);
+    setSelectionRangeY(rangeY);
+    setSelectionDimX(dimX);
+    setSelectionDimY(dimY);
+  }, []);
+
+  const xBrushSelection = (selectionRangeX && selectionDimX === dimX) ? selectionRangeX : null;
+  const yBrushSelection = (selectionRangeY && selectionDimY === dimY) ? selectionRangeY : null;
+
+  const { data: plotData } = usePlotData(dimX, dimY);
+  const { data: xScale } = useScale(dimX, [marginLeft, width - marginLeft]);
+  const { data: yScale } = useScale(dimY, [height-marginBottom, 0]);
+  const { data: selectedPlotData } = useSelectedPlotData(selectionDimX, selectionDimY, selectionRangeX, selectionRangeY);
+  
+  const brush = useMemo(() => {
+    if(!xScale || !yScale) {
+      return null;
+    }
+    console.log("create brush", dimX, dimY)
+    const brushElement = brushRef.current;
+    const brushG = select(brushElement);
+
+    function onBrush(e: any) {
+      // Check if there was a sourceEvent
+      // (if not then this was triggered by brush.move)
+      if(e.sourceEvent) {
+        const [x1, y1] = e.selection[0];
+        const [x2, y2] = e.selection[1];
+        const rangeX = ([xScale.invert(x1), xScale.invert(x2)] as any).toSorted(compareNumbers);
+        const rangeY = ([yScale.invert(y1), yScale.invert(y2)] as any).toSorted(compareNumbers);
+        
+        setBrushSelection(rangeX, rangeY);
+      }
+    }
+    // Brush handlers
+    function onBrushEnd(e: any) {
+      console.log('onBrushEnd', e);
+      if(selectionRangeX !== null && selectionRangeY !== null && e.sourceEvent && !e.selection) {
+        setBrushSelection(null, null);
+      }
+    }
+    const brushInner = d3_brush()
+      .extent([
+        [marginLeft, 0],
+        [width - 0, height - marginBottom],
+      ])
+      .on('brush', onBrush)
+      .on('end', onBrushEnd);
+    // Set up brushing
+    brushG.call(brushInner);
+    // TODO: prevent from initializing twice.
+    return brushInner;
+  }, [xScale, yScale]);
+
   useEffect(() => {
+    console.log("brush")
+    if(!brush) {
+      return;
+    }
+    const brushElement = brushRef.current;
+    const brushG = select(brushElement);
+
+    // Set the initial brush
+    const [x1, x2] = (xBrushSelection ? [xScale(xBrushSelection[0]), xScale(xBrushSelection[1])] : xScale.range()).toSorted(compareNumbers);
+    const [y1, y2] = (yBrushSelection ? [yScale(yBrushSelection[0]), yScale(yBrushSelection[1])] : yScale.range()).toSorted(compareNumbers);
+    const initialSelection = [
+      [x1, y1],
+      [x2, y2],
+    ];
+    if(!xBrushSelection && !yBrushSelection) {
+      brushG.call(brush.clear);
+    } else {
+      brushG.call(brush.move, initialSelection);
+    }
+  }, [brush, xScale, yScale, xBrushSelection, yBrushSelection]);
+
+
+  useEffect(() => {
+    console.log("redraw");
     const domElement = svgRef.current;
     const svg = select(domElement);
-    svg.selectAll('g').remove();
+    svg.selectAll('g:not(.brush)').remove();
     svg
       .attr('width', width)
       .attr('height', height);
 
     const g = svg
-      .append('g')
+      .insert('g', 'g.brush')
       .attr('width', width)
       .attr('height', height);
 
-    if(!data) {
+    if(!plotData) {
       return;
     }
-
-    const plotData = data.map((d: any) => ({
-      x: d[dimX],
-      y: d[dimY],
-      species: d.species,
-    }));
-    const xExtent = extent(plotData, (d: any) => d.x);
-    const yExtent = extent(plotData, (d: any) => d.y);
-
-    const xScale = scaleLinear()
-      .domain(xExtent)
-      .range([marginLeft, width]);
-    const yScale = scaleLinear()
-      .domain(yExtent)
-      .range([height-marginBottom, 0]);
 
     const xAxisTicks = g.append('g')
       .attr('transform', `translate(0,${height - marginBottom})`)
@@ -310,11 +451,21 @@ function Scatterplot(props: any) {
       .append('circle')
       .attr('cx', (d: any) => xScale(d.x))
       .attr('cy', (d: any) => yScale(d.y))
-      .attr('r', 3)
-      .attr('fill', (d: any) => `rgb(255,0,0)`)
+      .attr('r', (d: any) => d.inSelection ? 5 : 2)
+      .attr('fill', (d: PenguinRow) => `rgba(${colors[d.species][0]},${colors[d.species][1]},${colors[d.species][2]},0.5)`)
 
+  }, [svgRef, width, height, plotData, xScale, yScale]);
 
-  }, [svgRef, width, height, data]);
+  useEffect(() => {
+    if(!selectedPlotData) {
+      return;
+    }
+    const domElement = svgRef.current;
+    const svg = select(domElement);
+    const circles = svg.selectAll('circle')
+      .data(selectedPlotData)
+      .attr('r', (d: any) => d.inSelection ? 5 : 2)
+  }, [selectedPlotData]);
 
   return (
     <svg
@@ -324,82 +475,209 @@ function Scatterplot(props: any) {
         height: `${height}px`,
       }}
       ref={svgRef}
-    />
+    >
+      <g className="brush" ref={brushRef}></g>
+    </svg>
+  )
+}
+
+function PlotlyScatterplot(props: any) {
+  const {
+    data,
+    viewUid,
+
+    width = 250,
+    height = 250,
+    marginBottom = 25,
+    marginLeft = 25,
+    marginRight = 25,
+    marginTop = 1,
+  } = props;
+
+  const svgRef = React.useRef(null);
+  const brushRef = useRef(null);
+
+  const [{
+    dimX,
+    dimY,
+    selectionDimX,
+    selectionDimY,
+    selectionRangeX,
+    selectionRangeY,
+  }, {
+    setSelectionDimX,
+    setSelectionDimY,
+    setSelectionRangeX,
+    setSelectionRangeY,
+  }] = useCoordination(viewUid, [
+    "dimX",
+    "dimY",
+    "selectionDimX",
+    "selectionDimY",
+    "selectionRangeX",
+    "selectionRangeY",
+  ]);
+
+
+  const setBrushSelection = useCallback((rangeX: null|[number, number], rangeY: null|[number, number]) => {
+    setSelectionRangeX(rangeX);
+    setSelectionRangeY(rangeY);
+    setSelectionDimX(dimX);
+    setSelectionDimY(dimY);
+  }, []);
+
+  const xBrushSelection = (selectionRangeX && selectionDimX === dimX) ? selectionRangeX : null;
+  const yBrushSelection = (selectionRangeY && selectionDimY === dimY) ? selectionRangeY : null;
+
+  const { data: plotData } = usePlotData(dimX, dimY);
+  const { data: xScale } = useScale(dimX, [0, 1]);
+  const { data: yScale } = useScale(dimY, [1, 0]);
+  const xDomain = xScale?.domain();
+  const yDomain = yScale?.domain();
+  const { data: selectedPlotData } = useSelectedPlotData(selectionDimX, selectionDimY, selectionRangeX, selectionRangeY);
+
+  if(!plotData) {
+    return null;
+  }
+
+  return (
+    <div
+      className="splom-scatterplot"
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+      }}
+    >
+      <Plot.default
+        data={[
+          {
+            type: 'scatter',
+            mode: 'markers',
+            x: plotData.map((d: any) => d.x),
+            y: plotData.map((d: any) => d.y),
+            marker: {
+              size: selectedPlotData?.map((d: any) => d.inSelection ? 12 : 6),
+              color: plotData.map((d: PenguinRow) => `rgba(${colors[d.species][0]},${colors[d.species][1]},${colors[d.species][2]},0.5)`),
+            },
+          },
+        ]}
+        layout={{
+          dragmode: 'select',
+          plot_bgcolor: 'white',
+          width,
+          height,
+          margin: {
+            t: marginTop,
+            b: marginBottom,
+            r: marginRight,
+            l: marginLeft,
+          },
+          xaxis: {
+            linewidth: 1,
+            title: dimX,
+            ticklen: 5,
+          },
+          yaxis: {
+            linewidth: 1,
+            title: dimY,
+            ticklen: 5,
+          },
+          selections: xBrushSelection || yBrushSelection ? ([
+            {
+              x0: xBrushSelection ? xBrushSelection[0] : xDomain[0],
+              x1: xBrushSelection ? xBrushSelection[1] : xDomain[1],
+              y0: yBrushSelection ? yBrushSelection[0] : yDomain[0],
+              y1: yBrushSelection ? yBrushSelection[1] : yDomain[1],
+            }
+          ]) : undefined,
+        }}
+        onSelecting={(e: any) => {
+          if(e?.range?.x && e?.range?.y) {
+            setBrushSelection(e.range.x, e.range.y);
+          }
+          console.log('onSelecting', e);
+        }}
+        onSelected={(e: any) => {
+          console.log('onSelected', e);
+          if(e?.range?.x && e?.range?.y) {
+            setBrushSelection(e.range.x, e.range.y);
+          } else if(!e) {
+            setBrushSelection(null, null);
+          }
+        }}
+      />
+    </div>
   )
 }
 
 export function SplomExample(props: any) {
   const [spec, setSpec] = React.useState<any>(initialSpec);
-  const [penguinsData, setPenguinsData] = React.useState<any>(null);
 
-  useEffect(() => {
-    async function fetchData() {
-      const penguins = (await csv(baseUrl)).map((row: any) => ({
-        ...row,
-        bill_depth_mm: +row.bill_depth_mm,
-        bill_length_mm: +row.bill_length_mm,
-        body_mass_g: +row.body_mass_g,
-        flipper_length_mm: +row.flipper_length_mm,
-      }));
-
-      return penguins
-    }
-    fetchData().then(data => setPenguinsData(data))
-  }, []);
+  const queryClient = useMemo(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: 2,
+      },
+    },
+  }), []);
 
   return (
     <>
       <style>{`
         .splom-scatterplot {
           border: 1px solid red;
+          overflow: hidden;
         }
         .splom-matrix {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
         }
         .splom-row {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
         }
       `}</style>
-      <ZodErrorBoundary key={spec.key}>
-        <ZodCoordinationProvider
-          spec={spec}
-          coordinationTypes={pluginCoordinationTypes}
-          onSpecChange={setSpec}
-        >
-          <div className="splom-matrix">
-            <div className="splom-row">
-              <Scatterplot data={penguinsData} viewUid="x0y0" />
-              <Scatterplot data={penguinsData} viewUid="x1y0" />
-              <Scatterplot data={penguinsData} viewUid="x2y0" />
-              <Scatterplot data={penguinsData} viewUid="x3y0" />
+      <QueryClientProvider client={queryClient}>
+        <ZodErrorBoundary key={spec.key}>
+          <ZodCoordinationProvider
+            spec={spec}
+            coordinationTypes={pluginCoordinationTypes}
+            onSpecChange={setSpec}
+          >
+            <div className="splom-matrix">
+              <div className="splom-row">
+                <D3Scatterplot viewUid="x0y0" />
+                <PlotlyScatterplot viewUid="x1y0" />
+                <D3Scatterplot viewUid="x2y0" />
+                <PlotlyScatterplot viewUid="x3y0" />
+              </div>
+              <div className="splom-row">
+                <PlotlyScatterplot viewUid="x0y1" />
+                <D3Scatterplot viewUid="x1y1" />
+                <PlotlyScatterplot viewUid="x2y1" />
+                <D3Scatterplot viewUid="x3y1" />
+              </div>
+              <div className="splom-row">
+                <D3Scatterplot viewUid="x0y2" />
+                <PlotlyScatterplot viewUid="x1y2" />
+                <D3Scatterplot viewUid="x2y2" />
+                <PlotlyScatterplot viewUid="x3y2" />
+              </div>
+              <div className="splom-row">
+                <PlotlyScatterplot viewUid="x0y3" />
+                <D3Scatterplot viewUid="x1y3" />
+                <PlotlyScatterplot viewUid="x2y3" />
+                <D3Scatterplot viewUid="x3y3" />
+              </div>
             </div>
-            <div className="splom-row">
-              <Scatterplot data={penguinsData} viewUid="x0y1" />
-              <Scatterplot data={penguinsData} viewUid="x1y1" />
-              <Scatterplot data={penguinsData} viewUid="x2y1" />
-              <Scatterplot data={penguinsData} viewUid="x3y1" />
-            </div>
-            <div className="splom-row">
-              <Scatterplot data={penguinsData} viewUid="x0y2" />
-              <Scatterplot data={penguinsData} viewUid="x1y2" />
-              <Scatterplot data={penguinsData} viewUid="x2y2" />
-              <Scatterplot data={penguinsData} viewUid="x3y2" />
-            </div>
-            <div className="splom-row">
-              <Scatterplot data={penguinsData} viewUid="x0y3" />
-              <Scatterplot data={penguinsData} viewUid="x1y3" />
-              <Scatterplot data={penguinsData} viewUid="x2y3" />
-              <Scatterplot data={penguinsData} viewUid="x3y3" />
-            </div>
-          </div>
-        </ZodCoordinationProvider>
-        <pre>
-          {JSON.stringify(spec, null, 2)}
-        </pre>
-      </ZodErrorBoundary>
-      <FlowEditor spec={spec} onSpecChange={setSpec} />
+          </ZodCoordinationProvider>
+          <pre>
+            {JSON.stringify(spec, null, 2)}
+          </pre>
+        </ZodErrorBoundary>
+        <FlowEditor spec={spec} onSpecChange={setSpec} />
+      </QueryClientProvider>
     </>
   );
 }
