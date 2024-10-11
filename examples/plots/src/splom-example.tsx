@@ -358,7 +358,6 @@ function D3Scatterplot(props: any) {
     if(!xScale || !yScale) {
       return null;
     }
-    console.log("create brush", dimX, dimY)
     const brushElement = brushRef.current;
     const brushG = select(brushElement);
 
