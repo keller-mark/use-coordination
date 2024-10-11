@@ -6,7 +6,7 @@ import {
   defineSpec,
 } from '@use-coordination/all';
 import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { z } from 'zod';
+import { set, z } from 'zod';
 import { csv } from 'd3-fetch';
 import { select } from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
@@ -14,7 +14,6 @@ import { axisBottom, axisLeft } from 'd3-axis';
 import { brush as d3_brush } from 'd3-brush';
 import { extent } from 'd3-array';
 import Plot from 'react-plotly.js';
-import { FlowEditor } from '@use-coordination/flow-editor';
 
 const compareNumbers = (a: number, b: number) => a - b;
 
@@ -377,7 +376,6 @@ function D3Scatterplot(props: any) {
     }
     // Brush handlers
     function onBrushEnd(e: any) {
-      console.log('onBrushEnd', e);
       if(selectionRangeX !== null && selectionRangeY !== null && e.sourceEvent && !e.selection) {
         setBrushSelection(null, null);
       }
@@ -391,12 +389,10 @@ function D3Scatterplot(props: any) {
       .on('end', onBrushEnd);
     // Set up brushing
     brushG.call(brushInner);
-    // TODO: prevent from initializing twice.
     return brushInner;
   }, [xScale, yScale]);
 
   useEffect(() => {
-    console.log("brush")
     if(!brush) {
       return;
     }
@@ -419,7 +415,6 @@ function D3Scatterplot(props: any) {
 
 
   useEffect(() => {
-    console.log("redraw");
     const domElement = svgRef.current;
     const svg = select(domElement);
     svg.selectAll('g:not(.brush)').remove();
@@ -444,6 +439,21 @@ function D3Scatterplot(props: any) {
       .attr('transform', `translate(${marginLeft},0)`)
       .style('font-size', '10px')
       .call(axisLeft(yScale));
+
+    const xAxisTitle = g.append('text')
+      .attr('x', width/2)
+      .attr('y', height - 30)
+      .style('text-anchor', 'middle')
+      .style('font-size', '12px')
+      .text(dimX);
+    
+    const yAxisTitle = g.append('text')
+      .attr('x', -height/2)
+      .attr('y', 38)
+      .attr('transform', 'rotate(-90)')
+      .style('text-anchor', 'middle')
+      .style('font-size', '12px')
+      .text(dimY);
     
     const circles = g.selectAll('circle')
       .data(plotData)
@@ -453,7 +463,6 @@ function D3Scatterplot(props: any) {
       .attr('cy', (d: any) => yScale(d.y))
       .attr('r', (d: any) => d.inSelection ? 5 : 2)
       .attr('fill', (d: PenguinRow) => `rgba(${colors[d.species][0]},${colors[d.species][1]},${colors[d.species][2]},0.5)`)
-
   }, [svgRef, width, height, plotData, xScale, yScale]);
 
   useEffect(() => {
@@ -483,9 +492,7 @@ function D3Scatterplot(props: any) {
 
 function PlotlyScatterplot(props: any) {
   const {
-    data,
     viewUid,
-
     width = 250,
     height = 250,
     marginBottom = 25,
@@ -494,8 +501,7 @@ function PlotlyScatterplot(props: any) {
     marginTop = 1,
   } = props;
 
-  const svgRef = React.useRef(null);
-  const brushRef = useRef(null);
+  const [isSelecting, setIsSelecting] = useState(false);
 
   const [{
     dimX,
@@ -518,7 +524,6 @@ function PlotlyScatterplot(props: any) {
     "selectionRangeY",
   ]);
 
-
   const setBrushSelection = useCallback((rangeX: null|[number, number], rangeY: null|[number, number]) => {
     setSelectionRangeX(rangeX);
     setSelectionRangeY(rangeY);
@@ -526,15 +531,65 @@ function PlotlyScatterplot(props: any) {
     setSelectionDimY(dimY);
   }, []);
 
-  const xBrushSelection = (selectionRangeX && selectionDimX === dimX) ? selectionRangeX : null;
-  const yBrushSelection = (selectionRangeY && selectionDimY === dimY) ? selectionRangeY : null;
-
   const { data: plotData } = usePlotData(dimX, dimY);
   const { data: xScale } = useScale(dimX, [0, 1]);
   const { data: yScale } = useScale(dimY, [1, 0]);
   const xDomain = xScale?.domain();
   const yDomain = yScale?.domain();
   const { data: selectedPlotData } = useSelectedPlotData(selectionDimX, selectionDimY, selectionRangeX, selectionRangeY);
+
+  const onSelecting = useCallback((e: any) => {
+    setIsSelecting(true);
+    if(e?.range?.x && e?.range?.y) {
+      setBrushSelection(e.range.x, e.range.y);
+    }
+  }, []);
+
+  const onSelected = useCallback((e: any) => {
+    if(isSelecting) {
+      if(e?.range?.x && e?.range?.y) {
+        setBrushSelection(e.range.x, e.range.y);
+      } else if(!e) {
+        setBrushSelection(null, null);
+      }
+    }
+    setIsSelecting(false);
+  }, [isSelecting]);
+
+  const selections = useMemo(() => {
+    const [xBrushSelection, yBrushSelection] = ([
+      (selectionRangeX && selectionDimX === dimX) ? selectionRangeX : null,
+      (selectionRangeY && selectionDimY === dimY) ? selectionRangeY : null,
+    ]);
+    return xBrushSelection || yBrushSelection ? ([
+      {
+        type: 'rect',
+        x0: xBrushSelection ? xBrushSelection[0] : xDomain[0],
+        x1: xBrushSelection ? xBrushSelection[1] : xDomain[1],
+        y0: yBrushSelection ? yBrushSelection[0] : yDomain[0],
+        y1: yBrushSelection ? yBrushSelection[1] : yDomain[1],
+      }
+    ]) : undefined;
+  }, [selectionRangeX, selectionRangeY, selectionDimX, selectionDimY, dimX, dimY]);
+
+  const [xData, yData, colorData] = useMemo(() => {
+    if(!plotData) {
+      return [null, null, null];
+    }
+    return [
+      plotData.map((d: any) => d.x),
+      plotData.map((d: any) => d.y),
+      plotData.map((d: PenguinRow) => `rgba(${colors[d.species][0]},${colors[d.species][1]},${colors[d.species][2]},0.5)`),
+    ];
+  }, [plotData]);
+  const [sizeData] = useMemo(() => {
+    if(!plotData) {
+      return [null];
+    }
+    return [
+      selectedPlotData?.map((d: any) => d.inSelection ? 12 : 6),
+    ];
+  }, [selectedPlotData]);
 
   if(!plotData) {
     return null;
@@ -553,11 +608,11 @@ function PlotlyScatterplot(props: any) {
           {
             type: 'scatter',
             mode: 'markers',
-            x: plotData.map((d: any) => d.x),
-            y: plotData.map((d: any) => d.y),
+            x: xData,
+            y: yData,
             marker: {
-              size: selectedPlotData?.map((d: any) => d.inSelection ? 12 : 6),
-              color: plotData.map((d: PenguinRow) => `rgba(${colors[d.species][0]},${colors[d.species][1]},${colors[d.species][2]},0.5)`),
+              size: sizeData,
+              color: colorData,
             },
           },
         ]}
@@ -582,36 +637,22 @@ function PlotlyScatterplot(props: any) {
             title: dimY,
             ticklen: 5,
           },
-          selections: xBrushSelection || yBrushSelection ? ([
-            {
-              x0: xBrushSelection ? xBrushSelection[0] : xDomain[0],
-              x1: xBrushSelection ? xBrushSelection[1] : xDomain[1],
-              y0: yBrushSelection ? yBrushSelection[0] : yDomain[0],
-              y1: yBrushSelection ? yBrushSelection[1] : yDomain[1],
-            }
-          ]) : undefined,
+          selections: selections,
         }}
-        onSelecting={(e: any) => {
-          if(e?.range?.x && e?.range?.y) {
-            setBrushSelection(e.range.x, e.range.y);
-          }
-          console.log('onSelecting', e);
-        }}
-        onSelected={(e: any) => {
-          console.log('onSelected', e);
-          if(e?.range?.x && e?.range?.y) {
-            setBrushSelection(e.range.x, e.range.y);
-          } else if(!e) {
-            setBrushSelection(null, null);
-          }
-        }}
+        onSelecting={onSelecting}
+        onSelected={onSelected}
       />
     </div>
-  )
+  );
 }
 
 export function SplomExample(props: any) {
+  const {
+    d3only = true,
+  } = props;
   const [spec, setSpec] = React.useState<any>(initialSpec);
+
+  const SecondaryScatterplot = d3only ? D3Scatterplot : PlotlyScatterplot;
 
   const queryClient = useMemo(() => new QueryClient({
     defaultOptions: {
@@ -626,7 +667,7 @@ export function SplomExample(props: any) {
     <>
       <style>{`
         .splom-scatterplot {
-          border: 1px solid red;
+          border: 0px solid red;
           overflow: hidden;
         }
         .splom-matrix {
@@ -648,26 +689,26 @@ export function SplomExample(props: any) {
             <div className="splom-matrix">
               <div className="splom-row">
                 <D3Scatterplot viewUid="x0y0" />
-                <PlotlyScatterplot viewUid="x1y0" />
+                <SecondaryScatterplot viewUid="x1y0" />
                 <D3Scatterplot viewUid="x2y0" />
-                <PlotlyScatterplot viewUid="x3y0" />
+                <SecondaryScatterplot viewUid="x3y0" />
               </div>
               <div className="splom-row">
-                <PlotlyScatterplot viewUid="x0y1" />
+                <SecondaryScatterplot viewUid="x0y1" />
                 <D3Scatterplot viewUid="x1y1" />
-                <PlotlyScatterplot viewUid="x2y1" />
+                <SecondaryScatterplot viewUid="x2y1" />
                 <D3Scatterplot viewUid="x3y1" />
               </div>
               <div className="splom-row">
                 <D3Scatterplot viewUid="x0y2" />
-                <PlotlyScatterplot viewUid="x1y2" />
+                <SecondaryScatterplot viewUid="x1y2" />
                 <D3Scatterplot viewUid="x2y2" />
-                <PlotlyScatterplot viewUid="x3y2" />
+                <SecondaryScatterplot viewUid="x3y2" />
               </div>
               <div className="splom-row">
-                <PlotlyScatterplot viewUid="x0y3" />
+                <SecondaryScatterplot viewUid="x0y3" />
                 <D3Scatterplot viewUid="x1y3" />
-                <PlotlyScatterplot viewUid="x2y3" />
+                <SecondaryScatterplot viewUid="x2y3" />
                 <D3Scatterplot viewUid="x3y3" />
               </div>
             </div>
@@ -676,7 +717,6 @@ export function SplomExample(props: any) {
             {JSON.stringify(spec, null, 2)}
           </pre>
         </ZodErrorBoundary>
-        <FlowEditor spec={spec} onSpecChange={setSpec} />
       </QueryClientProvider>
     </>
   );

@@ -56,6 +56,7 @@ module.exports = {
         'volumetric-example',
         'mnist-example',
         'splom-example',
+        'splom-example-2',
       ]
     }
   ]
