@@ -266,6 +266,9 @@ importers:
       d3-brush:
         specifier: ^3.0.0
         version: 3.0.0
+      d3-fetch:
+        specifier: ^3.0.1
+        version: 3.0.1
       d3-scale:
         specifier: ^4.0.0
         version: 4.0.0
