@@ -30,6 +30,10 @@ export default function Index() {
           <pre>
             npm install use-coordination
           </pre>
+          <h3>Citation</h3>
+          <p>
+            Keller, M.S., Manz, T., Gehlenborg, N. Use-Coordination: Model, Grammar, and Library for Implementation of Coordinated Multiple Views. <i>Proc. IEEE VIS</i> (2024). https://doi.org/10.1109/VIS55277.2024.00041
+          </p>
           <h3>Demo</h3>
           
           <h4>Coordinated Multiple Views</h4>
