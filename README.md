@@ -140,4 +140,20 @@ pnpm build-demo
 pnpm meta-updater
 ```
 
-## Deployment
+
+## Citation
+
+To cite Use-Coordination in your work, please use:
+
+```bibtex
+@inproceedings{keller2024usecoordination,
+  author={Keller, Mark S. and Manz, Trevor and Gehlenborg, Nils},
+  booktitle={2024 IEEE Visualization and Visual Analytics (VIS)}, 
+  title={Use-Coordination: Model, Grammar, and Library for Implementation of Coordinated Multiple Views}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={166-170},
+  doi={10.1109/VIS55277.2024.00041}
+}
+```
