@@ -302,7 +302,7 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
     parameter, value, coordinationScopes,
     byType, typeScope, coordinationScopesBy,
   }: { parameter: string, value: any, coordinationScopes: Record<string, any>, byType: string, typeScope: string, coordinationScopesBy: Record<string, any> }) => set((state) => {
-    const { coordinationSpace = {} } = state.spec;
+    const { coordinationSpace } = state.spec;
     let scope;
     if (!byType) {
       scope = getParameterScope(coordinationScopes, parameter);
@@ -321,7 +321,7 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
         coordinationSpace: {
           ...coordinationSpace,
           [parameter]: {
-            ...coordinationSpace[parameter],
+            ...coordinationSpace?.[parameter],
             [scope]: value,
           },
         },
@@ -546,7 +546,7 @@ export function _useCoordination(coordinationScopes: Record<string, string | str
     });
     return [setterName, setterFunc];
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  })), [parameters, coordinationScopes]);
+  })), [coordinationScopes]);
 
   return [values, setters];
 }
