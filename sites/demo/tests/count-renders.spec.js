@@ -34,9 +34,9 @@ test('count component initializations and renders', async ({ page }) => {
   // =========== Select interactions ===========
   // Use <select/> to change the coordination scope mapping.
   await page.getByTitle('select-slider1').selectOption({ label: 'B' });
-  await expectNumRendersAndInits(page, ['slider1', 'slider2', 'slider3'], 2, 2);
+  await expectNumRendersAndInits(page, ['slider1', 'slider2', 'slider3'], 2, 3);
 
   await page.getByTitle('select-slider2').selectOption({ label: 'A' });
-  await expectNumRendersAndInits(page, ['slider1', 'slider2', 'slider3'], 3, 2);
+  await expectNumRendersAndInits(page, ['slider1', 'slider2', 'slider3'], 3, 3);
 
 });
