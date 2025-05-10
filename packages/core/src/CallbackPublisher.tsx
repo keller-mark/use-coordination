@@ -14,13 +14,17 @@ export default function CallbackPublisher(props: CallbackPublisherProps) {
     validateOnSpecChange,
   } = props;
 
-  const storeApi = useCoordinationStoreApi();
+  const storeApi: any = useCoordinationStoreApi();
 
   // Spec updates are often-occurring, so
   // we want to use the "transient update" approach
   // to subscribe to spec changes.
   // Reference: https://github.com/react-spring/zustand#transient-updates-for-often-occuring-state-changes
   useEffect(() => storeApi.subscribe(
+    // The function to specify which part of the store
+    // we want to subscribe to (the "selector").
+    // Reference: https://github.com/pmndrs/zustand?tab=readme-ov-file#using-subscribe-with-selector
+    (state: any) => state.spec,
     // The function to run on each publish.
     (spec: any) => {
       if (validateOnSpecChange && spec && validater) {
@@ -30,9 +34,7 @@ export default function CallbackPublisher(props: CallbackPublisherProps) {
         onSpecChange(spec);
       }
     },
-    // The function to specify which part of the store
-    // we want to subscribe to.
-    (state: any) => state.spec,
+    // TODO: here, should we specify the "shallow" equality function?
   ), [onSpecChange, validater, validateOnSpecChange, storeApi]);
 
   // Render nothing.
