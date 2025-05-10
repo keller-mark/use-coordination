@@ -1,8 +1,8 @@
-// @ts-ignore
 import { useEffect, useMemo, useCallback, useRef } from 'react';
 import {
   CoordinationStoreProvider,
   createCoordinationStore,
+  type CoordinationStore,
 } from './hooks.js';
 import ViewWrapper from './ViewWrapper.js';
 import CallbackPublisher from './CallbackPublisher.js';
@@ -53,7 +53,7 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
   }, [specKey, initializer, onCreateStore]);
 
   // Reference: https://github.com/pmndrs/zustand/discussions/1180
-  const storeRef = useRef();
+  const storeRef = useRef<CoordinationStore>();
   if (!storeRef.current) {
     storeRef.current = createCoordinationStoreClosure();
   }

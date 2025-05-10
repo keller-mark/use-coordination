@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useCoordinationStoreApi } from './hooks.js';
-import { CallbackPublisherProps } from './prop-types.js';
+import { type CoordinationState, useCoordinationStoreApi } from './hooks.js';
+import { CallbackPublisherProps, type CmvConfigObject } from './prop-types.js';
 
 /**
  * This is a dummy component which handles
@@ -14,7 +14,7 @@ export default function CallbackPublisher(props: CallbackPublisherProps) {
     validateOnSpecChange,
   } = props;
 
-  const storeApi: any = useCoordinationStoreApi();
+  const storeApi = useCoordinationStoreApi();
 
   // Spec updates are often-occurring, so
   // we want to use the "transient update" approach
@@ -24,9 +24,9 @@ export default function CallbackPublisher(props: CallbackPublisherProps) {
     // The function to specify which part of the store
     // we want to subscribe to (the "selector").
     // Reference: https://github.com/pmndrs/zustand?tab=readme-ov-file#using-subscribe-with-selector
-    (state: any) => state.spec,
+    (state: CoordinationState) => state.spec,
     // The function to run on each publish.
-    (spec: any) => {
+    (spec: CmvConfigObject) => {
       if (validateOnSpecChange && spec && validater) {
         validater(spec);
       }
