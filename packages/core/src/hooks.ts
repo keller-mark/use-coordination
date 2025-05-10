@@ -453,7 +453,7 @@ export function useViewMapping(viewUid: string) {
 
   const metaSpaceBy = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
-    return coordinationSpace?.[META_COORDINATION_SCOPES_BY] ?? {};
+    return coordinationSpace?.[META_COORDINATION_SCOPES_BY];
   });
   const coordinationScopesBy = useMemo(() => {
     const scopesBy = getScopesBy(
