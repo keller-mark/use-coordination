@@ -1,26 +1,98 @@
 /* eslint-disable max-len */
 /* eslint-disable react-refresh/only-export-components */
-import { useRef, useMemo } from 'react';
-import create from 'zustand';
-import createContext from 'zustand/context';
-import shallow from 'zustand/shallow';
+import { useRef, useMemo, createContext, useContext } from 'react';
+import { create, useStore } from 'zustand';
+import { useShallow } from 'zustand/shallow';
+import { subscribeWithSelector } from 'zustand/middleware';
 import { cloneDeep } from 'lodash-es';
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import { capitalize } from '@use-coordination/utils';
 import { getCoordinationSpaceAndScopes } from '@use-coordination/config';
 import { CmvConfigObject } from './prop-types.js';
 
-// Reference: https://github.com/pmndrs/zustand#react-context
-// Reference: https://github.com/pmndrs/zustand/blob/e47ea03/tests/context.test.tsx#L60
-const {
-  Provider: CoordinationStoreProviderLocal,
-  useStore: useCoordinationStoreLocal,
-  useStoreApi: useCoordinationStoreApiLocal,
-} = createContext();
 
-export const CoordinationStoreProvider = CoordinationStoreProviderLocal;
-export const useCoordinationStore = useCoordinationStoreLocal;
-export const useCoordinationStoreApi = useCoordinationStoreApiLocal;
+type SetCoordinationValueParamsNotByType = {
+  parameter: string,
+  value: any,
+  coordinationScopes: Record<string, any>,
+}
+
+type SetCoordinationValueParamsByType = {
+  parameter: string,
+  value: any,
+  coordinationScopes: Record<string, any>,
+  byType: string,
+  typeScope: string,
+  coordinationScopesBy: Record<string, any>
+}
+
+type SetCoordinationValueParams = SetCoordinationValueParamsNotByType | SetCoordinationValueParamsByType;
+
+export interface CoordinationState {
+  spec: CmvConfigObject,
+  initialSpec: CmvConfigObject,
+  setSpec: (spec: CmvConfigObject) => void,
+  setCoordinationValue: (params: SetCoordinationValueParams) => void,
+  mergeCoordination: (newCoordinationValues: Record<string, any>, scopePrefix: string, viewUid: string) => void,
+
+}
+export type CoordinationSelector = (state: CoordinationState) => any;
+export type CoordinationStore = ReturnType<typeof createCoordinationStore>;
+
+
+// References for Zustand v3:
+// - https://github.com/pmndrs/zustand#react-context
+// - https://github.com/pmndrs/zustand/blob/e47ea03/tests/context.test.tsx#L60
+// References for Zustand v4:
+// - https://github.com/pmndrs/zustand/discussions/1180#discussioncomment-3354713
+// - https://zustand.docs.pmnd.rs/previous-versions/zustand-v3-create-context#migration
+
+const StoreContext = createContext<CoordinationStore | null>(null);
+
+interface ProviderProps {
+  children: any;
+  createStore: () => ReturnType<typeof createCoordinationStore>;
+}
+
+export function CoordinationStoreProvider(props: ProviderProps) {
+  const {
+    createStore,
+    children,
+  } = props;
+
+  // Reference: https://github.com/pmndrs/zustand/discussions/1180
+  const storeRef = useRef<CoordinationStore>();
+  if (!storeRef.current) {
+    storeRef.current = createStore();
+  }
+
+  return (
+    <StoreContext.Provider value={storeRef.current}>
+      {children}
+    </StoreContext.Provider>
+  );
+}
+
+export function useCoordinationStoreApi() {
+  const store = useContext(StoreContext);
+  if (!store) {
+    throw new Error('Missing StoreProvider')
+  }
+  return store;
+}
+export function useCoordinationStore<T>(selector: (state: CoordinationState) => T) {
+  const store = useCoordinationStoreApi();
+  if (!store) {
+    throw new Error('Missing StoreProvider')
+  }
+  const slice = useStore(store, selector);
+  return slice;
+}
+
+export function useCoordinationStoreShallow<T>(selector: (state: CoordinationState) => T) {
+  return useCoordinationStore(useShallow(selector));
+}
+
 
 // Guidelines for parameter ordering:
 // - viewUid
@@ -37,32 +109,36 @@ export const useCoordinationStoreApi = useCoordinationStoreApiLocal;
 /**
  * Get the "computed" coordinationScopes after accounting for
  * meta-coordination.
- * @param {*} coordinationScopes The coordinationScopes for a view.
+ * @param {*} metaSpace The coordinationSpace.metaCoordinationScopes object.
  * @param {*} coordinationSpace The coordinationSpace for a spec.
  * @returns {string|undefined} The coordinationScopesBy after meta-coordination.
  */
-export function getScopes(metaSpace: Record<string, Record<string, any>>, coordinationScopes: Record<string, string | string[]>) {
+export function getScopes(metaSpace: Record<string, any> | undefined, coordinationScopes: Record<string, string | string[]> | Record<string, Record<string, Record<string, string | string[]>>> | undefined) {
   let result = { ...coordinationScopes };
   // Check if there is a matching meta-scope.
   if (metaSpace) {
     // Determine if there is a meta-scope that would take precedence.
-    const metaScopes = coordinationScopes[META_COORDINATION_SCOPES];
+    const metaScopes = coordinationScopes?.[META_COORDINATION_SCOPES];
     if (metaScopes && metaSpace) {
       // The view.coordinationScopes.metaCoordinationScopes might be an array or a string.
       // Convert to an array.
       const metaScopesArr = Array.isArray(metaScopes) ? metaScopes : [metaScopes];
       metaScopesArr.forEach((metaScope) => {
-        // Merge the original coordinationScopes with the matching meta-coordinationScopes
-        // from the coordinationSpace.
-        let o1 = result;
-        const o2 = metaSpace[metaScope] || {};
-        Object.entries(o2).forEach(([cType, cScope]) => {
-          o1 = {
-            ...o1,
-            [cType]: cScope,
-          };
-        });
-        result = o1;
+        if(typeof metaScope === 'string') {
+          // Merge the original coordinationScopes with the matching meta-coordinationScopes
+          // from the coordinationSpace.
+          let o1 = result;
+          const o2: Record<string, any> = metaSpace[metaScope] || {};
+          Object.entries(o2).forEach(([cType, cScope]) => {
+            o1 = {
+              ...o1,
+              [cType]: cScope,
+            };
+          });
+          result = o1;
+        } else {
+          console.warn('Encountered object in getScopes', metaScope);
+        }
       });
     }
   }
@@ -77,12 +153,12 @@ export function getScopes(metaSpace: Record<string, Record<string, any>>, coordi
  * @param {*} coordinationSpace The coordinationSpace for a spec.
  * @returns {string|undefined} The coordinationScopesBy after meta-coordination.
  */
-export function getScopesBy(metaSpaceBy: Record<string, Record<string, any>>, coordinationScopes: Record<string, any>, coordinationScopesBy: Record<string, any>) {
+export function getScopesBy(metaSpaceBy: Record<string, Record<string, any>> | undefined, coordinationScopes: Record<string, any> | undefined, coordinationScopesBy: Record<string, any> | undefined) {
   let result = { ...coordinationScopesBy };
   // Check if there is a matching meta-scope.
   if (metaSpaceBy) {
     // Determine if there is a meta-scope that would take precedence.
-    const metaScopesBy = coordinationScopes[META_COORDINATION_SCOPES_BY];
+    const metaScopesBy = coordinationScopes?.[META_COORDINATION_SCOPES_BY];
     if (metaSpaceBy && metaScopesBy) {
       // The view.coordinationScopes.metaCoordinationScopes might be an array or a string.
       // Convert to an array.
@@ -223,7 +299,6 @@ export function getParameterScopeBy(
   return parameterScopeGlobal;
 }
 
-
 /**
  * The useCoordinationStore hook is initialized via the zustand
  * create() function, which sets up both the state variables
@@ -234,7 +309,7 @@ export function getParameterScopeBy(
  * - https://github.com/pmndrs/zustand#using-subscribe-with-selector
  * @returns {function} The useStore hook.
  */
-export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateStore: Function | undefined) => create(set => ({
+export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateStore: Function | undefined) => create<CoordinationState>()(subscribeWithSelector((set) => ({
   // State:
   // The spec is an object which must conform to the schema.
   spec: initialSpec,
@@ -248,7 +323,7 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
   setCoordinationValue: ({
     parameter, value, coordinationScopes,
     byType, typeScope, coordinationScopesBy,
-  }: { parameter: string, value: any, coordinationScopes: Record<string, any>, byType: string, typeScope: string, coordinationScopesBy: Record<string, any> }) => set((state: any) => {
+  }: { parameter: string, value: any, coordinationScopes: Record<string, any>, byType: string, typeScope: string, coordinationScopesBy: Record<string, any> }) => set((state) => {
     const { coordinationSpace } = state.spec;
     let scope;
     if (!byType) {
@@ -268,15 +343,15 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
         coordinationSpace: {
           ...coordinationSpace,
           [parameter]: {
-            ...coordinationSpace[parameter],
+            ...coordinationSpace?.[parameter],
             [scope]: value,
           },
         },
       },
     };
   }),
-  mergeCoordination: (newCoordinationValues: Record<string, any>, scopePrefix: string, viewUid: string) => set((state: any) => {
-    const { coordinationSpace, viewCoordination } = state.spec;
+  mergeCoordination: (newCoordinationValues: Record<string, any>, scopePrefix: string, viewUid: string) => set((state) => {
+    const { coordinationSpace = {}, viewCoordination = {} } = state.spec;
     const {
       coordinationSpace: newCoordinationSpace,
       coordinationScopes,
@@ -335,14 +410,14 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
         [viewUid]: {
           ...viewCoordination[viewUid],
           coordinationScopes: {
-            ...viewCoordination[viewUid].coordinationScopes,
+            ...viewCoordination[viewUid]?.coordinationScopes,
             [META_COORDINATION_SCOPES]: [
               ...(coordinationScopes[META_COORDINATION_SCOPES] || []),
-              ...(viewCoordination[viewUid].coordinationScopes[META_COORDINATION_SCOPES] || []),
+              ...(viewCoordination[viewUid]?.coordinationScopes?.[META_COORDINATION_SCOPES] || []),
             ],
             [META_COORDINATION_SCOPES_BY]: [
               ...(coordinationScopes[META_COORDINATION_SCOPES_BY] || []),
-              ...(viewCoordination[viewUid].coordinationScopes[META_COORDINATION_SCOPES_BY] || []),
+              ...(viewCoordination[viewUid]?.coordinationScopes?.[META_COORDINATION_SCOPES_BY] || []),
             ],
           },
         },
@@ -353,7 +428,7 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
     };
   }),
   ...(onCreateStore ? onCreateStore(set) : {}),
-}));
+})));
 
 /**
  * Get the coordination information for a view.
@@ -361,10 +436,10 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
  * @returns {[coordinationScopes, coordinationScopesBy]}
  */
 export function useRawViewMapping(viewUid: string) {
-  const viewCoordination = useCoordinationStore((state: any) => {
+  const viewCoordination = useCoordinationStoreShallow((state) => {
     const { viewCoordination } = state.spec;
     return viewCoordination;
-  }, shallow);
+  });
 
   return useMemo(() => {
     return [
@@ -383,13 +458,13 @@ export function useRawViewMapping(viewUid: string) {
 export function useViewMapping(viewUid: string) {
   const [coordinationScopesRaw, coordinationScopesByRaw] = useRawViewMapping(viewUid);
 
-  const metaSpace = useCoordinationStore((state: any) => {
+  const metaSpace = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
     return coordinationSpace?.[META_COORDINATION_SCOPES];
-  }, shallow);
+  });
 
   const coordinationScopes = useMemo(() => {
-    const scopes = getScopes(
+    const scopes: Record<string, any> = getScopes(
       metaSpace,
       coordinationScopesRaw,
     );
@@ -398,10 +473,10 @@ export function useViewMapping(viewUid: string) {
     return scopes;
   }, [coordinationScopesRaw, metaSpace]);
 
-  const metaSpaceBy = useCoordinationStore((state: any) => {
+  const metaSpaceBy = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
     return coordinationSpace?.[META_COORDINATION_SCOPES_BY];
-  }, shallow);
+  });
   const coordinationScopesBy = useMemo(() => {
     const scopesBy = getScopesBy(
       metaSpaceBy,
@@ -425,7 +500,7 @@ export function useViewMapping(viewUid: string) {
  * @returns {object} Object containing all coordination values.
  */
 export function _useInitialCoordination(coordinationScopes: Record<string, any>, parameters: string[]) {
-  const values = useCoordinationStore((state: any) => {
+  const values = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.initialSpec;
     return Object.fromEntries(parameters.map((parameter) => {
       if (coordinationSpace && coordinationSpace[parameter]) {
@@ -434,7 +509,7 @@ export function _useInitialCoordination(coordinationScopes: Record<string, any>,
       }
       return [parameter, undefined];
     }));
-  }, shallow);
+  });
   return values;
 }
 
@@ -468,9 +543,9 @@ export function useInitialCoordination(viewUid: string, parameters: string[]) {
  * prefix.
  */
 export function _useCoordination(coordinationScopes: Record<string, string | string[]>, parameters: string[]) {
-  const setCoordinationValue = useCoordinationStore((state: any) => state.setCoordinationValue);
+  const setCoordinationValue = useCoordinationStore((state) => state.setCoordinationValue);
 
-  const values = useCoordinationStore((state: any) => {
+  const values = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
     return Object.fromEntries(parameters.map((parameter) => {
       if (coordinationSpace) {
@@ -482,7 +557,7 @@ export function _useCoordination(coordinationScopes: Record<string, string | str
       }
       return [parameter, undefined];
     }));
-  }, shallow);
+  });
 
   const setters = useMemo(() => Object.fromEntries(parameters.map((parameter) => {
     const setterName = `set${capitalize(parameter)}`;
@@ -493,7 +568,7 @@ export function _useCoordination(coordinationScopes: Record<string, string | str
     });
     return [setterName, setterFunc];
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  })), [parameters, coordinationScopes]);
+  })), [coordinationScopes]);
 
   return [values, setters];
 }
@@ -520,10 +595,10 @@ export function _useCoordinationScopes(coordinationScopes: Record<string, string
 
   // Return array of coordination scopes,
   // but filter out any whose value is null / falsey.
-  const parameterSpace = useCoordinationStore((state: any) => {
+  const parameterSpace = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
     return coordinationSpace?.[parameter];
-  }, shallow);
+  });
   const nonNullScopes = useMemo(() => {
     // Convert a single scope to an array of scopes to be consistent.
     const scopesArr = Array.isArray(scopes) ? scopes : [scopes];
@@ -585,14 +660,14 @@ export function _useCoordinationScopesL1(
 ) {
   const scopes = getParameterScope(coordinationScopes, byType);
 
-  const parameterSpace = useCoordinationStore((state: any) => {
+  const parameterSpace = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
     return coordinationSpace?.[parameter];
-  }, shallow);
-  const byTypeSpace = useCoordinationStore((state: any) => {
+  });
+  const byTypeSpace = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
     return coordinationSpace?.[byType];
-  }, shallow);
+  });
 
   return useMemo(() => {
     if (scopes && coordinationScopesBy?.[byType]?.[parameter]) {
@@ -657,7 +732,7 @@ export function _useCoordinationObject(coordinationScopes: Record<string, string
   const scopes = getParameterScope(coordinationScopes, parameter);
 
   // Mapping from dataset coordination scope name to dataset uid
-  const vals = useCoordinationStore((state: any) => {
+  const vals = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
     // Convert a single scope to an array of scopes to be consistent.
     const scopesArr = Array.isArray(scopes) ? scopes : [scopes];
@@ -669,7 +744,7 @@ export function _useCoordinationObject(coordinationScopes: Record<string, string
       return [scope, undefined] as [string, any];
       // eslint-disable-next-line no-unused-vars
     }).filter(([k, v]) => v !== undefined));
-  }, shallow);
+  });
 
   return vals;
 }
@@ -697,12 +772,12 @@ export function _useCoordinationL1(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, Record<string, any>>,
   byType: string, parameters: string[],
 ) {
-  const setCoordinationValue = useCoordinationStore((state: any) => state.setCoordinationValue);
+  const setCoordinationValue = useCoordinationStore((state) => state.setCoordinationValue);
 
-  const parameterSpaces = useCoordinationStore((state: any) => {
+  const parameterSpaces = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.spec;
-    return parameters.map(parameter => coordinationSpace[parameter]);
-  }, shallow);
+    return parameters.map(parameter => coordinationSpace?.[parameter]);
+  });
 
   const values = useMemo(() => {
     const typeScopes = getParameterScope(coordinationScopes, byType);
@@ -880,7 +955,7 @@ export function useCoordinationL2(viewUid: string, primaryType: string, secondar
  * @returns {function} The spec setter function
  * in the `useCoordinationStore` store.
  */
-export function useSetSpec(storeApi: any) {
+export function useSetSpec(storeApi: ReturnType<typeof useCoordinationStoreApi>) {
   const setSpecRef = useRef(storeApi.getState().setSpec);
   const setSpec = setSpecRef.current;
   return setSpec;
@@ -893,5 +968,5 @@ export function useSetSpec(storeApi: any) {
  * in the `useCoordinationStore` store.
  */
 export function useMergeCoordination() {
-  return useCoordinationStore((state: any) => state.mergeCoordination);
+  return useCoordinationStore((state) => state.mergeCoordination);
 }

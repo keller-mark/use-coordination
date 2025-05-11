@@ -20,8 +20,8 @@ importers:
         specifier: ^0.5.2
         version: 0.5.2
       '@playwright/test':
-        specifier: ^1.40.1
-        version: 1.40.1
+        specifier: ^1.52.0
+        version: 1.52.0
       '@pnpm/meta-updater':
         specifier: ^0.0.6
         version: 0.0.6
@@ -42,10 +42,10 @@ importers:
         version: 14.4.3(@testing-library/dom@9.3.0)
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.59.2
-        version: 5.59.7(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@4.7.4))(eslint@8.18.0)(typescript@4.7.4)
+        version: 5.59.7(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@5.8.3))(eslint@8.18.0)(typescript@5.8.3)
       '@typescript-eslint/parser':
         specifier: ^5.59.2
-        version: 5.59.7(eslint@8.18.0)(typescript@4.7.4)
+        version: 5.59.7(eslint@8.18.0)(typescript@5.8.3)
       '@vitejs/plugin-react':
         specifier: ^4.0.0
         version: 4.0.0(vite@4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6))
@@ -60,7 +60,7 @@ importers:
         version: 8.18.0
       eslint-plugin-import:
         specifier: ^2.27.5
-        version: 2.27.5(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@4.7.4))(eslint@8.18.0)
+        version: 2.27.5(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@5.8.3))(eslint@8.18.0)
       eslint-plugin-jsx-a11y:
         specifier: ^6.7.1
         version: 6.7.1(eslint@8.18.0)
@@ -122,8 +122,8 @@ importers:
         specifier: ^5.15.0
         version: 5.17.6
       typescript:
-        specifier: ^4.7.4
-        version: 4.7.4
+        specifier: ^5.5.3
+        version: 5.8.3
       unified:
         specifier: ^8.3.2
         version: 8.4.2
@@ -393,8 +393,8 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
       zustand:
-        specifier: ^3.5.10
-        version: 3.5.10(react@18.2.0)
+        specifier: ^5.0.4
+        version: 5.0.4(@types/react@18.2.43)(immer@9.0.21)(react@18.2.0)(use-sync-external-store@1.2.0(react@18.2.0))
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^5.16.4
@@ -668,13 +668,13 @@ importers:
     dependencies:
       '@docusaurus/core':
         specifier: 2.0.0-beta.21
-        version: 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+        version: 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/preset-classic':
         specifier: 2.0.0-beta.21
-        version: 2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+        version: 2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/theme-live-codeblock':
         specifier: 2.0.0-beta.21
-        version: 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+        version: 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@mdx-js/react':
         specifier: ^1.6.21
         version: 1.6.22(react@18.2.0)
@@ -698,7 +698,7 @@ importers:
         version: 2.2.0
       docusaurus-plugin-sass:
         specifier: ^0.2.1
-        version: 0.2.2(@docusaurus/core@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4))(sass@1.62.1)(webpack@5.73.0)
+        version: 0.2.2(@docusaurus/core@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3))(sass@1.62.1)(webpack@5.73.0)
       prism-react-renderer:
         specifier: ^1.1.1
         version: 1.3.3(react@18.2.0)
@@ -2579,9 +2579,9 @@ packages:
     resolution: {integrity: sha512-wKTA2DxAGEW+QffRQvOhRQ0VBiYU2h2p8Yc1oBNlqSKws48/8faxqKNIuub0q4iuyTuLwtB8EkwiKwhlfV1PBA==}
     hasBin: true
 
-  '@playwright/test@1.40.1':
-    resolution: {integrity: sha512-EaaawMTOeEItCRvfmkI9v6rBkF1svM8wjl/YPRrg2N2Wmp+4qJYkWtJsbew1szfKKDm6fPLy4YAanBhIlf9dWw==}
-    engines: {node: '>=16'}
+  '@playwright/test@1.52.0':
+    resolution: {integrity: sha512-uh6W7sb55hl7D6vsAeA+V2p5JnlAqzhqFyF0VcJkKZXkgnFcVG9PziERRHQfPLfNGx1C292a4JqbWzhR8L4R1g==}
+    engines: {node: '>=18'}
     hasBin: true
 
   '@plotly/d3-sankey-circular@0.33.1':
@@ -7862,14 +7862,14 @@ packages:
     resolution: {integrity: sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA==}
     engines: {node: '>=8'}
 
-  playwright-core@1.40.1:
-    resolution: {integrity: sha512-+hkOycxPiV534c4HhpfX6yrlawqVUzITRKwHAmYfmsVreltEl6fAZJ3DPfLMOODw0H3s1Itd6MDCWmP1fl/QvQ==}
-    engines: {node: '>=16'}
+  playwright-core@1.52.0:
+    resolution: {integrity: sha512-l2osTgLXSMeuLZOML9qYODUQoPPnUsKsb5/P6LJ2e6uPKXUdPK5WYhN4z03G+YNbWmGDY4YENauNu4ZKczreHg==}
+    engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.40.1:
-    resolution: {integrity: sha512-2eHI7IioIpQ0bS1Ovg/HszsN/XKNwEG1kbzSDDmADpclKc7CyqkHw7Mg2JCz/bbCxg25QUPcjksoMW7JcIFQmw==}
-    engines: {node: '>=16'}
+  playwright@1.52.0:
+    resolution: {integrity: sha512-JAwMNMBlxJ2oD1kce4KPtMkDeKGHQstdpFPcPH3maElAXon/QZeTvtsfXmTMRyO9TslfoYOXkSsvao2nE1ilTw==}
+    engines: {node: '>=18'}
     hasBin: true
 
   plotly.js@2.29.0:
@@ -9282,6 +9282,7 @@ packages:
 
   sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   supercluster@7.1.5:
     resolution: {integrity: sha512-EulshI3pGUM66o6ZdH3ReiFcvHpM3vAigyK+vcxdjpJyEbIIrtbmBdY23mGgnI24uXiGFvrGq9Gkum/8U7vJWg==}
@@ -9588,9 +9589,9 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
-  typescript@4.7.4:
-    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
-    engines: {node: '>=4.2.0'}
+  typescript@5.8.3:
+    resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   ua-parser-js@0.7.31:
@@ -10354,14 +10355,6 @@ packages:
   zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
 
-  zustand@3.5.10:
-    resolution: {integrity: sha512-upluvSRWrlCiExu2UbkuMIPJ9AigyjRFoO7O9eUossIj7rPPq7pcJ0NKk6t2P7KF80tg/UdPX6/pNKOSbs9DEg==}
-    peerDependencies:
-      react: '>=16.8'
-    peerDependenciesMeta:
-      react:
-        optional: true
-
   zustand@3.7.2:
     resolution: {integrity: sha512-PIJDIZKtokhof+9+60cpockVOq05sJzHCriyvaLBmEJixseQ1a5Kdov6fWZfWOu5SK9c+FhH1jU0tntLxRJYMA==}
     engines: {node: '>=12.7.0'}
@@ -10384,6 +10377,24 @@ packages:
       immer:
         optional: true
       react:
+        optional: true
+
+  zustand@5.0.4:
+    resolution: {integrity: sha512-39VFTN5InDtMd28ZhjLyuTnlytDr9HfwO512Ai4I8ZABCoyAj4F1+sr7sD1jP/+p7k77Iko0Pb5NhgBFDCX0kQ==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
         optional: true
 
   zwitch@1.0.5:
@@ -12687,7 +12698,7 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@docusaurus/core@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/core@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
       '@babel/core': 7.18.5
       '@babel/generator': 7.18.2
@@ -12740,7 +12751,7 @@ snapshots:
       postcss-loader: 7.0.0(postcss@8.4.14)(webpack@5.73.0)
       prompts: 2.4.2
       react: 18.2.0
-      react-dev-utils: 12.0.1(eslint@8.18.0)(typescript@4.7.4)(webpack@5.73.0)
+      react-dev-utils: 12.0.1(eslint@8.18.0)(typescript@5.8.3)(webpack@5.73.0)
       react-dom: 18.2.0(react@18.2.0)
       react-helmet-async: 1.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-loadable: '@docusaurus/react-loadable@5.5.2(react@18.2.0)'
@@ -12832,9 +12843,9 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@docusaurus/plugin-content-blog@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/plugin-content-blog@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/logger': 2.0.0-beta.21
       '@docusaurus/mdx-loader': 2.0.0-beta.21(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@docusaurus/utils': 2.0.0-beta.21
@@ -12867,9 +12878,9 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/plugin-content-docs@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/plugin-content-docs@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/logger': 2.0.0-beta.21
       '@docusaurus/mdx-loader': 2.0.0-beta.21(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@docusaurus/utils': 2.0.0-beta.21
@@ -12900,9 +12911,9 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/plugin-content-pages@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/plugin-content-pages@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/mdx-loader': 2.0.0-beta.21(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@docusaurus/utils': 2.0.0-beta.21
       '@docusaurus/utils-validation': 2.0.0-beta.21
@@ -12927,9 +12938,9 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/plugin-debug@2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/plugin-debug@2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/utils': 2.0.0-beta.21
       fs-extra: 10.1.0
       react: 18.2.0
@@ -12953,9 +12964,9 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/plugin-google-analytics@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/plugin-google-analytics@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/utils-validation': 2.0.0-beta.21
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -12975,9 +12986,9 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/plugin-google-gtag@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/plugin-google-gtag@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/utils-validation': 2.0.0-beta.21
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -12997,9 +13008,9 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/plugin-sitemap@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/plugin-sitemap@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/logger': 2.0.0-beta.21
       '@docusaurus/utils': 2.0.0-beta.21
       '@docusaurus/utils-common': 2.0.0-beta.21
@@ -13024,19 +13035,19 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/preset-classic@2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/preset-classic@2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-content-blog': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-content-docs': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-content-pages': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-debug': 2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-google-analytics': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-google-gtag': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-sitemap': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/theme-classic': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/theme-common': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/theme-search-algolia': 2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-content-blog': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-content-docs': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-content-pages': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-debug': 2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-google-analytics': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-google-gtag': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-sitemap': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/theme-classic': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/theme-common': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/theme-search-algolia': 2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     transitivePeerDependencies:
@@ -13062,13 +13073,13 @@ snapshots:
       prop-types: 15.8.1
       react: 18.2.0
 
-  '@docusaurus/theme-classic@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/theme-classic@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-content-blog': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-content-docs': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-content-pages': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/theme-common': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-content-blog': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-content-docs': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-content-pages': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/theme-common': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/theme-translations': 2.0.0-beta.21
       '@docusaurus/utils': 2.0.0-beta.21
       '@docusaurus/utils-common': 2.0.0-beta.21
@@ -13102,12 +13113,12 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/theme-common@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/theme-common@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
       '@docusaurus/module-type-aliases': 2.0.0-beta.21(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@docusaurus/plugin-content-blog': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-content-docs': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/plugin-content-pages': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/plugin-content-blog': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-content-docs': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/plugin-content-pages': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       clsx: 1.1.1
       parse-numeric-range: 1.3.0
       prism-react-renderer: 1.3.3(react@18.2.0)
@@ -13130,10 +13141,10 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/theme-live-codeblock@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/theme-live-codeblock@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/theme-common': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/theme-common': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/theme-translations': 2.0.0-beta.21
       '@docusaurus/utils-validation': 2.0.0-beta.21
       '@philpl/buble': 0.19.7
@@ -13158,13 +13169,13 @@ snapshots:
       - vue-template-compiler
       - webpack-cli
 
-  '@docusaurus/theme-search-algolia@2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)':
+  '@docusaurus/theme-search-algolia@2.0.0-beta.21(@types/react@18.2.43)(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)':
     dependencies:
       '@docsearch/react': 3.1.0(@types/react@18.2.43)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/logger': 2.0.0-beta.21
-      '@docusaurus/plugin-content-docs': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
-      '@docusaurus/theme-common': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/plugin-content-docs': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
+      '@docusaurus/theme-common': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       '@docusaurus/theme-translations': 2.0.0-beta.21
       '@docusaurus/utils': 2.0.0-beta.21
       '@docusaurus/utils-validation': 2.0.0-beta.21
@@ -14029,9 +14040,9 @@ snapshots:
       os-homedir: 1.0.2
       regexpu-core: 4.8.0
 
-  '@playwright/test@1.40.1':
+  '@playwright/test@1.52.0':
     dependencies:
-      playwright: 1.40.1
+      playwright: 1.52.0
 
   '@plotly/d3-sankey-circular@0.33.1':
     dependencies:
@@ -15614,34 +15625,34 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.0
 
-  '@typescript-eslint/eslint-plugin@5.59.7(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@4.7.4))(eslint@8.18.0)(typescript@4.7.4)':
+  '@typescript-eslint/eslint-plugin@5.59.7(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@5.8.3))(eslint@8.18.0)(typescript@5.8.3)':
     dependencies:
       '@eslint-community/regexpp': 4.5.1
-      '@typescript-eslint/parser': 5.59.7(eslint@8.18.0)(typescript@4.7.4)
+      '@typescript-eslint/parser': 5.59.7(eslint@8.18.0)(typescript@5.8.3)
       '@typescript-eslint/scope-manager': 5.59.7
-      '@typescript-eslint/type-utils': 5.59.7(eslint@8.18.0)(typescript@4.7.4)
-      '@typescript-eslint/utils': 5.59.7(eslint@8.18.0)(typescript@4.7.4)
+      '@typescript-eslint/type-utils': 5.59.7(eslint@8.18.0)(typescript@5.8.3)
+      '@typescript-eslint/utils': 5.59.7(eslint@8.18.0)(typescript@5.8.3)
       debug: 4.3.4
       eslint: 8.18.0
       grapheme-splitter: 1.0.4
       ignore: 5.2.0
       natural-compare-lite: 1.4.0
       semver: 7.3.8
-      tsutils: 3.21.0(typescript@4.7.4)
+      tsutils: 3.21.0(typescript@5.8.3)
     optionalDependencies:
-      typescript: 4.7.4
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@4.7.4)':
+  '@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@5.8.3)':
     dependencies:
       '@typescript-eslint/scope-manager': 5.59.7
       '@typescript-eslint/types': 5.59.7
-      '@typescript-eslint/typescript-estree': 5.59.7(typescript@4.7.4)
+      '@typescript-eslint/typescript-estree': 5.59.7(typescript@5.8.3)
       debug: 4.3.4
       eslint: 8.18.0
     optionalDependencies:
-      typescript: 4.7.4
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -15650,21 +15661,21 @@ snapshots:
       '@typescript-eslint/types': 5.59.7
       '@typescript-eslint/visitor-keys': 5.59.7
 
-  '@typescript-eslint/type-utils@5.59.7(eslint@8.18.0)(typescript@4.7.4)':
+  '@typescript-eslint/type-utils@5.59.7(eslint@8.18.0)(typescript@5.8.3)':
     dependencies:
-      '@typescript-eslint/typescript-estree': 5.59.7(typescript@4.7.4)
-      '@typescript-eslint/utils': 5.59.7(eslint@8.18.0)(typescript@4.7.4)
+      '@typescript-eslint/typescript-estree': 5.59.7(typescript@5.8.3)
+      '@typescript-eslint/utils': 5.59.7(eslint@8.18.0)(typescript@5.8.3)
       debug: 4.3.4
       eslint: 8.18.0
-      tsutils: 3.21.0(typescript@4.7.4)
+      tsutils: 3.21.0(typescript@5.8.3)
     optionalDependencies:
-      typescript: 4.7.4
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
   '@typescript-eslint/types@5.59.7': {}
 
-  '@typescript-eslint/typescript-estree@5.59.7(typescript@4.7.4)':
+  '@typescript-eslint/typescript-estree@5.59.7(typescript@5.8.3)':
     dependencies:
       '@typescript-eslint/types': 5.59.7
       '@typescript-eslint/visitor-keys': 5.59.7
@@ -15672,20 +15683,20 @@ snapshots:
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.5.4
-      tsutils: 3.21.0(typescript@4.7.4)
+      tsutils: 3.21.0(typescript@5.8.3)
     optionalDependencies:
-      typescript: 4.7.4
+      typescript: 5.8.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@5.59.7(eslint@8.18.0)(typescript@4.7.4)':
+  '@typescript-eslint/utils@5.59.7(eslint@8.18.0)(typescript@5.8.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.18.0)
       '@types/json-schema': 7.0.11
       '@types/semver': 7.5.0
       '@typescript-eslint/scope-manager': 5.59.7
       '@typescript-eslint/types': 5.59.7
-      '@typescript-eslint/typescript-estree': 5.59.7(typescript@4.7.4)
+      '@typescript-eslint/typescript-estree': 5.59.7(typescript@5.8.3)
       eslint: 8.18.0
       eslint-scope: 5.1.1
       semver: 7.5.4
@@ -17670,9 +17681,9 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
-  docusaurus-plugin-sass@0.2.2(@docusaurus/core@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4))(sass@1.62.1)(webpack@5.73.0):
+  docusaurus-plugin-sass@0.2.2(@docusaurus/core@2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3))(sass@1.62.1)(webpack@5.73.0):
     dependencies:
-      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@4.7.4)
+      '@docusaurus/core': 2.0.0-beta.21(eslint@8.18.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.8.3)
       sass: 1.62.1
       sass-loader: 10.2.1(sass@1.62.1)(webpack@5.73.0)
     transitivePeerDependencies:
@@ -18067,17 +18078,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.8.0(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@4.7.4))(eslint-import-resolver-node@0.3.7)(eslint@8.18.0):
+  eslint-module-utils@2.8.0(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.7)(eslint@8.18.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
-      '@typescript-eslint/parser': 5.59.7(eslint@8.18.0)(typescript@4.7.4)
+      '@typescript-eslint/parser': 5.59.7(eslint@8.18.0)(typescript@5.8.3)
       eslint: 8.18.0
       eslint-import-resolver-node: 0.3.7
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.27.5(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@4.7.4))(eslint@8.18.0):
+  eslint-plugin-import@2.27.5(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@5.8.3))(eslint@8.18.0):
     dependencies:
       array-includes: 3.1.6
       array.prototype.flat: 1.3.1
@@ -18086,7 +18097,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.18.0
       eslint-import-resolver-node: 0.3.7
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@4.7.4))(eslint-import-resolver-node@0.3.7)(eslint@8.18.0)
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@5.59.7(eslint@8.18.0)(typescript@5.8.3))(eslint-import-resolver-node@0.3.7)(eslint@8.18.0)
       has: 1.0.3
       is-core-module: 2.12.1
       is-glob: 4.0.3
@@ -18096,7 +18107,7 @@ snapshots:
       semver: 6.3.0
       tsconfig-paths: 3.14.2
     optionalDependencies:
-      '@typescript-eslint/parser': 5.59.7(eslint@8.18.0)(typescript@4.7.4)
+      '@typescript-eslint/parser': 5.59.7(eslint@8.18.0)(typescript@5.8.3)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -18520,7 +18531,7 @@ snapshots:
     dependencies:
       is-callable: 1.2.7
 
-  fork-ts-checker-webpack-plugin@6.5.2(eslint@8.18.0)(typescript@4.7.4)(webpack@5.73.0):
+  fork-ts-checker-webpack-plugin@6.5.2(eslint@8.18.0)(typescript@5.8.3)(webpack@5.73.0):
     dependencies:
       '@babel/code-frame': 7.23.5
       '@types/json-schema': 7.0.11
@@ -18535,7 +18546,7 @@ snapshots:
       schema-utils: 2.7.0
       semver: 7.5.4
       tapable: 1.1.3
-      typescript: 4.7.4
+      typescript: 5.8.3
       webpack: 5.73.0
     optionalDependencies:
       eslint: 8.18.0
@@ -20730,11 +20741,11 @@ snapshots:
     dependencies:
       find-up: 3.0.0
 
-  playwright-core@1.40.1: {}
+  playwright-core@1.52.0: {}
 
-  playwright@1.40.1:
+  playwright@1.52.0:
     dependencies:
-      playwright-core: 1.40.1
+      playwright-core: 1.52.0
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -21352,7 +21363,7 @@ snapshots:
       lodash.flow: 3.5.0
       pure-color: 1.3.0
 
-  react-dev-utils@12.0.1(eslint@8.18.0)(typescript@4.7.4)(webpack@5.73.0):
+  react-dev-utils@12.0.1(eslint@8.18.0)(typescript@5.8.3)(webpack@5.73.0):
     dependencies:
       '@babel/code-frame': 7.23.5
       address: 1.2.0
@@ -21363,7 +21374,7 @@ snapshots:
       escape-string-regexp: 4.0.0
       filesize: 8.0.7
       find-up: 5.0.0
-      fork-ts-checker-webpack-plugin: 6.5.2(eslint@8.18.0)(typescript@4.7.4)(webpack@5.73.0)
+      fork-ts-checker-webpack-plugin: 6.5.2(eslint@8.18.0)(typescript@5.8.3)(webpack@5.73.0)
       global-modules: 2.0.0
       globby: 11.1.0
       gzip-size: 6.0.0
@@ -21380,7 +21391,7 @@ snapshots:
       text-table: 0.2.0
       webpack: 5.73.0
     optionalDependencies:
-      typescript: 4.7.4
+      typescript: 5.8.3
     transitivePeerDependencies:
       - eslint
       - supports-color
@@ -22961,10 +22972,10 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tsutils@3.21.0(typescript@4.7.4):
+  tsutils@3.21.0(typescript@5.8.3):
     dependencies:
       tslib: 1.14.1
-      typescript: 4.7.4
+      typescript: 5.8.3
 
   tty-table@4.2.1:
     dependencies:
@@ -23026,7 +23037,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typescript@4.7.4: {}
+  typescript@5.8.3: {}
 
   ua-parser-js@0.7.31: {}
 
@@ -24062,10 +24073,6 @@ snapshots:
 
   zod@3.22.4: {}
 
-  zustand@3.5.10(react@18.2.0):
-    optionalDependencies:
-      react: 18.2.0
-
   zustand@3.7.2(react@18.2.0):
     optionalDependencies:
       react: 18.2.0
@@ -24077,5 +24084,12 @@ snapshots:
       '@types/react': 18.2.43
       immer: 9.0.21
       react: 18.2.0
+
+  zustand@5.0.4(@types/react@18.2.43)(immer@9.0.21)(react@18.2.0)(use-sync-external-store@1.2.0(react@18.2.0)):
+    optionalDependencies:
+      '@types/react': 18.2.43
+      immer: 9.0.21
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
 
   zwitch@1.0.5: {}
