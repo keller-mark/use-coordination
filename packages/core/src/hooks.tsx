@@ -49,7 +49,29 @@ export type CoordinationStore = ReturnType<typeof createCoordinationStore>;
 
 const StoreContext = createContext<CoordinationStore | null>(null);
 
-export const CoordinationStoreProvider = StoreContext.Provider;
+interface ProviderProps {
+  children: any;
+  createStore: () => ReturnType<typeof createCoordinationStore>;
+}
+
+export function CoordinationStoreProvider(props: ProviderProps) {
+  const {
+    createStore,
+    children,
+  } = props;
+
+  // Reference: https://github.com/pmndrs/zustand/discussions/1180
+  const storeRef = useRef<CoordinationStore>();
+  if (!storeRef.current) {
+    storeRef.current = createStore();
+  }
+
+  return (
+    <StoreContext.Provider value={storeRef.current}>
+      {children}
+    </StoreContext.Provider>
+  );
+}
 
 export function useCoordinationStoreApi() {
   const store = useContext(StoreContext);

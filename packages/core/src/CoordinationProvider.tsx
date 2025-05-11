@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import {
   CoordinationStoreProvider,
   createCoordinationStore,
-  type CoordinationStore,
 } from './hooks.js';
 import ViewWrapper from './ViewWrapper.js';
 import CallbackPublisher from './CallbackPublisher.js';
@@ -52,15 +51,9 @@ export function CoordinationProvider(props: CoordinationProviderProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [specKey, initializer, onCreateStore]);
 
-  // Reference: https://github.com/pmndrs/zustand/discussions/1180
-  const storeRef = useRef<CoordinationStore>();
-  if (!storeRef.current) {
-    storeRef.current = createCoordinationStoreClosure();
-  }
-
   return (
     /* @ts-ignore */
-    <CoordinationStoreProvider value={storeRef.current} {...(remountOnKeyChange ? ({ key: specKey }) : {})}>
+    <CoordinationStoreProvider createStore={createCoordinationStoreClosure} {...(remountOnKeyChange ? ({ key: specKey }) : {})}>
         <ViewWrapper
           specKey={specKey}
           spec={spec}
