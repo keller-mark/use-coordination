@@ -1,4 +1,11 @@
 
+## 1.0.1
+
+### Patch Changes
+
+- Fix build. (`use-coordination`) ([#102](https://github.com/keller-mark/use-coordination/pull/102))
+
+
 ## 1.0.0
 
 ### Major Changes
