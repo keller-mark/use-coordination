@@ -1,6 +1,6 @@
 {
   "name": "@use-coordination/schemas",
-  "version": "0.0.11",
+  "version": "1.0.0",
   "author": "Mark Keller",
   "license": "MIT",
   "type": "module",

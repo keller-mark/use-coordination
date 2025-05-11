@@ -1,4 +1,19 @@
 
+## 1.0.0
+
+### Major Changes
+
+- Upgrade Zustand from v3 to v5. (`@use-coordination/core`) ([#100](https://github.com/keller-mark/use-coordination/pull/100))
+
+### Patch Changes
+
+- Update coordination types for MNIST example (targetX/targetY -> target [x, y]) (`@use-coordination/plots-example`) ([#91](https://github.com/keller-mark/use-coordination/pull/91))
+
+- Add SPLOM example. (`@use-coordination/plots-example`) ([#99](https://github.com/keller-mark/use-coordination/pull/99))
+
+- Remove unused <rect> element from Visx bar plot. (`@use-coordination/plots-example`) ([#93](https://github.com/keller-mark/use-coordination/pull/93))
+
+
 ## 0.0.11
 
 ### Patch Changes
