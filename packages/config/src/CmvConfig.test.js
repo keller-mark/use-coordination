@@ -352,50 +352,46 @@ describe('src/api/CmvConfig.js', () => {
             B: 'Non-Globally Sclerotic Glomeruli',
             C: 'Globally Sclerotic Glomeruli',
           },
-          metaCoordinationScopes: {
-            A: {
-              spatialImageLayer: ['A'],
-              spatialSegmentationLayer: ['A'],
-            },
+        },
+        metaCoordinationScopes: {
+          A: {
+            spatialImageLayer: ['A'],
+            spatialSegmentationLayer: ['A'],
           },
-          metaCoordinationScopesBy: {
-            A: {
-              spatialImageLayer: {
-                image: { A: 'A' },
-                spatialLayerVisible: { A: 'A' },
-                spatialLayerOpacity: { A: 'A' },
-                spatialImageChannel: { A: ['A', 'B'] },
-              },
-              spatialImageChannel: {
-                spatialTargetC: { A: 'A', B: 'B' },
-                spatialChannelColor: { A: 'A', B: 'B' },
-              },
-              spatialSegmentationLayer: {
-                image: { A: 'B' },
-                spatialLayerVisible: { A: 'B' },
-                spatialLayerOpacity: { A: 'B' },
-                spatialSegmentationChannel: { A: ['A', 'B', 'C'] },
-              },
-              spatialSegmentationChannel: {
-                obsType: { A: 'A', B: 'B', C: 'C' },
-                spatialTargetC: { A: 'C', B: 'D', C: 'E' },
-                spatialChannelColor: { A: 'C', B: 'D', C: 'E' },
-              },
+        },
+        metaCoordinationScopesBy: {
+          A: {
+            spatialImageLayer: {
+              image: { A: 'A' },
+              spatialLayerVisible: { A: 'A' },
+              spatialLayerOpacity: { A: 'A' },
+              spatialImageChannel: { A: ['A', 'B'] },
+            },
+            spatialImageChannel: {
+              spatialTargetC: { A: 'A', B: 'B' },
+              spatialChannelColor: { A: 'A', B: 'B' },
+            },
+            spatialSegmentationLayer: {
+              image: { A: 'B' },
+              spatialLayerVisible: { A: 'B' },
+              spatialLayerOpacity: { A: 'B' },
+              spatialSegmentationChannel: { A: ['A', 'B', 'C'] },
+            },
+            spatialSegmentationChannel: {
+              obsType: { A: 'A', B: 'B', C: 'C' },
+              spatialTargetC: { A: 'C', B: 'D', C: 'E' },
+              spatialChannelColor: { A: 'C', B: 'D', C: 'E' },
             },
           },
         },
         viewCoordination: {
           spatial: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['A'],
-              metaCoordinationScopesBy: ['A'],
-            },
+            metaCoordinationScopes: ['A'],
+            metaCoordinationScopesBy: ['A'],
           },
           layerController: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['A'],
-              metaCoordinationScopesBy: ['A'],
-            },
+            metaCoordinationScopes: ['A'],
+            metaCoordinationScopesBy: ['A'],
           },
         },
       });
@@ -477,50 +473,46 @@ describe('src/api/CmvConfig.js', () => {
             B: 'Non-Globally Sclerotic Glomeruli',
             C: 'Globally Sclerotic Glomeruli',
           },
-          metaCoordinationScopes: {
-            A: {
-              spatialImageLayer: ['A'],
-              spatialSegmentationLayer: ['A'],
-            },
+        },
+        metaCoordinationScopes: {
+          A: {
+            spatialImageLayer: ['A'],
+            spatialSegmentationLayer: ['A'],
           },
-          metaCoordinationScopesBy: {
-            A: {
-              spatialImageLayer: {
-                image: { A: 'A' },
-                spatialLayerVisible: { A: 'A' },
-                spatialLayerOpacity: { A: 'A' },
-                spatialImageChannel: { A: ['A', 'B'] },
-              },
-              spatialImageChannel: {
-                spatialTargetC: { A: 'A', B: 'B' },
-                spatialChannelColor: { A: 'A', B: 'B' },
-              },
-              spatialSegmentationLayer: {
-                image: { A: 'B' },
-                spatialLayerVisible: { A: 'B' },
-                spatialLayerOpacity: { A: 'B' },
-                spatialSegmentationChannel: { A: ['A', 'B', 'C'] },
-              },
-              spatialSegmentationChannel: {
-                obsType: { A: 'A', B: 'B', C: 'C' },
-                spatialTargetC: { A: 'C', B: 'D', C: 'E' },
-                spatialChannelColor: { A: 'C', B: 'D', C: 'E' },
-              },
+        },
+        metaCoordinationScopesBy: {
+          A: {
+            spatialImageLayer: {
+              image: { A: 'A' },
+              spatialLayerVisible: { A: 'A' },
+              spatialLayerOpacity: { A: 'A' },
+              spatialImageChannel: { A: ['A', 'B'] },
+            },
+            spatialImageChannel: {
+              spatialTargetC: { A: 'A', B: 'B' },
+              spatialChannelColor: { A: 'A', B: 'B' },
+            },
+            spatialSegmentationLayer: {
+              image: { A: 'B' },
+              spatialLayerVisible: { A: 'B' },
+              spatialLayerOpacity: { A: 'B' },
+              spatialSegmentationChannel: { A: ['A', 'B', 'C'] },
+            },
+            spatialSegmentationChannel: {
+              obsType: { A: 'A', B: 'B', C: 'C' },
+              spatialTargetC: { A: 'C', B: 'D', C: 'E' },
+              spatialChannelColor: { A: 'C', B: 'D', C: 'E' },
             },
           },
         },
         viewCoordination: {
           spatial: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['A'],
-              metaCoordinationScopesBy: ['A'],
-            },
+            metaCoordinationScopes: ['A'],
+            metaCoordinationScopesBy: ['A'],
           },
           layerController: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['A'],
-              metaCoordinationScopesBy: ['A'],
-            },
+            metaCoordinationScopes: ['A'],
+            metaCoordinationScopesBy: ['A'],
           },
         },
       });
@@ -602,50 +594,46 @@ describe('src/api/CmvConfig.js', () => {
             SOME_PREFIX_1: 'Non-Globally Sclerotic Glomeruli',
             SOME_PREFIX_2: 'Globally Sclerotic Glomeruli',
           },
-          metaCoordinationScopes: {
-            SOME_PREFIX_0: {
-              spatialImageLayer: ['SOME_PREFIX_0'],
-              spatialSegmentationLayer: ['SOME_PREFIX_0'],
-            },
+        },
+        metaCoordinationScopes: {
+          SOME_PREFIX_0: {
+            spatialImageLayer: ['SOME_PREFIX_0'],
+            spatialSegmentationLayer: ['SOME_PREFIX_0'],
           },
-          metaCoordinationScopesBy: {
-            SOME_PREFIX_0: {
-              spatialImageLayer: {
-                image: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
-                spatialLayerVisible: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
-                spatialLayerOpacity: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
-                spatialImageChannel: { SOME_PREFIX_0: ['SOME_PREFIX_0', 'SOME_PREFIX_1'] },
-              },
-              spatialImageChannel: {
-                spatialTargetC: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1' },
-                spatialChannelColor: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1' },
-              },
-              spatialSegmentationLayer: {
-                image: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
-                spatialLayerVisible: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
-                spatialLayerOpacity: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
-                spatialSegmentationChannel: { SOME_PREFIX_0: ['SOME_PREFIX_0', 'SOME_PREFIX_1', 'SOME_PREFIX_2'] },
-              },
-              spatialSegmentationChannel: {
-                obsType: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1', SOME_PREFIX_2: 'SOME_PREFIX_2' },
-                spatialTargetC: { SOME_PREFIX_0: 'SOME_PREFIX_2', SOME_PREFIX_1: 'SOME_PREFIX_3', SOME_PREFIX_2: 'SOME_PREFIX_4' },
-                spatialChannelColor: { SOME_PREFIX_0: 'SOME_PREFIX_2', SOME_PREFIX_1: 'SOME_PREFIX_3', SOME_PREFIX_2: 'SOME_PREFIX_4' },
-              },
+        },
+        metaCoordinationScopesBy: {
+          SOME_PREFIX_0: {
+            spatialImageLayer: {
+              image: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
+              spatialLayerVisible: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
+              spatialLayerOpacity: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
+              spatialImageChannel: { SOME_PREFIX_0: ['SOME_PREFIX_0', 'SOME_PREFIX_1'] },
+            },
+            spatialImageChannel: {
+              spatialTargetC: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1' },
+              spatialChannelColor: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1' },
+            },
+            spatialSegmentationLayer: {
+              image: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
+              spatialLayerVisible: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
+              spatialLayerOpacity: { SOME_PREFIX_0: 'SOME_PREFIX_1' },
+              spatialSegmentationChannel: { SOME_PREFIX_0: ['SOME_PREFIX_0', 'SOME_PREFIX_1', 'SOME_PREFIX_2'] },
+            },
+            spatialSegmentationChannel: {
+              obsType: { SOME_PREFIX_0: 'SOME_PREFIX_0', SOME_PREFIX_1: 'SOME_PREFIX_1', SOME_PREFIX_2: 'SOME_PREFIX_2' },
+              spatialTargetC: { SOME_PREFIX_0: 'SOME_PREFIX_2', SOME_PREFIX_1: 'SOME_PREFIX_3', SOME_PREFIX_2: 'SOME_PREFIX_4' },
+              spatialChannelColor: { SOME_PREFIX_0: 'SOME_PREFIX_2', SOME_PREFIX_1: 'SOME_PREFIX_3', SOME_PREFIX_2: 'SOME_PREFIX_4' },
             },
           },
         },
         viewCoordination: {
           spatial: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['SOME_PREFIX_0'],
-              metaCoordinationScopesBy: ['SOME_PREFIX_0'],
-            },
+            metaCoordinationScopes: ['SOME_PREFIX_0'],
+            metaCoordinationScopesBy: ['SOME_PREFIX_0'],
           },
           layerController: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['SOME_PREFIX_0'],
-              metaCoordinationScopesBy: ['SOME_PREFIX_0'],
-            },
+            metaCoordinationScopes: ['SOME_PREFIX_0'],
+            metaCoordinationScopesBy: ['SOME_PREFIX_0'],
           },
         },
       });

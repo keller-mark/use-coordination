@@ -8,6 +8,20 @@ export type CmvConfigObject = {
             [coordinationScopeName: string]: any;
         };
     };
+    metaCoordinationScopes?: {
+        [metaScopeName: string]: {
+            [coordinationTypeName: string]: string | string[];
+        };
+    };
+    metaCoordinationScopesBy?: {
+        [metaScopeName: string]: {
+            [coordinationTypeNameA: string]: {
+                [coordinationTypeNameB: string]: {
+                    [coordinationScopeName: string]: string | string[];
+                };
+            };
+        };
+    };
     viewCoordination?: {
         [viewUid: string]: {
             coordinationScopes?: {
@@ -20,6 +34,8 @@ export type CmvConfigObject = {
                     };
                 };
             };
+            metaCoordinationScopes?: string | string[];
+            metaCoordinationScopesBy?: string | string[];
         };
     };
 };

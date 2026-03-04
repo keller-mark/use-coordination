@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 import { getNextScope } from '@use-coordination/utils';
-import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 
 const CoordinationType = {};
 
@@ -8,30 +7,20 @@ const CoordinationType = {};
  * Get the name of the metaCoordinationScopes coordination scope
  * for a particular non-meta coordination scope, after accounting for
  * meta-coordination.
- * @param {*} coordinationScopes The coordinationScopes for a view.
- * @param {*} coordinationSpace The coordinationSpace for a spec.
+ * @param {*} metaSpace The metaCoordinationScopes object from the spec.
+ * @param {*} viewMetaScopeNames The view-level metaCoordinationScopes (scope name or names).
  * @param {string} parameter The parameter for which to get the metaScope.
  * @returns {string|undefined} The metaCoordinationScopes coordination scope name.
  */
-export function getMetaScope(coordinationScopes, coordinationSpace, parameter) {
+export function getMetaScope(metaSpace, viewMetaScopeNames, parameter) {
   let latestMetaScope;
-  // Check if there is a matching meta-scope.
-  if (coordinationSpace) {
-    // Determine if there is a meta-scope that would take precedence.
-    const metaScopes = coordinationScopes[META_COORDINATION_SCOPES];
-    const metaSpace = coordinationSpace[META_COORDINATION_SCOPES];
-    if (metaScopes && metaSpace) {
-      // The view.coordinationScopes.metaCoordinationScopes might be an array or a string.
-      // Convert to an array.
-      const metaScopesArr = Array.isArray(metaScopes) ? metaScopes : [metaScopes];
-      metaScopesArr.forEach((metaScope) => {
-        // Merge the original coordinationScopes with the matching meta-coordinationScopes
-        // from the coordinationSpace.
-        if (metaSpace[metaScope][parameter]) {
-          latestMetaScope = metaScope;
-        }
-      });
-    }
+  if (metaSpace && viewMetaScopeNames) {
+    const metaScopesArr = Array.isArray(viewMetaScopeNames) ? viewMetaScopeNames : [viewMetaScopeNames];
+    metaScopesArr.forEach((metaScope) => {
+      if (metaSpace[metaScope]?.[parameter]) {
+        latestMetaScope = metaScope;
+      }
+    });
   }
   return latestMetaScope;
 }
@@ -40,54 +29,41 @@ export function getMetaScope(coordinationScopes, coordinationSpace, parameter) {
  * Get the name of the metaCoordinationScopesBy coordination scope
  * for a particular non-meta coordination scope, after accounting for
  * meta-coordination.
- * @param {*} coordinationScopes The coordinationScopes for a view.
- * @param {*} coordinationSpace The coordinationSpace for a spec.
+ * @param {*} metaSpaceBy The metaCoordinationScopesBy object from the spec.
+ * @param {*} viewMetaScopeByNames The view-level metaCoordinationScopesBy (scope name or names).
  * @param {string} byParameter The byParameter for which to get the metaScope.
  * @param {string} parameter The parameter for which to get the metaScope.
  * @param {string} byScope The byScope for the byParameter in which to look for the metaScope.
  * @returns {string|undefined} The metaCoordinationScopesBy coordination scope name.
  */
-export function getMetaScopeBy(coordinationScopes, coordinationSpace, byParameter, parameter, byScope) {
+export function getMetaScopeBy(metaSpaceBy, viewMetaScopeByNames, byParameter, parameter, byScope) {
   let latestMetaScope;
-  // Check if there is a matching meta-scope.
-  if (coordinationSpace) {
-    // Determine if there is a meta-scope that would take precedence.
-    const metaScopesBy = coordinationScopes[META_COORDINATION_SCOPES_BY];
-    const metaSpaceBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
-    if (metaSpaceBy && metaScopesBy) {
-      // The view.coordinationScopes.metaCoordinationScopes might be an array or a string.
-      // Convert to an array.
-      const metaScopesArr = Array.isArray(metaScopesBy) ? metaScopesBy : [metaScopesBy];
-      metaScopesArr.forEach((metaScope) => {
-        // Merge the original coordinationScopesBy with the matching meta-coordinationScopesBy
-        // from the coordinationSpace.
-        if (metaSpaceBy[metaScope]?.[byParameter]?.[parameter]?.[byScope]) {
-          latestMetaScope = metaScope;
-        }
-      });
-    }
+  if (metaSpaceBy && viewMetaScopeByNames) {
+    const metaScopesArr = Array.isArray(viewMetaScopeByNames) ? viewMetaScopeByNames : [viewMetaScopeByNames];
+    metaScopesArr.forEach((metaScope) => {
+      if (metaSpaceBy[metaScope]?.[byParameter]?.[parameter]?.[byScope]) {
+        latestMetaScope = metaScope;
+      }
+    });
   }
   return latestMetaScope;
 }
 
 
-export function removeImageChannelInMetaCoordinationScopesHelper(coordinationScopesRaw, layerScope, channelScope, coordinationSpace) {
-  const metaCoordinationScopes = coordinationSpace[META_COORDINATION_SCOPES];
-  const metaCoordinationScopesBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
-
+export function removeImageChannelInMetaCoordinationScopesHelper(viewMetaScopes, viewMetaScopesBy, layerScope, channelScope, coordinationSpace, metaCoordinationScopes, metaCoordinationScopesBy) {
   let newMetaCoordinationScopes = metaCoordinationScopes;
   let newMetaCoordinationScopesBy = metaCoordinationScopesBy;
 
-  // const layerMetaScope = getMetaScope(coordinationScopesRaw, coordinationSpace, CoordinationType.IMAGE_LAYER);
+  // const layerMetaScope = getMetaScope(metaCoordinationScopes, viewMetaScopes, CoordinationType.IMAGE_LAYER);
   const channelMetaScopeBy = getMetaScopeBy(
-    coordinationScopesRaw,
-    coordinationSpace,
+    metaCoordinationScopesBy,
+    viewMetaScopesBy,
     CoordinationType.IMAGE_LAYER,
     CoordinationType.IMAGE_CHANNEL,
     layerScope,
   );
   // Only used in fallback case.
-  const channelMetaScope = getMetaScope(coordinationScopesRaw, coordinationSpace, CoordinationType.IMAGE_CHANNEL);
+  const channelMetaScope = getMetaScope(metaCoordinationScopes, viewMetaScopes, CoordinationType.IMAGE_CHANNEL);
   const hasPerLayerChannels = !!channelMetaScopeBy;
 
   const prevChannels = hasPerLayerChannels
@@ -127,30 +103,27 @@ export function removeImageChannelInMetaCoordinationScopesHelper(coordinationSco
   }
 
   return {
-    ...coordinationSpace,
-    [META_COORDINATION_SCOPES]: newMetaCoordinationScopes,
-    [META_COORDINATION_SCOPES_BY]: newMetaCoordinationScopesBy,
+    coordinationSpace,
+    metaCoordinationScopes: newMetaCoordinationScopes,
+    metaCoordinationScopesBy: newMetaCoordinationScopesBy,
   };
 }
 
-export function addImageChannelInMetaCoordinationScopesHelper(coordinationScopesRaw, layerScope, coordinationSpace) {
-  const metaCoordinationScopes = coordinationSpace[META_COORDINATION_SCOPES];
-  const metaCoordinationScopesBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
-
+export function addImageChannelInMetaCoordinationScopesHelper(viewMetaScopes, viewMetaScopesBy, layerScope, coordinationSpace, metaCoordinationScopes, metaCoordinationScopesBy) {
   let newMetaCoordinationScopes = metaCoordinationScopes;
   let newMetaCoordinationScopesBy = metaCoordinationScopesBy;
 
-  // const layerMetaScope = getMetaScope(coordinationScopesRaw, coordinationSpace, CoordinationType.IMAGE_LAYER);
+  // const layerMetaScope = getMetaScope(metaCoordinationScopes, viewMetaScopes, CoordinationType.IMAGE_LAYER);
   const channelMetaScopeBy = getMetaScopeBy(
-    coordinationScopesRaw,
-    coordinationSpace,
+    metaCoordinationScopesBy,
+    viewMetaScopesBy,
     CoordinationType.IMAGE_LAYER,
     CoordinationType.IMAGE_CHANNEL,
     layerScope,
   );
 
   // Only used in fallback case.
-  const channelMetaScope = getMetaScope(coordinationScopesRaw, coordinationSpace, CoordinationType.IMAGE_CHANNEL);
+  const channelMetaScope = getMetaScope(metaCoordinationScopes, viewMetaScopes, CoordinationType.IMAGE_CHANNEL);
   const hasPerLayerChannels = !!channelMetaScopeBy;
 
   const prevChannels = hasPerLayerChannels
@@ -286,8 +259,8 @@ export function addImageChannelInMetaCoordinationScopesHelper(coordinationScopes
   }
 
   return {
-    ...newCoordinationSpace,
-    [META_COORDINATION_SCOPES]: newMetaCoordinationScopes,
-    [META_COORDINATION_SCOPES_BY]: newMetaCoordinationScopesBy,
+    coordinationSpace: newCoordinationSpace,
+    metaCoordinationScopes: newMetaCoordinationScopes,
+    metaCoordinationScopesBy: newMetaCoordinationScopesBy,
   };
 }
