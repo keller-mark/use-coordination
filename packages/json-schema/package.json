@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@use-coordination/schemas": "workspace:*",
-    "zod-to-json-schema": "^3.20.4"
+    "zod-to-json-schema": "^3.25.0"
   }
 }

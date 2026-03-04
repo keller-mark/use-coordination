@@ -30,12 +30,12 @@
     "@use-coordination/utils": "workspace:*",
     "@use-coordination/constants-internal": "workspace:*",
     "lodash-es": "^4.17.21",
-    "zod": "^3.21.4"
+    "zod": "^4.3.0"
   },
   "devDependencies": {
     "json-schema-to-zod": "^0.6.3",
     "vite": "^5.4.0",
     "vitest": "^1.6.1",
-    "zod-to-json-schema": "^3.20.4"
+    "zod-to-json-schema": "^3.25.0"
   }
 }

@@ -158,8 +158,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/main/all
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^4.3.0
+        version: 4.3.6
     devDependencies:
       '@types/react':
         specifier: ^18.2.43
@@ -312,8 +312,8 @@ importers:
         specifier: 0.4.0-next.10
         version: 0.4.0-next.10
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^4.3.0
+        version: 4.3.6
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -340,8 +340,8 @@ importers:
         specifier: ^0.9.0
         version: 0.9.0(immer@9.0.21)(react@18.2.0)
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^4.3.0
+        version: 4.3.6
     devDependencies:
       '@types/react':
         specifier: ^18.2.43
@@ -390,8 +390,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^4.3.0
+        version: 4.3.6
       zustand:
         specifier: ^5.0.4
         version: 5.0.4(@types/react@18.2.43)(immer@9.0.21)(react@18.2.0)(use-sync-external-store@1.2.0(react@18.2.0))
@@ -476,8 +476,8 @@ importers:
         specifier: workspace:*
         version: link:../schemas
       zod-to-json-schema:
-        specifier: ^3.20.4
-        version: 3.20.4(zod@3.22.4)
+        specifier: ^3.25.0
+        version: 3.25.1(zod@4.3.6)
 
   packages/main/all:
     dependencies:
@@ -575,8 +575,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^4.3.0
+        version: 4.3.6
     devDependencies:
       json-schema-to-zod:
         specifier: ^0.6.3
@@ -588,8 +588,8 @@ importers:
         specifier: ^1.6.1
         version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
       zod-to-json-schema:
-        specifier: ^3.20.4
-        version: 3.20.4(zod@3.21.4)
+        specifier: ^3.25.0
+        version: 3.25.1(zod@4.3.6)
 
   packages/trrack-helpers:
     dependencies:
@@ -651,8 +651,8 @@ importers:
         specifier: ^18.0.0
         version: 18.2.0(react@18.2.0)
       zod:
-        specifier: ^3.21.4
-        version: 3.21.4
+        specifier: ^4.3.0
+        version: 4.3.6
     devDependencies:
       '@types/react':
         specifier: ^18.2.43
@@ -11025,16 +11025,13 @@ packages:
   zdog@1.1.3:
     resolution: {integrity: sha512-raRj6r0gPzopFm5XWBJZr/NuV4EEnT4iE+U3dp5FV5pCb588Gmm3zLIp/j9yqqcMiHH8VNQlerLTgOqL7krh6w==}
 
-  zod-to-json-schema@3.20.4:
-    resolution: {integrity: sha512-Un9+kInJ2Zt63n6Z7mLqBifzzPcOyX+b+Exuzf7L1+xqck9Q2EPByyTRduV3kmSPaXaRer1JCsucubpgL1fipg==}
+  zod-to-json-schema@3.25.1:
+    resolution: {integrity: sha512-pM/SU9d3YAggzi6MtR4h7ruuQlqKtad8e9S0fmxcMi+ueAK5Korys/aWcV9LIIHTVbj01NdzxcnXSN+O74ZIVA==}
     peerDependencies:
-      zod: ^3.20.0
+      zod: ^3.25 || ^4
 
-  zod@3.21.4:
-    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
-
-  zod@3.22.4:
-    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+  zod@4.3.6:
+    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
   zustand@3.7.2:
     resolution: {integrity: sha512-PIJDIZKtokhof+9+60cpockVOq05sJzHCriyvaLBmEJixseQ1a5Kdov6fWZfWOu5SK9c+FhH1jU0tntLxRJYMA==}
@@ -25944,17 +25941,11 @@ snapshots:
 
   zdog@1.1.3: {}
 
-  zod-to-json-schema@3.20.4(zod@3.21.4):
+  zod-to-json-schema@3.25.1(zod@4.3.6):
     dependencies:
-      zod: 3.21.4
+      zod: 4.3.6
 
-  zod-to-json-schema@3.20.4(zod@3.22.4):
-    dependencies:
-      zod: 3.22.4
-
-  zod@3.21.4: {}
-
-  zod@3.22.4: {}
+  zod@4.3.6: {}
 
   zustand@3.7.2(react@18.2.0):
     optionalDependencies:

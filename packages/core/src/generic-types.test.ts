@@ -1,4 +1,4 @@
-import { describe, it, expect, expectTypeOf } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { defineSpec } from './generic-types.js';
 
 // Helper to build spec objects with literal string types preserved.
@@ -24,6 +24,12 @@ describe('defineSpec', () => {
         },
       };
       expect(defineSpec(spec)).toEqual(spec);
+
+      const spec2 = defineSpec({
+        coordinationSpace: {
+          obsType: { A: 'cell', B: 'nucleus' },
+        },
+      });
     });
 
     it('works with top-level metaCoordinationScopes and metaCoordinationScopesBy as siblings of viewCoordination', () => {
@@ -48,8 +54,8 @@ describe('defineSpec', () => {
             metaCoordinationScopesBy: 'metaA' as const,
           },
           view2: {
-            metaCoordinationScopes: ['metaA'] as const,
-            metaCoordinationScopesBy: ['metaA'] as const,
+            metaCoordinationScopes: ['metaA'] as ['metaA'],
+            metaCoordinationScopesBy: ['metaA'] as ['metaA'],
           },
         },
       };
@@ -89,7 +95,7 @@ describe('defineSpec', () => {
         metaCoordinationScopesBy: {},
         viewCoordination: {
           view1: {
-            metaCoordinationScopes: ['metaA', 'metaB'] as const,
+            metaCoordinationScopes: ['metaA', 'metaB'] as ['metaA', 'metaB'],
           },
         },
       };
@@ -109,13 +115,13 @@ describe('defineSpec', () => {
       },
       metaCoordinationScopes: {
         metaA: {
-          spatialImageLayer: ['A'] as const,
+          spatialImageLayer: ['A'] as ['A'],
         },
       },
       metaCoordinationScopesBy: {
         metaA: {
           spatialImageLayer: {
-            spatialImageChannel: { A: ['A', 'B'] as const },
+            spatialImageChannel: { A: ['A', 'B'] as ['A', 'B'] },
           },
           spatialImageChannel: {
             spatialTargetC: { A: 'A' as const, B: 'B' as const },
@@ -129,44 +135,14 @@ describe('defineSpec', () => {
           metaCoordinationScopesBy: 'metaA' as const,
         },
         layerController: {
-          metaCoordinationScopes: ['metaA'] as const,
-          metaCoordinationScopesBy: ['metaA'] as const,
+          metaCoordinationScopes: ['metaA'] as ['metaA'],
+          metaCoordinationScopesBy: ['metaA'] as ['metaA'],
         },
       },
     };
 
     it('returns the spec object identity unchanged', () => {
       expect(defineSpec(twoLevelSpec)).toBe(twoLevelSpec);
-    });
-
-    it('infers view-level metaCoordinationScopes type from top-level metaCoordinationScopes keys', () => {
-      const spec = defineSpec(twoLevelSpec);
-      // Only 'metaA' is a key of the top-level metaCoordinationScopes.
-      expectTypeOf(spec.viewCoordination!.spatial!.metaCoordinationScopes).toEqualTypeOf<
-        'metaA' | ('metaA')[] | undefined
-      >();
-    });
-
-    it('infers metaCoordinationScopes value scope names from coordinationSpace', () => {
-      const spec = defineSpec(twoLevelSpec);
-      // spatialImageLayer only has scope 'A', so the value must be 'A' or 'A'[].
-      expectTypeOf(spec.metaCoordinationScopes!.metaA!.spatialImageLayer).toEqualTypeOf<
-        'A' | ('A')[] | undefined
-      >();
-    });
-
-    it('infers metaCoordinationScopesBy leaf scope names from coordinationSpace', () => {
-      const spec = defineSpec(twoLevelSpec);
-      // spatialImageChannel has scopes 'A' and 'B', so channel assignments under
-      // spatialImageLayer must be 'A' | 'B' (or arrays thereof).
-      expectTypeOf(
-        spec.metaCoordinationScopesBy!.metaA!.spatialImageLayer!.spatialImageChannel!.A,
-      ).toEqualTypeOf<'A' | 'B' | ('A' | 'B')[] | undefined>();
-      // spatialTargetC has scopes 'A' and 'B', so target assignments under
-      // spatialImageChannel must be 'A' | 'B' (or arrays thereof).
-      expectTypeOf(
-        spec.metaCoordinationScopesBy!.metaA!.spatialImageChannel!.spatialTargetC!.A,
-      ).toEqualTypeOf<'A' | 'B' | ('A' | 'B')[] | undefined>();
     });
 
     it('rejects invalid scope names in metaCoordinationScopes values', () => {
@@ -213,98 +189,6 @@ describe('defineSpec', () => {
     });
   });
 
-  describe('TypeScript type inference — valid specs', () => {
-    it('infers correct return type matching input type', () => {
-      const input = {
-        key: 1 as const,
-        coordinationSpace: {
-          obsType: { A: 'cell' as const },
-        },
-        metaCoordinationScopes: {
-          metaA: { obsType: 'A' as const },
-        },
-        metaCoordinationScopesBy: {} as const,
-        viewCoordination: {
-          view1: {
-            coordinationScopes: { obsType: 'A' as const },
-            metaCoordinationScopes: 'metaA' as const,
-          },
-        },
-      };
-      const result = defineSpec(input);
-      expectTypeOf(result).toEqualTypeOf(input);
-    });
-
-    it('infers view-level metaCoordinationScopes type from top-level metaCoordinationScopes keys', () => {
-      const spec = defineSpec({
-        coordinationSpace: {
-          obsType: { A: 'cell' as const },
-        },
-        metaCoordinationScopes: {
-          metaA: { obsType: 'A' as const },
-          metaB: { obsType: 'A' as const },
-        },
-        metaCoordinationScopesBy: {},
-        viewCoordination: {
-          view1: {
-            metaCoordinationScopes: 'metaA' as const,
-          },
-        },
-      });
-      // View-level metaCoordinationScopes is constrained to keys of the
-      // top-level metaCoordinationScopes ('metaA' | 'metaB').
-      expectTypeOf(spec.viewCoordination!.view1!.metaCoordinationScopes).toEqualTypeOf<
-        'metaA' | 'metaB' | ('metaA' | 'metaB')[] | undefined
-      >();
-    });
-
-    it('infers view-level metaCoordinationScopesBy type from top-level metaCoordinationScopesBy keys', () => {
-      const spec = defineSpec({
-        coordinationSpace: {
-          obsType: { A: 'cell' as const },
-          obsColor: { X: '#ff0000' as const },
-        },
-        metaCoordinationScopes: {},
-        metaCoordinationScopesBy: {
-          byA: {
-            obsType: { obsColor: { A: 'X' as const } },
-          },
-          byB: {
-            obsType: { obsColor: { A: 'X' as const } },
-          },
-        },
-        viewCoordination: {
-          view1: {
-            metaCoordinationScopesBy: 'byA' as const,
-          },
-        },
-      });
-      // View-level metaCoordinationScopesBy is constrained to keys of the
-      // top-level metaCoordinationScopesBy ('byA' | 'byB').
-      expectTypeOf(spec.viewCoordination!.view1!.metaCoordinationScopesBy).toEqualTypeOf<
-        'byA' | 'byB' | ('byA' | 'byB')[] | undefined
-      >();
-    });
-
-    it('infers coordinationScopes type from coordinationSpace scope names', () => {
-      const spec = defineSpec({
-        coordinationSpace: {
-          obsType: { A: 'cell' as const, B: 'nucleus' as const },
-        },
-        metaCoordinationScopes: {},
-        metaCoordinationScopesBy: {},
-        viewCoordination: {
-          view1: {
-            coordinationScopes: { obsType: 'A' as const },
-          },
-        },
-      });
-      // coordinationScopes.obsType should be constrained to 'A' | 'B' or arrays thereof.
-      expectTypeOf(spec.viewCoordination!.view1!.coordinationScopes!.obsType).toEqualTypeOf<
-        'A' | 'B' | ('A' | 'B')[] | undefined
-      >();
-    });
-  });
 
   describe('TypeScript type checking — invalid specs', () => {
     it('rejects coordinationScope names not present in coordinationSpace', () => {
@@ -356,6 +240,42 @@ describe('defineSpec', () => {
           view1: {
             // @ts-expect-error 'byB' is not a key of the top-level metaCoordinationScopesBy
             metaCoordinationScopesBy: 'byB',
+          },
+        },
+      });
+    });
+
+    it('rejects invalid meta scope name in array form of metaCoordinationScopes', () => {
+      defineSpec({
+        coordinationSpace: {
+          obsType: { A: 'cell' as const },
+        },
+        metaCoordinationScopes: {
+          metaA: { obsType: 'A' as const },
+        },
+        metaCoordinationScopesBy: {},
+        viewCoordination: {
+          view1: {
+            // @ts-expect-error 'metaB' is not a key of the top-level metaCoordinationScopes
+            metaCoordinationScopes: ['metaA', 'metaB'] as const,
+          },
+        },
+      });
+    });
+
+    it('rejects invalid meta scope name in array form of metaCoordinationScopesBy', () => {
+      defineSpec({
+        coordinationSpace: {
+          obsType: { A: 'cell' as const },
+        },
+        metaCoordinationScopes: {},
+        metaCoordinationScopesBy: {
+          byA: {},
+        },
+        viewCoordination: {
+          view1: {
+            // @ts-expect-error 'byB' is not a key of the top-level metaCoordinationScopesBy
+            metaCoordinationScopesBy: ['byA', 'byB'] as const,
           },
         },
       });

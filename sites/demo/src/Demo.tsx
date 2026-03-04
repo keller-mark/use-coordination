@@ -9,7 +9,7 @@ import {
   useCoordination,
 } from '@use-coordination/all';
 
-const initializationCounters = {};
+const initializationCounters: Record<string, number> = {};
 
 const NavBarGrid = styled(Grid)`
   border-bottom: 1px solid gray;

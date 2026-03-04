@@ -28,14 +28,14 @@ type MetaCoordinationScopesBy<T extends CoordinationSpace> = {
 
 type ViewCoordination<
   T extends CoordinationSpace,
-  MetaScopeNames extends string,
-  MetaByScopeNames extends string,
+  MetaScopes extends MetaCoordinationScopes<T>,
+  MetaScopesBy extends MetaCoordinationScopesBy<T>,
 > = {
   [viewId: string]: {
     coordinationScopes?: CoordinationScopesMapping<T>;
     coordinationScopesBy?: CoordinationScopesByMapping<T>;
-    metaCoordinationScopes?: MetaScopeNames | MetaScopeNames[];
-    metaCoordinationScopesBy?: MetaByScopeNames | MetaByScopeNames[];
+    metaCoordinationScopes?: keyof MetaScopes & string | (keyof MetaScopes & string)[];
+    metaCoordinationScopesBy?: keyof MetaScopesBy & string | (keyof MetaScopesBy & string)[];
   };
 };
 
@@ -45,8 +45,8 @@ type Config<
   MetaCoordinationScopesByT extends MetaCoordinationScopesBy<CoordinationSpaceT>,
   ViewCoordinationT extends ViewCoordination<
     CoordinationSpaceT,
-    keyof MetaCoordinationScopesT & string,
-    keyof MetaCoordinationScopesByT & string
+    MetaCoordinationScopesT,
+    MetaCoordinationScopesByT
   >,
 > = {
   key?: string | number;
@@ -62,8 +62,8 @@ export function defineSpec<
   MetaCoordinationScopesByT extends MetaCoordinationScopesBy<CoordinationSpaceT>,
   ViewCoordinationT extends ViewCoordination<
     CoordinationSpaceT,
-    keyof MetaCoordinationScopesT & string,
-    keyof MetaCoordinationScopesByT & string
+    MetaCoordinationScopesT,
+    MetaCoordinationScopesByT
   >,
 >(
   spec: Config<CoordinationSpaceT, MetaCoordinationScopesT, MetaCoordinationScopesByT, ViewCoordinationT>,

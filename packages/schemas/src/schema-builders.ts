@@ -6,11 +6,11 @@ import {
 } from './shared.js';
 
 const baseCoordinationTypes = {
-  [META_COORDINATION_SCOPES]: z.record(z.any()).nullable(),
-  [META_COORDINATION_SCOPES_BY]: z.record(z.any()).nullable(),
+  [META_COORDINATION_SCOPES]: z.record(z.string(), z.any()).nullable(),
+  [META_COORDINATION_SCOPES_BY]: z.record(z.string(), z.any()).nullable(),
 };
 
-function buildSpecSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
+function buildSpecSchemaAux<T extends z.ZodType>(coordinationSpace: T) {
   return z.object({
     key: z.union([z.string(), z.number()]).optional(),
     coordinationSpace: coordinationSpace
@@ -19,6 +19,7 @@ function buildSpecSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
       )
       .optional(),
     viewCoordination: z.record(
+      z.string(),
       z.object({
         coordinationScopes: componentCoordinationScopes
           .optional(),
@@ -58,12 +59,12 @@ export const genericSpecSchema = buildSpecSchemaAux(
  * @returns The Zod schema.
  */
 export function buildSpecSchema<
-  T extends Record<string, z.ZodTypeAny>,
+  T extends Record<string, z.ZodType>,
 >(
   coordinationTypes: T,
 ) {
   return buildSpecSchemaAux(
-    z.object(
+    z.strictObject(
       // Wrap each value schema in z.record()
       Object.fromEntries(
         [
@@ -77,10 +78,11 @@ export function buildSpecSchema<
               // slightly nicer if we could use the coordinationScopeName schema here).
               // Once https://github.com/colinhacks/zod/issues/2746 gets resolved
               // then we can try that approach again, but it should not be a big deal.
+              z.string(),
               ctValueSchema.optional(),
             ).optional(),
           ])),
       ),
-    ).strict(),
+    ),
   );
 }
