@@ -338,7 +338,7 @@ function D3Scatterplot(props: any) {
     "selectionDimY",
     "selectionRangeX",
     "selectionRangeY",
-  ]);
+  ] as const);
 
   const setBrushSelection = useCallback((rangeX: null|[number, number], rangeY: null|[number, number]) => {
     setSelectionRangeX(rangeX);
