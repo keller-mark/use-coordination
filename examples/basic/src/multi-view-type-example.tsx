@@ -26,7 +26,7 @@ const SliderInputContainer = ({
     value,
   }, {
     setValue,
-  }] = useCoordination(viewUid, ['value']);
+  }] = useCoordination<CT>(viewUid, ['value']);
   return (
     <SliderInput
       value={value}
@@ -54,7 +54,7 @@ const NumericInputContainer = ({
     value,
   }, {
     setValue,
-  }] = useCoordination(viewUid, ['value']);
+  }] = useCoordination<CT>(viewUid, ['value']);
   return (
     <NumericInput
     value={value}
@@ -67,7 +67,8 @@ const NumericInputContainer = ({
 
 const pluginCoordinationTypes = {
   value: z.number(),
-}
+};
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec2 = {
   key: 1,

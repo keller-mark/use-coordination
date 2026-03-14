@@ -35,3 +35,13 @@ export {
 export { ZodCoordinationProvider } from './ZodCoordinationProvider.js';
 export { ZodErrorBoundary } from './ZodErrorBoundary.js';
 export { defineSpec } from './generic-types.js';
+export type {
+  ZodInferMap,
+  PickValues,
+  PickSetters,
+  SetterName,
+  PickValuesL1,
+  PickSettersL1,
+  PickValuesL2,
+  PickSettersL2,
+} from './coordination-type-utils.js';

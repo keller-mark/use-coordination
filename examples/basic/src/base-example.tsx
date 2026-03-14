@@ -27,7 +27,7 @@ const SliderInputContainer = ({
     sliderValue,
   }, {
     setSliderValue,
-  }] = useCoordination(viewUid, ['sliderValue']);
+  }] = useCoordination<CT>(viewUid, ['sliderValue']);
   return (
     <SliderInput
       sliderValue={sliderValue}
@@ -40,6 +40,7 @@ const SliderInputContainer = ({
 const pluginCoordinationTypes = {
   sliderValue: z.number(),
 };
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,

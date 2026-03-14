@@ -9,6 +9,7 @@ import {
 } from 'd3-array';
 import { select } from 'd3-selection';
 import { useCoordination } from '@use-coordination/all';
+import type { WeatherCT } from './weather.js';
 
 const scaleBand = vega_scale('band');
 
@@ -188,7 +189,7 @@ export function WeatherBarsView(props: any) {
   const [
     { maxTempSelection, precipitationSelection },
     { setMaxTempSelection, setPrecipitationSelection },
-  ] = useCoordination(viewUid, ["maxTempSelection", "precipitationSelection"]);
+  ] = useCoordination<WeatherCT>(viewUid, ["maxTempSelection", "precipitationSelection"]);
 
   return (
     <WeatherBars

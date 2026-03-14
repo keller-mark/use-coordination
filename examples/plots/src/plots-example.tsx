@@ -14,9 +14,10 @@ import { VisxPlotView } from './visx.js';
 import { PlotlyBarPlotView } from './plotly.js';
 
 
-const pluginCoordinationTypes = {
+export const pluginCoordinationTypes = {
   barSelection: z.array(z.string()).nullable(),
 };
+export type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,

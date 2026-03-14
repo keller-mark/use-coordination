@@ -59,7 +59,7 @@ const ColorfulSliderInputContainer = ({
   }, {
     setValue,
     setColor,
-  }] = _useCoordination(coordinationScopes, ['value', 'color']);
+  }] = _useCoordination<CT>(coordinationScopes, ['value', 'color']);
   return (
     <ColorfulSliderInput
       value={value}
@@ -74,6 +74,7 @@ const pluginCoordinationTypes = {
   value: z.number(),
   color: z.array(z.number()).length(3),
 };
+type CT = typeof pluginCoordinationTypes;
 
 
 const initialSpec = {
