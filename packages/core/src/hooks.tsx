@@ -488,10 +488,14 @@ export function useViewMapping(viewUid: string) {
  */
 export function _useInitialCoordination<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  const P extends readonly (keyof CTypes & string)[] = (keyof CTypes & string)[],
+  const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(coordinationScopes: Record<string, any>, parameters: P): PickValues<CTypes, P> {
   const values = useCoordinationStoreShallow((state) => {
     const { coordinationSpace } = state.initialSpec;
+    // TypeScript can only do limited things for Object.fromEntries:
+    // References:
+    // - https://stackoverflow.com/a/69019874
+    // - https://github.com/microsoft/TypeScript/issues/35745
     return Object.fromEntries(parameters.map((parameter) => {
       if (coordinationSpace && coordinationSpace[parameter]) {
         const value = coordinationSpace[parameter][coordinationScopes[parameter]];
@@ -500,6 +504,7 @@ export function _useInitialCoordination<
       return [parameter, undefined];
     }));
   });
+  
   return values as PickValues<CTypes, P>;
 }
 
@@ -512,7 +517,7 @@ export function _useInitialCoordination<
  */
 export function useInitialCoordination<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  const P extends readonly (keyof CTypes & string)[] = (keyof CTypes & string)[],
+  const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(viewUid: string, parameters: P): PickValues<CTypes, P> {
   const [coordinationScopes] = useViewMapping(viewUid);
   return _useInitialCoordination<CTypes, P>(coordinationScopes, parameters);
@@ -537,7 +542,7 @@ export function useInitialCoordination<
  */
 export function _useCoordination<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  const P extends readonly (keyof CTypes & string)[] = (keyof CTypes & string)[],
+  const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(coordinationScopes: Record<string, string | string[]>, parameters: P): [PickValues<CTypes, P>, PickSetters<CTypes, P>] {
   const setCoordinationValue = useCoordinationStore((state) => state.setCoordinationValue);
 
@@ -571,7 +576,7 @@ export function _useCoordination<
 
 export function useCoordination<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  const P extends readonly (keyof CTypes & string)[] = (keyof CTypes & string)[],
+  const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(viewUid: string, parameters: P): [PickValues<CTypes, P>, PickSetters<CTypes, P>] {
   const [coordinationScopes] = useViewMapping(viewUid);
   return _useCoordination<CTypes, P>(coordinationScopes, parameters);
@@ -579,7 +584,7 @@ export function useCoordination<
 
 export function _useCoordinationScopesAll<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
->(coordinationScopes: Record<string, string | string[]>, parameter: keyof CTypes & string) {
+>(coordinationScopes: Record<string, string | string[]>, parameter: Extract<keyof CTypes, string>) {
   return useMemo(() => {
     const scopes = coordinationScopes[parameter];
     return Array.isArray(scopes) ? scopes : [scopes];
@@ -588,14 +593,14 @@ export function _useCoordinationScopesAll<
 
 export function useCoordinationScopesAll<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
->(viewUid: string, parameter: keyof CTypes & string) {
+>(viewUid: string, parameter: Extract<keyof CTypes, string>) {
   const [coordinationScopes] = useViewMapping(viewUid);
   return _useCoordinationScopesAll<CTypes>(coordinationScopes, parameter);
 }
 
 export function _useCoordinationScopes<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
->(coordinationScopes: Record<string, string | string[]>, parameter: keyof CTypes & string) {
+>(coordinationScopes: Record<string, string | string[]>, parameter: Extract<keyof CTypes, string>) {
   const scopes = getParameterScope(coordinationScopes, parameter);
 
   // Return array of coordination scopes,
@@ -620,7 +625,7 @@ export function _useCoordinationScopes<
 
 export function useCoordinationScopes<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
->(viewUid: string, parameter: keyof CTypes & string) {
+>(viewUid: string, parameter: Extract<keyof CTypes, string>) {
   const [coordinationScopes] = useViewMapping(viewUid);
   return _useCoordinationScopes<CTypes>(coordinationScopes, parameter);
 }
@@ -629,7 +634,7 @@ export function _useCoordinationScopesL1All<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
 >(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
-  byType: keyof CTypes & string, parameter: keyof CTypes & string,
+  byType: Extract<keyof CTypes, string>, parameter: Extract<keyof CTypes, string>,
 ) {
   return useMemo(() => {
     const scopes = getParameterScope(coordinationScopes, byType);
@@ -660,7 +665,7 @@ export function _useCoordinationScopesL1All<
 
 export function useCoordinationScopesL1All<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
->(viewUid: string, byType: keyof CTypes & string, parameter: keyof CTypes & string) {
+>(viewUid: string, byType: Extract<keyof CTypes, string>, parameter: Extract<keyof CTypes, string>) {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
   return _useCoordinationScopesL1All<CTypes>(coordinationScopes, coordinationScopesBy, byType, parameter);
 }
@@ -669,7 +674,7 @@ export function _useCoordinationScopesL1<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
 >(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
-  byType: keyof CTypes & string, parameter: keyof CTypes & string,
+  byType: Extract<keyof CTypes, string>, parameter: Extract<keyof CTypes, string>,
 ) {
   const scopes = getParameterScope(coordinationScopes, byType);
 
@@ -738,14 +743,14 @@ export function _useCoordinationScopesL1<
 
 export function useCoordinationScopesL1<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
->(viewUid: string, byType: keyof CTypes & string, parameter: keyof CTypes & string) {
+>(viewUid: string, byType: Extract<keyof CTypes, string>, parameter: Extract<keyof CTypes, string>) {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
   return _useCoordinationScopesL1<CTypes>(coordinationScopes, coordinationScopesBy, byType, parameter);
 }
 
 export function _useCoordinationObject<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  K extends keyof CTypes & string = keyof CTypes & string,
+  K extends Extract<keyof CTypes, string> = Extract<keyof CTypes, string>,
 >(coordinationScopes: Record<string, string | string[]>, parameter: K): Record<string, z.infer<CTypes[K]>> {
   const scopes = getParameterScope(coordinationScopes, parameter);
 
@@ -769,7 +774,7 @@ export function _useCoordinationObject<
 
 export function useCoordinationObject<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  K extends keyof CTypes & string = keyof CTypes & string,
+  K extends Extract<keyof CTypes, string> = Extract<keyof CTypes, string>,
 >(viewUid: string, parameter: K): Record<string, z.infer<CTypes[K]>> {
   const [coordinationScopes] = useViewMapping(viewUid);
   return _useCoordinationObject<CTypes, K>(coordinationScopes, parameter);
@@ -791,10 +796,10 @@ export function useCoordinationObject<
  */
 export function _useCoordinationL1<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  const P extends readonly (keyof CTypes & string)[] = (keyof CTypes & string)[],
+  const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, Record<string, any>>,
-  byType: keyof CTypes & string, parameters: P,
+  byType: Extract<keyof CTypes, string>, parameters: P,
 ): [PickValuesL1<CTypes, P>, PickSettersL1<CTypes, P>] {
   const setCoordinationValue = useCoordinationStore((state) => state.setCoordinationValue);
 
@@ -870,8 +875,8 @@ export function _useCoordinationL1<
 
 export function useCoordinationL1<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  const P extends readonly (keyof CTypes & string)[] = (keyof CTypes & string)[],
->(viewUid: string, byType: keyof CTypes & string, parameters: P): [PickValuesL1<CTypes, P>, PickSettersL1<CTypes, P>] {
+  const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
+>(viewUid: string, byType: Extract<keyof CTypes, string>, parameters: P): [PickValuesL1<CTypes, P>, PickSettersL1<CTypes, P>] {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
   return _useCoordinationL1<CTypes, P>(coordinationScopes, coordinationScopesBy, byType, parameters);
 }
@@ -886,10 +891,10 @@ export function useCoordinationL1<
  */
 export function _useCoordinationL2<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  const P extends readonly (keyof CTypes & string)[] = (keyof CTypes & string)[],
+  const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(
   coordinationScopes: Record<string, string | string[]>, coordinationScopesBy: Record<string, any>,
-  primaryType: keyof CTypes & string, secondaryType: keyof CTypes & string, parameters: P,
+  primaryType: Extract<keyof CTypes, string>, secondaryType: Extract<keyof CTypes, string>, parameters: P,
 ): [PickValuesL2<CTypes, P>, PickSettersL2<CTypes, P>] {
   const coordinationScopesFake = useMemo(() => {
     if (coordinationScopesBy?.[primaryType]?.[secondaryType]) {
@@ -976,8 +981,8 @@ export function _useCoordinationL2<
 
 export function useCoordinationL2<
   CTypes extends Record<string, z.ZodType> = Record<string, z.ZodType>,
-  const P extends readonly (keyof CTypes & string)[] = (keyof CTypes & string)[],
->(viewUid: string, primaryType: keyof CTypes & string, secondaryType: keyof CTypes & string, parameters: P): [PickValuesL2<CTypes, P>, PickSettersL2<CTypes, P>] {
+  const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
+>(viewUid: string, primaryType: Extract<keyof CTypes, string>, secondaryType: Extract<keyof CTypes, string>, parameters: P): [PickValuesL2<CTypes, P>, PickSettersL2<CTypes, P>] {
   const [coordinationScopes, coordinationScopesBy] = useViewMapping(viewUid);
   return _useCoordinationL2<CTypes, P>(coordinationScopes, coordinationScopesBy, primaryType, secondaryType, parameters);
 }
