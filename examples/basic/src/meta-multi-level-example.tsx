@@ -33,7 +33,7 @@ const SliderInputContainer = ({
     channelValue,
   }, {
     setChannelValue,
-  }] = useCoordination(viewUid, ['channelValue']);
+  }] = useCoordination<CT>(viewUid, ['channelValue']);
   return (
     <SliderInput
       sliderValue={channelValue}
@@ -92,8 +92,8 @@ const ColorfulSliderInputContainer = ({
 }: any) => {
 
   // Support meta-coordination.
-  const channelScopes = useCoordinationScopes(viewUid, "channel");
-  const channelCoordination = useCoordinationL1(viewUid, "channel", [
+  const channelScopes = useCoordinationScopes<CT>(viewUid, "channel");
+  const channelCoordination = useCoordinationL1<CT>(viewUid, "channel", [
     "channelValue"
   ]);
 
@@ -110,6 +110,7 @@ const pluginCoordinationTypes = {
   channel: z.literal('__dummy__'),
   channelValue: z.number(),
 };
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = {
   key: 1,

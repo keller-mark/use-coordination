@@ -1,6 +1,7 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import { useCoordination } from '@use-coordination/all';
+import type { CT } from './plots-example.js';
 
 function PlotlyBarPlot(props: any) {
   const {
@@ -65,7 +66,7 @@ export function PlotlyBarPlotView(props: any) {
   const [
     { barSelection },
     { setBarSelection },
-  ] = useCoordination(viewUid, ["barSelection"]);
+  ] = useCoordination<CT>(viewUid, ["barSelection"]);
 
   return (
     <>

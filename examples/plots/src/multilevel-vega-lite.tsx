@@ -2,7 +2,7 @@ import React, { useMemo, Suspense, useCallback } from 'react';
 import { clamp } from 'lodash-es';
 import { useCoordinationScopes, useCoordinationL1, useCoordinationObject } from '@use-coordination/all';
 import { Vega, VisualizationSpec } from 'react-vega';
-import { useSelectBar, useUnselectBar } from './multilevel-example.js';
+import { useSelectBar, useUnselectBar, type MultiLevelCT } from './multilevel-example.js';
 
 const DATASET_NAME = 'table';
 const partialSpec = {
@@ -143,9 +143,9 @@ export function MultiLevelVegaLitePlotView(props: any) {
   const selectBar = useSelectBar();
   const unselectBar = useUnselectBar();
 
-  const selectionScopes = useCoordinationScopes(viewUid, "barSelection");
-  const selectionCoordination = useCoordinationL1(viewUid, "barSelection", ["barColor", "barValue"]);
-  const selectionValues = useCoordinationObject(viewUid, "barSelection");
+  const selectionScopes = useCoordinationScopes<MultiLevelCT>(viewUid, "barSelection");
+  const selectionCoordination = useCoordinationL1<MultiLevelCT>(viewUid, "barSelection", ["barColor"]);
+  const selectionValues = useCoordinationObject<MultiLevelCT>(viewUid, "barSelection");
 
   const barSelection = selectionScopes.map(scope => selectionValues[scope]);
   const barColors = Object.fromEntries(selectionScopes.map(scope => ([

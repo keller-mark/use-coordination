@@ -5,6 +5,7 @@ import { LetterFrequency } from '@visx/mock-data/lib/mocks/letterFrequency';
 import { scaleBand, scaleLinear } from '@visx/scale';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { useCoordination } from '@use-coordination/all';
+import type { CT } from './plots-example.js';
 
 const getLetter = (d: LetterFrequency) => d.letter;
 const getLetterFrequency = (d: LetterFrequency) => Number(d.frequency);
@@ -103,7 +104,7 @@ export function VisxPlotView(props: any) {
   const [
     { barSelection },
     { setBarSelection },
-  ] = useCoordination(viewUid, ["barSelection"]);
+  ] = useCoordination<CT>(viewUid, ["barSelection"]);
 
   return (
     <>

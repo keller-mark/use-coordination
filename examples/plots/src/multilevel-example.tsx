@@ -18,10 +18,11 @@ import { MultilevelColors } from './multilevel-colors.js';
 const getNextSelectionScope = createPrefixedGetNextScopeNumeric("S");
 const getNextColorScope = createPrefixedGetNextScopeNumeric("C");
 
-const pluginCoordinationTypes = {
+export const pluginCoordinationTypes = {
   barSelection: z.string().nullable(),
   barColor: z.string().nullable(),
 };
+export type MultiLevelCT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,

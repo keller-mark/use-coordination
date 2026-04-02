@@ -1,6 +1,7 @@
 import React, { useMemo, useState, Suspense, useCallback } from 'react';
 import { clamp } from 'lodash-es';
 import { useCoordination } from '@use-coordination/all';
+import type { CT } from './plots-example.js';
 import { Vega, VisualizationSpec } from 'react-vega';
 
 const DATASET_NAME = 'table';
@@ -146,7 +147,7 @@ export function VegaLitePlotView(props: any) {
   const [
     { barSelection },
     { setBarSelection },
-  ] = useCoordination(viewUid, ["barSelection"]);
+  ] = useCoordination<CT>(viewUid, ["barSelection"]);
 
   const data = useMemo(() => {
     return dataProp.map((d: any) => ({

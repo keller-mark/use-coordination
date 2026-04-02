@@ -48,6 +48,7 @@ const pluginCoordinationTypes = {
   selectionRangeX: z.array(z.number()).length(2).nullable(),
   selectionRangeY: z.array(z.number()).length(2).nullable(),
 };
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,
@@ -285,7 +286,7 @@ function useScale(dimName: string, range: [number, number]) {
   });
 }
 
-function useSelectedPlotData(selectionDimX: string, selectionDimY: string, selectionRangeX: [number, number], selectionRangeY: [number, number]) {
+function useSelectedPlotData(selectionDimX: string | null, selectionDimY: string | null, selectionRangeX: number[] | null, selectionRangeY: number[] | null) {
   const { data, isLoading, isSuccess } = usePenguinsData();
   return useQuery({
     enabled: !isLoading && isSuccess,
@@ -330,14 +331,14 @@ function D3Scatterplot(props: any) {
     setSelectionDimY,
     setSelectionRangeX,
     setSelectionRangeY,
-  }] = useCoordination(viewUid, [
+  }] = useCoordination<CT>(viewUid, [
     "dimX",
     "dimY",
     "selectionDimX",
     "selectionDimY",
     "selectionRangeX",
     "selectionRangeY",
-  ]);
+  ] as const);
 
   const setBrushSelection = useCallback((rangeX: null|[number, number], rangeY: null|[number, number]) => {
     setSelectionRangeX(rangeX);
@@ -514,7 +515,7 @@ function PlotlyScatterplot(props: any) {
     setSelectionDimY,
     setSelectionRangeX,
     setSelectionRangeY,
-  }] = useCoordination(viewUid, [
+  }] = useCoordination<CT>(viewUid, [
     "dimX",
     "dimY",
     "selectionDimX",

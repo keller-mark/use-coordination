@@ -34,7 +34,7 @@ function NiivueView(props: any) {
       setAzimuth,
       setElevation,
     },
-  ] = useCoordination(viewUid, ['crosshairX', 'crosshairY', 'crosshairZ', 'azimuth', 'elevation']);
+  ] = useCoordination<CT>(viewUid, ['crosshairX', 'crosshairY', 'crosshairZ', 'azimuth', 'elevation']);
 
   const [options, setOptions] = useImmer<NVROptions>({
     isOrientCube: true,
@@ -67,6 +67,7 @@ const pluginCoordinationTypes = {
   azimuth: z.number(),
   elevation: z.number(),
 };
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,

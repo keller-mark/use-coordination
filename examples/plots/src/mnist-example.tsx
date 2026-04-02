@@ -23,6 +23,7 @@ const pluginCoordinationTypes = {
   zoomOffset: z.number().nullable(),
   target: z.array(z.number()).length(2).nullable(),
 };
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,
@@ -104,10 +105,10 @@ function MnistScatterplot(props: any) {
   }, {
     setZoomLevel,
     setTarget,
-  }] = useCoordination(viewUid, ["zoomLevel", "zoomOffset", "target"]);
+  }] = useCoordination<CT>(viewUid, ["zoomLevel", "zoomOffset", "target"]);
 
   const onViewStateChange = useCallback(({viewState}: any) => {
-    setZoomLevel(viewState.zoom - zoomOffset);
+    setZoomLevel(viewState.zoom - (zoomOffset ?? 0));
     setTarget([viewState.target[0], viewState.target[1]]);
   }, []);
   const views = useMemo(() => {
@@ -165,8 +166,8 @@ function MnistScatterplot(props: any) {
         controller={true}
         layers={layers}
         viewState={{
-          target: [target[0], target[1], 0],
-          zoom: zoomLevel + zoomOffset,
+          target: target ? [target[0], target[1], 0] : [0, 0, 0],
+          zoom: (zoomLevel ?? 0) + (zoomOffset ?? 0),
         }}
         onViewStateChange={onViewStateChange}
         views={views}
