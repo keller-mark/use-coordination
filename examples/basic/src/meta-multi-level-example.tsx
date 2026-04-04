@@ -15,7 +15,7 @@ function rgbToHex(r: number, g: number, b: number) {
 }
 
 const SliderInput = ({
-  sliderValue, 
+  sliderValue,
   setSliderValue,
 }: any) => {
   function handleChange(e: any) {
@@ -125,65 +125,65 @@ const initialSpec = {
       "Y": 128,
       "Z": 255,
     },
-    metaCoordinationScopes: {
-      A: {
-        channel: ['R', 'G', 'B'],
-      },
-      B: {
-        channelValue: 'X',
-      },
-      C: {
-        channelValue: 'Y',
-      },
-      D: {
-        channelValue: 'Z',
-      }
+  },
+  metaCoordinationScopes: {
+    A: {
+      channel: ['R', 'G', 'B'],
     },
-    metaCoordinationScopesBy: {
-      A: {
-        channel: {
-          channelValue: {
-            "R": "X",
-            "G": "Y",
-            "B": "Z",
-          },
+    B: {
+      channelValue: 'X',
+    },
+    C: {
+      channelValue: 'Y',
+    },
+    D: {
+      channelValue: 'Z',
+    }
+  },
+  metaCoordinationScopesBy: {
+    A: {
+      channel: {
+        channelValue: {
+          "R": "X",
+          "G": "Y",
+          "B": "Z",
         },
-      }
-    },
+      },
+    }
   },
   viewCoordination: {
     view1: {
-      coordinationScopes: {
-        metaCoordinationScopes: ['A'],
-        metaCoordinationScopesBy: ['A'],
-      },
+      coordinationScopes: {},
+      metaCoordinationScopes: ['A'],
+      metaCoordinationScopesBy: ['A'],
     },
     view2: {
-      coordinationScopes: {
-        metaCoordinationScopes: ['A'],
-        metaCoordinationScopesBy: ['A'],
-      },
+      coordinationScopes: {},
+      metaCoordinationScopes: ['A'],
+      metaCoordinationScopesBy: ['A'],
     },
     view3: {
-      coordinationScopes: {
-        metaCoordinationScopes: ['A'],
-        metaCoordinationScopesBy: ['A'],
-      },
+      coordinationScopes: {},
+      metaCoordinationScopes: ['A'],
+      metaCoordinationScopesBy: ['A'],
     },
     view4: {
       coordinationScopes: {
-        metaCoordinationScopes: ['B'],
+
       },
+      metaCoordinationScopes: ['B'],
     },
     view5: {
       coordinationScopes: {
-        metaCoordinationScopes: ['C'],
+
       },
+      metaCoordinationScopes: ['C'],
     },
     view6: {
       coordinationScopes: {
-        metaCoordinationScopes: ['D'],
+
       },
+      metaCoordinationScopes: ['D'],
     },
   },
 };
@@ -239,4 +239,3 @@ export function MetaMultiLevelExample() {
     </>
   );
 }
-

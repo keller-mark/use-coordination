@@ -1,14 +1,9 @@
 import { z } from 'zod';
-import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import {
+  oneOrMoreCoordinationScopeNames,
   componentCoordinationScopes,
   componentCoordinationScopesBy,
 } from './shared.js';
-
-const baseCoordinationTypes = {
-  [META_COORDINATION_SCOPES]: z.record(z.string(), z.any()).nullable(),
-  [META_COORDINATION_SCOPES_BY]: z.record(z.string(), z.any()).nullable(),
-};
 
 function buildSpecSchemaAux<T extends z.ZodType>(coordinationSpace: T) {
   return z.object({
@@ -18,6 +13,8 @@ function buildSpecSchemaAux<T extends z.ZodType>(coordinationSpace: T) {
         'The coordination space stores the values for each scope of each coordination object.',
       )
       .optional(),
+    metaCoordinationScopes: z.record(z.string(), componentCoordinationScopes).optional(),
+    metaCoordinationScopesBy: z.record(z.string(), componentCoordinationScopesBy).optional(),
     viewCoordination: z.record(
       z.string(),
       z.object({
@@ -25,6 +22,8 @@ function buildSpecSchemaAux<T extends z.ZodType>(coordinationSpace: T) {
           .optional(),
         coordinationScopesBy: componentCoordinationScopesBy
           .optional(),
+        metaCoordinationScopes: oneOrMoreCoordinationScopeNames.optional(),
+        metaCoordinationScopesBy: oneOrMoreCoordinationScopeNames.optional()
       }),
     )
       .describe(
@@ -67,11 +66,7 @@ export function buildSpecSchema<
     z.strictObject(
       // Wrap each value schema in z.record()
       Object.fromEntries(
-        [
-          ...Object.entries(baseCoordinationTypes),
-          // Merge with coordination type schemas.
-          ...Object.entries(coordinationTypes),
-        ].map(([ctName, ctValueSchema]) => ([
+        Object.entries(coordinationTypes).map(([ctName, ctValueSchema]) => ([
             ctName,
             z.record(
               // For now, assume the key type is string (though it would be

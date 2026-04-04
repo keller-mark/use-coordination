@@ -8,7 +8,7 @@ const stringOrStringArray = z.union([
   z.array(z.string()),
 ]);
 
-const oneOrMoreCoordinationScopeNames = stringOrStringArray;
+export const oneOrMoreCoordinationScopeNames = stringOrStringArray;
 
 export const componentCoordinationScopes = z.record(
   coordinationTypeName,

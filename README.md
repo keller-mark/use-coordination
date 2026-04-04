@@ -107,31 +107,33 @@ Install pnpm v8
 ```sh
 git clone 
 pnpm install
+
+pnpm run build-json-schema
 ```
 
 ### Run demo
 
 ```sh
-pnpm start
+pnpm run start
 ```
 
 ### Lint and format
 
 ```sh
-pnpm lint
-pnpm format
+pnpm run lint
+pnpm run format
 ```
 
 ### Build library
 
 ```sh
-pnpm build
+pnpm run build
 ```
 
 ### Build demo
 
 ```sh
-pnpm build-demo
+pnpm run build-demo
 ```
 
 ### Monorepo tasks
