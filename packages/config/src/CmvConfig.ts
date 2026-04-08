@@ -1,8 +1,84 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { z } from 'zod';
+import type { CoordinationSpace, CoordinationScopesMapping, CoordinationScopesByMapping } from '@use-coordination/types';
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import { getNextScope, createPrefixedGetNextScopeNumeric } from '@use-coordination/utils';
 
-function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationScopesBy) {
+type CoordinationScopeName = string;
+type CoordinationType = string;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type CoordinationValue = any;
+
+interface ViewJson {
+  coordinationScopes?: CoordinationScopesMapping<CoordinationSpace>;
+  coordinationScopesBy?: CoordinationScopesByMapping<CoordinationSpace>;
+  metaCoordinationScopes?: CoordinationScopeName[];
+  metaCoordinationScopesBy?: CoordinationScopeName[];
+}
+
+interface MetaCoordinationJson {
+  coordinationScopes?: Record<CoordinationScopeName, CoordinationScopesMapping<CoordinationSpace>>;
+  coordinationScopesBy?: Record<CoordinationScopeName, CoordinationScopesByMapping<CoordinationSpace>>;
+}
+
+export interface CmvConfigJson {
+  key: string | number | undefined;
+  coordinationSpace: Record<CoordinationType, Record<CoordinationScopeName, CoordinationValue>>;
+  viewCoordination: Record<string, ViewJson>;
+  metaCoordination?: MetaCoordinationJson;
+}
+
+interface ScopeWithChildren {
+  scope: CmvConfigCoordinationScope;
+  children?: ProcessedLevel;
+}
+type ProcessedLevelValue = ScopeWithChildren | ScopeWithChildren[];
+type ProcessedLevel = Record<CoordinationType, ProcessedLevelValue>;
+
+// Phantom brand that carries CT through the addCoordinationByObject → useCoordinationByObject pipeline.
+type ProcessedLevelOf<CT extends Record<string, z.ZodTypeAny>> = ProcessedLevel & { readonly __ct?: CT };
+
+type CoordinationInput = Record<
+  CoordinationType,
+  CoordinationLevel | CmvConfigCoordinationScope | CoordinationValue
+>;
+
+type CoordinationInputOf<CT extends Record<string, z.ZodTypeAny>> = {
+  [K in Extract<keyof CT, string>]?: CoordinationLevel | CmvConfigCoordinationScope | z.infer<CT[K]>;
+};
+
+type GetNextScopeFn = (prevScopes: string[]) => string;
+
+interface CmvConfigData<CT extends Record<string, z.ZodTypeAny>> {
+  key: string | number | undefined;
+  coordinationSpace: Record<CoordinationType, Record<CoordinationScopeName, CmvConfigCoordinationScope>>;
+  metaCoordination: {
+    coordinationScopes: Record<CoordinationScopeName, CmvConfigCoordinationScope>;
+    coordinationScopesBy: Record<CoordinationScopeName, CmvConfigCoordinationScope>;
+  };
+  viewCoordination: Record<string, CmvConfigView<CT>>;
+}
+
+interface CmvConfigSpec {
+  key?: string | number;
+  coordinationSpace?: Record<CoordinationType, Record<CoordinationScopeName, CoordinationValue>>;
+  metaCoordination?: {
+    coordinationScopes?: Record<CoordinationScopeName, CoordinationValue>;
+    coordinationScopesBy?: Record<CoordinationScopeName, CoordinationValue>;
+  };
+  viewCoordination?: Record<string, ViewJson>;
+}
+
+interface LinkViewsByObjectOptions {
+  meta?: boolean;
+  scopePrefix?: string | null;
+}
+
+function useCoordinationByObjectHelper(
+  scopes: ProcessedLevel,
+  coordinationScopes: CoordinationScopesMapping<CoordinationSpace>,
+  coordinationScopesBy: CoordinationScopesByMapping<CoordinationSpace>,
+): [CoordinationScopesMapping<CoordinationSpace>, CoordinationScopesByMapping<CoordinationSpace>] {
   // Set this.coordinationScopes and this.coordinationScopesBy by recursion on `scopes`.
   /*
     // Destructured, `scopes` might look like:
@@ -70,7 +146,12 @@ function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationS
    */
 
   // Recursive inner function.
-  function processLevel(parentType, parentScope, levelType, levelVal) {
+  function processLevel(
+    parentType: CoordinationType,
+    parentScope: CmvConfigCoordinationScope,
+    levelType: CoordinationType,
+    levelVal: ProcessedLevelValue,
+  ): void {
     if (Array.isArray(levelVal)) {
       // eslint-disable-next-line no-param-reassign
       coordinationScopesBy[parentType] = {
@@ -141,7 +222,9 @@ function useCoordinationByObjectHelper(scopes, coordinationScopes, coordinationS
 /**
  * Class representing a view.
  */
-export class CmvConfigView {
+export class CmvConfigView<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>> {
+  view: ViewJson;
+
   /**
    * Construct a new view instance.
    * @param {object} coordinationScopes A mapping from coordination type
@@ -149,7 +232,12 @@ export class CmvConfigView {
    * @param {object} coordinationScopesBy A mapping from coordination type
    * names to coordination scope names, for multi-level coordination.
    */
-  constructor(coordinationScopes, coordinationScopesBy, metaCoordinationScopes, metaCoordinationScopesBy) {
+  constructor(
+    coordinationScopes: CoordinationScopesMapping<CoordinationSpace> | undefined,
+    coordinationScopesBy: CoordinationScopesByMapping<CoordinationSpace> | undefined,
+    metaCoordinationScopes?: CoordinationScopeName[],
+    metaCoordinationScopesBy?: CoordinationScopeName[],
+  ) {
     this.view = {
       coordinationScopes,
       coordinationScopesBy,
@@ -164,12 +252,12 @@ export class CmvConfigView {
    * coordination scope instances.
    * @returns {CmvConfigView} This, to allow chaining.
    */
-  useCoordination(cScopes) {
+  useCoordination(cScopes: CmvConfigCoordinationScope[]): this {
     if (!this.view.coordinationScopes) {
       this.view.coordinationScopes = {};
     }
     cScopes.forEach((cScope) => {
-      this.view.coordinationScopes[cScope.cType] = cScope.cScope;
+      this.view.coordinationScopes![cScope.cType] = cScope.cScope;
     });
     return this;
   }
@@ -180,7 +268,7 @@ export class CmvConfigView {
    * Not intended to be a manually-constructed object.
    * @returns {CmvConfigView} This, to allow chaining.
    */
-  useCoordinationByObject(scopes) {
+  useCoordinationByObject(scopes: ProcessedLevelOf<CT>): this {
     if (!this.view.coordinationScopes) {
       this.view.coordinationScopes = {};
     }
@@ -188,7 +276,7 @@ export class CmvConfigView {
       this.view.coordinationScopesBy = {};
     }
     const [nextCoordinationScopes, nextCoordinationScopesBy] = useCoordinationByObjectHelper(
-      scopes,
+      scopes as ProcessedLevel,
       this.view.coordinationScopes,
       this.view.coordinationScopesBy,
     );
@@ -202,7 +290,7 @@ export class CmvConfigView {
    * @param {CmvConfigMetaCoordinationScope} metaScope A meta coordination scope instance.
    * @returns {CmvConfigView} This, to allow chaining.
    */
-  useMetaCoordination(metaScope) {
+  useMetaCoordination(metaScope: CmvConfigMetaCoordinationScope<CT>): this {
     this.view.metaCoordinationScopes = [
       ...(this.view.metaCoordinationScopes || []),
       metaScope.metaScope.cScope,
@@ -218,45 +306,52 @@ export class CmvConfigView {
   /**
    * @returns {object} This view as a JSON object.
    */
-  toJSON() {
+  toJSON(): ViewJson {
     return this.view;
   }
 }
 
 // would import as CL for convenience
-class CoordinationLevel {
-  constructor(value) {
+class CoordinationLevel<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>> {
+  value: CoordinationInputOf<CT> | CoordinationInputOf<CT>[];
+  cachedValue: ProcessedLevelValue | null;
+
+  constructor(value: CoordinationInputOf<CT> | CoordinationInputOf<CT>[]) {
     this.value = value;
     this.cachedValue = null;
   }
 
-  setCached(processedLevel) {
+  setCached(processedLevel: ProcessedLevelValue): void {
     this.cachedValue = processedLevel;
   }
 
-  getCached() {
+  getCached(): ProcessedLevelValue | null {
     return this.cachedValue;
   }
 
-  isCached() {
+  isCached(): boolean {
     return this.cachedValue !== null;
   }
 }
 
-export function CL(value) {
-  return new CoordinationLevel(value);
+export function CL<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>>(value: CoordinationInputOf<CT> | CoordinationInputOf<CT>[]): CoordinationLevel<CT> {
+  return new CoordinationLevel<CT>(value);
 }
 
 /**
  * Class representing a coordination scope in the coordination space.
  */
-export class CmvConfigCoordinationScope {
+export class CmvConfigCoordinationScope<V = CoordinationValue> {
+  cType: CoordinationType;
+  cScope: CoordinationScopeName;
+  cValue: V | null;
+
   /**
    * Construct a new coordination scope instance.
    * @param {string} cType The coordination type for this coordination scope.
    * @param {string} cScope The name of the coordination scope.
    */
-  constructor(cType, cScope, cValue = null) {
+  constructor(cType: CoordinationType, cScope: CoordinationScopeName, cValue: V | null = null) {
     this.cType = cType;
     this.cScope = cScope;
     this.cValue = cValue;
@@ -264,10 +359,10 @@ export class CmvConfigCoordinationScope {
 
   /**
    * Set the coordination value of the coordination scope.
-   * @param {any} cValue The value to set.
+   * @param {V} cValue The value to set.
    * @returns {CmvConfigCoordinationScope} This, to allow chaining.
    */
-  setValue(cValue) {
+  setValue(cValue: V): this {
     this.cValue = cValue;
     return this;
   }
@@ -278,13 +373,16 @@ export class CmvConfigCoordinationScope {
  * for metaCoordinationScopes and metaCoordinationScopesBy,
  * respectively, in the coordination space.
  */
-export class CmvConfigMetaCoordinationScope {
+export class CmvConfigMetaCoordinationScope<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>> {
+  metaScope: CmvConfigCoordinationScope;
+  metaByScope: CmvConfigCoordinationScope;
+
   /**
    * Construct a new coordination scope instance.
    * @param {string} metaScope The name of the coordination scope for metaCoordinationScopes.
    * @param {string} metaByScope The name of the coordination scope for metaCoordinationScopesBy.
    */
-  constructor(metaScope, metaByScope) {
+  constructor(metaScope: CoordinationScopeName, metaByScope: CoordinationScopeName) {
     this.metaScope = new CmvConfigCoordinationScope(
       META_COORDINATION_SCOPES,
       metaScope,
@@ -301,7 +399,7 @@ export class CmvConfigMetaCoordinationScope {
    * coordination scope instances.
    * @returns {CmvConfigMetaCoordinationScope} This, to allow chaining.
    */
-  useCoordination(cScopes) {
+  useCoordination(cScopes: CmvConfigCoordinationScope[]): this {
     const metaScopesVal = this.metaScope.cValue;
     cScopes.forEach((cScope) => {
       metaScopesVal[cScope.cType] = cScope.cScope;
@@ -315,9 +413,9 @@ export class CmvConfigMetaCoordinationScope {
    * scope instance.
    * @param {object} scopes A value returned by `CmvConfig.addCoordinationByObject`.
    * Not intended to be a manually-constructed object.
-   * @returns {CmvConfigView} This, to allow chaining.
+   * @returns {CmvConfigMetaCoordinationScope} This, to allow chaining.
    */
-  useCoordinationByObject(scopes) {
+  useCoordinationByObject(scopes: ProcessedLevelOf<CT>): this {
     if (!this.metaScope.cValue) {
       this.metaScope.setValue({});
     }
@@ -325,7 +423,7 @@ export class CmvConfigMetaCoordinationScope {
       this.metaByScope.setValue({});
     }
     const [metaScopesVal, metaByScopesVal] = useCoordinationByObjectHelper(
-      scopes,
+      scopes as ProcessedLevel,
       this.metaScope.cValue,
       this.metaByScope.cValue,
     );
@@ -338,13 +436,16 @@ export class CmvConfigMetaCoordinationScope {
 /**
  * Class representing a coordination spec.
  */
-export class CmvConfig {
+export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>> {
+  config: CmvConfigData<CT>;
+  getNextScope: GetNextScopeFn;
+
   /**
    * Construct a new spec instance.
    * @param {object} params An object with named arguments.
    * @param {string|number|undefined} params.key The spec key.
    */
-  constructor(key) {
+  constructor(key: string | number | undefined) {
     this.config = {
       key,
       coordinationSpace: {},
@@ -359,20 +460,11 @@ export class CmvConfig {
 
   /**
    * Add a new view to the spec.
-   * @param {CmvConfigDataset} dataset The dataset instance which defines the data
-   * that will be displayed in the view.
-   * @param {string} component A component name, such as "scatterplot" or "spatial".
-   * @param {object} options Extra options for the component.
-   * @param {number} options.x The x-coordinate for the view in the grid layout.
-   * @param {number} options.y The y-coordinate for the view in the grid layout.
-   * @param {number} options.w The width for the view in the grid layout.
-   * @param {number} options.h The height for the view in the grid layout.
-   * @param {number} options.mapping A convenience parameter for setting the EMBEDDING_TYPE
-   * coordination value. Only applicable if the component is "scatterplot".
+   * @param {string} viewUid The unique identifier for the view.
    * @returns {CmvConfigView} A new view instance.
    */
-  addView(viewUid) {
-    const newView = new CmvConfigView(undefined, undefined);
+  addView(viewUid: string): CmvConfigView<CT> {
+    const newView = new CmvConfigView<CT>(undefined, undefined);
     this.config.viewCoordination[viewUid] = newView;
     return newView;
   }
@@ -383,8 +475,10 @@ export class CmvConfig {
    * @param {string[]} cTypes A variable number of coordination type names.
    * @returns {CmvConfigCoordinationScope[]} An array of coordination scope instances.
    */
-  addCoordination(cTypes) {
-    const result = [];
+  addCoordination<const K extends Extract<keyof CT, string>[]>(
+    cTypes: K,
+  ): { [I in keyof K]: CmvConfigCoordinationScope<z.infer<CT[K[I] & keyof CT]>> } {
+    const result: CmvConfigCoordinationScope[] = [];
     cTypes.forEach((cType) => {
       const prevScopes = (
         this.config.coordinationSpace[cType]
@@ -398,7 +492,7 @@ export class CmvConfig {
       this.config.coordinationSpace[scope.cType][scope.cScope] = scope;
       result.push(scope);
     });
-    return result;
+    return result as unknown as { [I in keyof K]: CmvConfigCoordinationScope<z.infer<CT[K[I] & keyof CT]>> };
   }
 
   /**
@@ -406,7 +500,7 @@ export class CmvConfig {
    * and get a reference to it in the form of a meta coordination scope instance.
    * @returns {CmvConfigMetaCoordinationScope} A new meta coordination scope instance.
    */
-  addMetaCoordination() {
+  addMetaCoordination(): CmvConfigMetaCoordinationScope<CT> {
     const prevMetaScopes = Object.keys(this.config.metaCoordination.coordinationScopes);
     const prevMetaByScopes = Object.keys(this.config.metaCoordination.coordinationScopesBy);
     const metaContainer = new CmvConfigMetaCoordinationScope(
@@ -431,7 +525,7 @@ export class CmvConfig {
    * being either { scope }, { scope, children }, or an array of these. Not intended to be
    * manipulated before being passed to a `useCoordinationByObject` function.
    */
-  addCoordinationByObject(input) {
+  addCoordinationByObject(input: CoordinationInputOf<CT>): ProcessedLevelOf<CT> {
     /*
       // The value for `input` might look like:
       {
@@ -509,8 +603,8 @@ export class CmvConfig {
         // ...
       }
     */
-    const processLevel = (level) => {
-      const result = {};
+    const processLevel = (level: CoordinationInput | null): ProcessedLevel => {
+      const result: ProcessedLevel = {};
       if (level === null) {
         return result;
       }
@@ -520,27 +614,27 @@ export class CmvConfig {
         if (nextLevelOrInitialValue instanceof CoordinationLevel) {
           const nextLevel = nextLevelOrInitialValue.value;
           if (nextLevelOrInitialValue.isCached()) {
-            result[cType] = nextLevelOrInitialValue.getCached();
+            result[cType] = nextLevelOrInitialValue.getCached()!;
           } else if (Array.isArray(nextLevel)) {
-            const processedLevel = nextLevel.map((nextEl) => {
-              const [dummyScope] = this.addCoordination([cType]);
+            const processedLevel: ScopeWithChildren[] = nextLevel.map((nextEl) => {
+              const [dummyScope] = this.addCoordination([cType as Extract<keyof CT, string>]) as unknown as CmvConfigCoordinationScope[];
               // TODO: set a better initial value for dummy cases.
               dummyScope.setValue('__dummy__');
               return {
                 scope: dummyScope,
-                children: processLevel(nextEl),
+                children: processLevel(nextEl as CoordinationInput),
               };
             });
             nextLevelOrInitialValue.setCached(processedLevel);
             result[cType] = processedLevel;
           } else {
             const nextEl = nextLevel;
-            const [dummyScope] = this.addCoordination([cType]);
+            const [dummyScope] = this.addCoordination([cType as Extract<keyof CT, string>]) as unknown as CmvConfigCoordinationScope[];
             // TODO: set a better initial value for dummy cases.
             dummyScope.setValue('__dummy__');
-            const processedLevel = {
+            const processedLevel: ScopeWithChildren = {
               scope: dummyScope,
-              children: processLevel(nextEl),
+              children: processLevel(nextEl as CoordinationInput),
             };
             nextLevelOrInitialValue.setCached(processedLevel);
             result[cType] = processedLevel;
@@ -551,7 +645,7 @@ export class CmvConfig {
           if (initialValue instanceof CmvConfigCoordinationScope) {
             result[cType] = { scope: initialValue };
           } else {
-            const [scope] = this.addCoordination([cType]);
+            const [scope] = this.addCoordination([cType as Extract<keyof CT, string>]);
             scope.setValue(initialValue);
             result[cType] = { scope };
           }
@@ -560,7 +654,7 @@ export class CmvConfig {
       return result;
     };
     // Begin recursion.
-    const output = processLevel(input);
+    const output = processLevel(input as CoordinationInput) as ProcessedLevelOf<CT>;
     return output;
   }
 
@@ -572,7 +666,11 @@ export class CmvConfig {
    * Should have the same length as the cTypes array. Optional.
    * @returns {CmvConfig} This, to allow chaining.
    */
-  linkViews(views, cTypes, cValues = null) {
+  linkViews<const K extends Extract<keyof CT, string>[]>(
+    views: CmvConfigView<CT>[],
+    cTypes: K,
+    cValues: { [I in keyof K]: z.infer<CT[K[I] & keyof CT]> } | null = null,
+  ): this {
     const cScopes = this.addCoordination(cTypes);
     views.forEach((view) => {
       cScopes.forEach((cScope) => {
@@ -603,7 +701,11 @@ export class CmvConfig {
    * coordination scope names. Optional.
    * @returns {CmvConfig} This, to allow chaining.
    */
-  linkViewsByObject(views, input, options = null) {
+  linkViewsByObject(
+    views: CmvConfigView<CT>[],
+    input: CoordinationInputOf<CT>,
+    options: LinkViewsByObjectOptions | null = null,
+  ): this {
     const { meta = true, scopePrefix = null } = options || {};
 
     if (scopePrefix) {
@@ -637,12 +739,16 @@ export class CmvConfig {
    * @param {any} cValue The initial value for the coordination scope.
    * @returns {CmvConfigCoordinationScope} A coordination scope instance.
    */
-  setCoordinationValue(cType, cScope, cValue) {
-    const scope = new CmvConfigCoordinationScope(cType, cScope, cValue);
+  setCoordinationValue<K extends Extract<keyof CT, string>>(
+    cType: K,
+    cScope: CoordinationScopeName,
+    cValue: z.infer<CT[K]>,
+  ): CmvConfigCoordinationScope<z.infer<CT[K]>> {
+    const scope = new CmvConfigCoordinationScope<z.infer<CT[K]>>(cType, cScope, cValue);
     if (!this.config.coordinationSpace[scope.cType]) {
       this.config.coordinationSpace[scope.cType] = {};
     }
-    this.config.coordinationSpace[scope.cType][scope.cScope] = scope;
+    this.config.coordinationSpace[scope.cType][scope.cScope] = scope as CmvConfigCoordinationScope;
     return scope;
   }
 
@@ -650,7 +756,7 @@ export class CmvConfig {
    * Convert this instance to a JSON object that can be passed to a provider component.
    * @returns {object} The spec as a JSON object.
    */
-  toJSON() {
+  toJSON(): CmvConfigJson {
     const metaCoordinationScopes = Object.fromEntries(
       Object.entries(this.config.metaCoordination.coordinationScopes).map(([cScopeName, cScope]) => ([
         cScopeName,
@@ -663,7 +769,7 @@ export class CmvConfig {
         cScope.cValue,
       ])),
     );
-    const result = {
+    const result: CmvConfigJson = {
       key: this.config.key,
       coordinationSpace: Object.fromEntries(
         Object.entries(this.config.coordinationSpace).map(([cType, cScopes]) => ([
@@ -702,11 +808,11 @@ export class CmvConfig {
    * @returns {CmvConfig} A new config instance, with values set to match
    * the spec parameter.
    */
-  static fromJSON(spec) {
+  static fromJSON<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>>(spec: CmvConfigSpec): CmvConfig<CT> {
     const { key } = spec;
-    const vc = new CmvConfig(key);
+    const vc = new CmvConfig<CT>(key);
     Object.keys(spec.coordinationSpace || {}).forEach((cType) => {
-      const cObj = spec.coordinationSpace[cType];
+      const cObj = spec.coordinationSpace![cType];
       vc.config.coordinationSpace[cType] = {};
       Object.entries(cObj).forEach(([cScopeName, cScopeValue]) => {
         const scope = new CmvConfigCoordinationScope(cType, cScopeName);
@@ -725,17 +831,35 @@ export class CmvConfig {
       vc.config.metaCoordination.coordinationScopesBy[cScopeName] = scope;
     });
     Object.keys(spec.viewCoordination || {}).forEach((viewUid) => {
-      const viewObj = spec.viewCoordination[viewUid];
-      const newView = new CmvConfigView(viewObj.coordinationScopes, viewObj.coordinationScopesBy, viewObj.metaCoordinationScopes, viewObj.metaCoordinationScopesBy);
+      const viewObj = spec.viewCoordination![viewUid];
+      const newView = new CmvConfigView<CT>(
+        viewObj.coordinationScopes,
+        viewObj.coordinationScopesBy,
+        viewObj.metaCoordinationScopes,
+        viewObj.metaCoordinationScopesBy,
+      );
       vc.config.viewCoordination[viewUid] = newView;
     });
     return vc;
   }
 }
 
+export interface CoordinationSpaceAndScopesResult {
+  coordinationSpace: Record<CoordinationType, Record<CoordinationScopeName, CoordinationValue>>;
+  metaCoordinationScopes: Record<CoordinationScopeName, CoordinationScopesMapping<CoordinationSpace>>;
+  metaCoordinationScopesBy: Record<CoordinationScopeName, CoordinationScopesByMapping<CoordinationSpace>>;
+  coordinationScopes: CoordinationScopesMapping<CoordinationSpace> | undefined;
+  coordinationScopesBy: CoordinationScopesByMapping<CoordinationSpace> | undefined;
+  viewMetaCoordinationScopes: CoordinationScopeName[] | undefined;
+  viewMetaCoordinationScopesBy: CoordinationScopeName[] | undefined;
+}
+
 // For usage during auto-initialization.
-export function getCoordinationSpaceAndScopes(partialCoordinationValues, scopePrefix) {
-  const vc = new CmvConfig('__dummy__');
+export function getCoordinationSpaceAndScopes<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>>(
+  partialCoordinationValues: CoordinationInputOf<CT>,
+  scopePrefix: string,
+): CoordinationSpaceAndScopesResult {
+  const vc = new CmvConfig<CT>('__dummy__');
   vc.getNextScope = createPrefixedGetNextScopeNumeric(scopePrefix);
   const v1 = vc.addView('__dummy__');
   vc.linkViewsByObject([v1], partialCoordinationValues, { meta: true });
