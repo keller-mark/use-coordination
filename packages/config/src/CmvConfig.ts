@@ -346,17 +346,17 @@ export function CL(value: CoordinationInput | CoordinationInput[]): Coordination
 /**
  * Class representing a coordination scope in the coordination space.
  */
-export class CmvConfigCoordinationScope {
+export class CmvConfigCoordinationScope<V = CoordinationValue> {
   cType: CoordinationType;
   cScope: CoordinationScopeName;
-  cValue: CoordinationValue;
+  cValue: V | null;
 
   /**
    * Construct a new coordination scope instance.
    * @param {string} cType The coordination type for this coordination scope.
    * @param {string} cScope The name of the coordination scope.
    */
-  constructor(cType: CoordinationType, cScope: CoordinationScopeName, cValue: CoordinationValue = null) {
+  constructor(cType: CoordinationType, cScope: CoordinationScopeName, cValue: V | null = null) {
     this.cType = cType;
     this.cScope = cScope;
     this.cValue = cValue;
@@ -364,10 +364,10 @@ export class CmvConfigCoordinationScope {
 
   /**
    * Set the coordination value of the coordination scope.
-   * @param {any} cValue The value to set.
+   * @param {V} cValue The value to set.
    * @returns {CmvConfigCoordinationScope} This, to allow chaining.
    */
-  setValue(cValue: CoordinationValue): this {
+  setValue(cValue: V): this {
     this.cValue = cValue;
     return this;
   }
@@ -480,7 +480,9 @@ export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, 
    * @param {string[]} cTypes A variable number of coordination type names.
    * @returns {CmvConfigCoordinationScope[]} An array of coordination scope instances.
    */
-  addCoordination(cTypes: Extract<keyof CT, string>[]): CmvConfigCoordinationScope[] {
+  addCoordination<const K extends Extract<keyof CT, string>[]>(
+    cTypes: K,
+  ): { [I in keyof K]: CmvConfigCoordinationScope<z.infer<CT[K[I] & keyof CT]>> } {
     const result: CmvConfigCoordinationScope[] = [];
     cTypes.forEach((cType) => {
       const prevScopes = (
@@ -495,7 +497,7 @@ export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, 
       this.config.coordinationSpace[scope.cType][scope.cScope] = scope;
       result.push(scope);
     });
-    return result;
+    return result as unknown as { [I in keyof K]: CmvConfigCoordinationScope<z.infer<CT[K[I] & keyof CT]>> };
   }
 
   /**
@@ -620,7 +622,7 @@ export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, 
             result[cType] = nextLevelOrInitialValue.getCached()!;
           } else if (Array.isArray(nextLevel)) {
             const processedLevel: ScopeWithChildren[] = nextLevel.map((nextEl) => {
-              const [dummyScope] = this.addCoordination([cType as Extract<keyof CT, string>]);
+              const [dummyScope] = this.addCoordination([cType as Extract<keyof CT, string>]) as unknown as CmvConfigCoordinationScope[];
               // TODO: set a better initial value for dummy cases.
               dummyScope.setValue('__dummy__');
               return {
@@ -632,7 +634,7 @@ export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, 
             result[cType] = processedLevel;
           } else {
             const nextEl = nextLevel;
-            const [dummyScope] = this.addCoordination([cType as Extract<keyof CT, string>]);
+            const [dummyScope] = this.addCoordination([cType as Extract<keyof CT, string>]) as unknown as CmvConfigCoordinationScope[];
             // TODO: set a better initial value for dummy cases.
             dummyScope.setValue('__dummy__');
             const processedLevel: ScopeWithChildren = {
@@ -669,7 +671,11 @@ export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, 
    * Should have the same length as the cTypes array. Optional.
    * @returns {CmvConfig} This, to allow chaining.
    */
-  linkViews(views: CmvConfigView<CT>[], cTypes: Extract<keyof CT, string>[], cValues: CoordinationValue[] | null = null): this {
+  linkViews<const K extends Extract<keyof CT, string>[]>(
+    views: CmvConfigView<CT>[],
+    cTypes: K,
+    cValues: { [I in keyof K]: z.infer<CT[K[I] & keyof CT]> } | null = null,
+  ): this {
     const cScopes = this.addCoordination(cTypes);
     views.forEach((view) => {
       cScopes.forEach((cScope) => {
@@ -738,16 +744,16 @@ export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, 
    * @param {any} cValue The initial value for the coordination scope.
    * @returns {CmvConfigCoordinationScope} A coordination scope instance.
    */
-  setCoordinationValue(
-    cType: Extract<keyof CT, string>,
+  setCoordinationValue<K extends Extract<keyof CT, string>>(
+    cType: K,
     cScope: CoordinationScopeName,
-    cValue: CoordinationValue,
-  ): CmvConfigCoordinationScope {
-    const scope = new CmvConfigCoordinationScope(cType, cScope, cValue);
+    cValue: z.infer<CT[K]>,
+  ): CmvConfigCoordinationScope<z.infer<CT[K]>> {
+    const scope = new CmvConfigCoordinationScope<z.infer<CT[K]>>(cType, cScope, cValue);
     if (!this.config.coordinationSpace[scope.cType]) {
       this.config.coordinationSpace[scope.cType] = {};
     }
-    this.config.coordinationSpace[scope.cType][scope.cScope] = scope;
+    this.config.coordinationSpace[scope.cType][scope.cScope] = scope as CmvConfigCoordinationScope;
     return scope;
   }
 

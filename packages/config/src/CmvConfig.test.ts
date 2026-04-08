@@ -799,8 +799,8 @@ describe('src/api/CmvConfig.js', () => {
         },
       });
 
-      // Return type of addCoordination is CmvConfigCoordinationScope[].
-      expectTypeOf(config.addCoordination(['embeddingZoom'])).toEqualTypeOf<CmvConfigCoordinationScope[]>();
+      // Return type of addCoordination is a typed tuple matching the inferred value type per key.
+      expectTypeOf(config.addCoordination(['embeddingZoom'])).toEqualTypeOf<[CmvConfigCoordinationScope<number | null>]>();
 
       // Return type of addView is CmvConfigView<CT>.
       expectTypeOf(config.addView('x')).toEqualTypeOf<CmvConfigView<CT>>();
@@ -835,6 +835,15 @@ describe('src/api/CmvConfig.js', () => {
         // @ts-expect-error 10 is not assignable to string (z.infer<z.ZodString>)
         embeddingType: 10,
       });
+
+      // @ts-expect-error 10 is not assignable to string (z.infer<z.ZodString>)
+      config2.setCoordinationValue('embeddingType', 'A', 10);
+
+      // @ts-expect-error
+      config2.linkViews([view2], ['embeddingType'], [10]);
+      config2.linkViews([view2], ['embeddingType'], ['test']);
+      // @ts-expect-error
+      config2.linkViews([view2], ['embeddingType', 'embeddingZoom'], ['test', 'test']);
     });
   });
 });
