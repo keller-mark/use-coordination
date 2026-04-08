@@ -348,8 +348,10 @@ export class CmvConfig {
     this.config = {
       key,
       coordinationSpace: {},
-      metaCoordinationScopes: {},
-      metaCoordinationScopesBy: {},
+      metaCoordination: {
+        coordinationScopes: {},
+        coordinationScopesBy: {},
+      },
       viewCoordination: {},
     };
     this.getNextScope = getNextScope;
@@ -405,14 +407,14 @@ export class CmvConfig {
    * @returns {CmvConfigMetaCoordinationScope} A new meta coordination scope instance.
    */
   addMetaCoordination() {
-    const prevMetaScopes = Object.keys(this.config.metaCoordinationScopes);
-    const prevMetaByScopes = Object.keys(this.config.metaCoordinationScopesBy);
+    const prevMetaScopes = Object.keys(this.config.metaCoordination.coordinationScopes);
+    const prevMetaByScopes = Object.keys(this.config.metaCoordination.coordinationScopesBy);
     const metaContainer = new CmvConfigMetaCoordinationScope(
       this.getNextScope(prevMetaScopes),
       this.getNextScope(prevMetaByScopes),
     );
-    this.config.metaCoordinationScopes[metaContainer.metaScope.cScope] = metaContainer.metaScope;
-    this.config.metaCoordinationScopesBy[metaContainer.metaByScope.cScope] = metaContainer.metaByScope;
+    this.config.metaCoordination.coordinationScopes[metaContainer.metaScope.cScope] = metaContainer.metaScope;
+    this.config.metaCoordination.coordinationScopesBy[metaContainer.metaByScope.cScope] = metaContainer.metaByScope;
     return metaContainer;
   }
 
@@ -650,13 +652,13 @@ export class CmvConfig {
    */
   toJSON() {
     const metaCoordinationScopes = Object.fromEntries(
-      Object.entries(this.config.metaCoordinationScopes).map(([cScopeName, cScope]) => ([
+      Object.entries(this.config.metaCoordination.coordinationScopes).map(([cScopeName, cScope]) => ([
         cScopeName,
         cScope.cValue,
       ])),
     );
     const metaCoordinationScopesBy = Object.fromEntries(
-      Object.entries(this.config.metaCoordinationScopesBy).map(([cScopeName, cScope]) => ([
+      Object.entries(this.config.metaCoordination.coordinationScopesBy).map(([cScopeName, cScope]) => ([
         cScopeName,
         cScope.cValue,
       ])),
@@ -681,11 +683,14 @@ export class CmvConfig {
         ])),
       ),
     };
-    if (Object.keys(metaCoordinationScopes).length > 0) {
-      result.metaCoordinationScopes = metaCoordinationScopes;
-    }
-    if (Object.keys(metaCoordinationScopesBy).length > 0) {
-      result.metaCoordinationScopesBy = metaCoordinationScopesBy;
+    if (Object.keys(metaCoordinationScopes).length > 0 || Object.keys(metaCoordinationScopesBy).length > 0) {
+      result.metaCoordination = {};
+      if (Object.keys(metaCoordinationScopes).length > 0) {
+        result.metaCoordination.coordinationScopes = metaCoordinationScopes;
+      }
+      if (Object.keys(metaCoordinationScopesBy).length > 0) {
+        result.metaCoordination.coordinationScopesBy = metaCoordinationScopesBy;
+      }
     }
     return result;
   }
@@ -709,15 +714,15 @@ export class CmvConfig {
         vc.config.coordinationSpace[cType][cScopeName] = scope;
       });
     });
-    Object.entries(spec.metaCoordinationScopes || {}).forEach(([cScopeName, cScopeValue]) => {
+    Object.entries(spec.metaCoordination?.coordinationScopes || {}).forEach(([cScopeName, cScopeValue]) => {
       const scope = new CmvConfigCoordinationScope(META_COORDINATION_SCOPES, cScopeName);
       scope.setValue(cScopeValue);
-      vc.config.metaCoordinationScopes[cScopeName] = scope;
+      vc.config.metaCoordination.coordinationScopes[cScopeName] = scope;
     });
-    Object.entries(spec.metaCoordinationScopesBy || {}).forEach(([cScopeName, cScopeValue]) => {
+    Object.entries(spec.metaCoordination?.coordinationScopesBy || {}).forEach(([cScopeName, cScopeValue]) => {
       const scope = new CmvConfigCoordinationScope(META_COORDINATION_SCOPES_BY, cScopeName);
       scope.setValue(cScopeValue);
-      vc.config.metaCoordinationScopesBy[cScopeName] = scope;
+      vc.config.metaCoordination.coordinationScopesBy[cScopeName] = scope;
     });
     Object.keys(spec.viewCoordination || {}).forEach((viewUid) => {
       const viewObj = spec.viewCoordination[viewUid];
@@ -735,7 +740,7 @@ export function getCoordinationSpaceAndScopes(partialCoordinationValues, scopePr
   const v1 = vc.addView('__dummy__');
   vc.linkViewsByObject([v1], partialCoordinationValues, { meta: true });
   const vcJson = vc.toJSON();
-  const { coordinationSpace, metaCoordinationScopes, metaCoordinationScopesBy } = vcJson;
+  const { coordinationSpace, metaCoordination } = vcJson;
   const viewData = vcJson.viewCoordination['__dummy__'];
   const coordinationScopes = viewData?.coordinationScopes;
   const coordinationScopesBy = viewData?.coordinationScopesBy;
@@ -744,8 +749,8 @@ export function getCoordinationSpaceAndScopes(partialCoordinationValues, scopePr
 
   return {
     coordinationSpace,
-    metaCoordinationScopes: metaCoordinationScopes || {},
-    metaCoordinationScopesBy: metaCoordinationScopesBy || {},
+    metaCoordinationScopes: metaCoordination?.coordinationScopes || {},
+    metaCoordinationScopesBy: metaCoordination?.coordinationScopesBy || {},
     coordinationScopes,
     coordinationScopesBy,
     viewMetaCoordinationScopes,

@@ -126,30 +126,32 @@ const initialSpec = {
       "Z": 255,
     },
   },
-  metaCoordinationScopes: {
-    A: {
-      channel: ['R', 'G', 'B'],
-    },
-    B: {
-      channelValue: 'X',
-    },
-    C: {
-      channelValue: 'Y',
-    },
-    D: {
-      channelValue: 'Z',
-    }
-  },
-  metaCoordinationScopesBy: {
-    A: {
-      channel: {
-        channelValue: {
-          "R": "X",
-          "G": "Y",
-          "B": "Z",
-        },
+  metaCoordination: {
+    coordinationScopes: {
+      A: {
+        channel: ['R', 'G', 'B'],
       },
-    }
+      B: {
+        channelValue: 'X',
+      },
+      C: {
+        channelValue: 'Y',
+      },
+      D: {
+        channelValue: 'Z',
+      }
+    },
+    coordinationScopesBy: {
+      A: {
+        channel: {
+          channelValue: {
+            "R": "X",
+            "G": "Y",
+            "B": "Z",
+          },
+        },
+      }
+    },
   },
   viewCoordination: {
     view1: {

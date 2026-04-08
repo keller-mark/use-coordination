@@ -34,16 +34,18 @@ const initialSpec = defineSpec({
       C0: "#ff0000",
     },
   },
-  metaCoordinationScopes: {
-    A: {
-      barSelection: ["S0"],
-    }
-  },
-  metaCoordinationScopesBy: {
-    A: {
-      barSelection: {
-        barColor: {
-          S0: "C0",
+  metaCoordination: {
+    coordinationScopes: {
+      A: {
+        barSelection: ["S0"],
+      }
+    },
+    coordinationScopesBy: {
+      A: {
+        barSelection: {
+          barColor: {
+            S0: "C0",
+          },
         },
       },
     },
@@ -180,7 +182,8 @@ function unselectBarInMetaCoordinationScopesHelper(viewMetaScopes: any, viewMeta
 function onCreateStore(set: Function) {
   return {
     selectBar: (viewUid: string, letter: string) => set((state: any) => {
-      const { coordinationSpace, viewCoordination, metaCoordinationScopes, metaCoordinationScopesBy } = state.spec;
+      const { coordinationSpace, viewCoordination, metaCoordination = {} } = state.spec;
+      const { coordinationScopes: metaCoordinationScopes, coordinationScopesBy: metaCoordinationScopesBy } = metaCoordination;
       const viewMetaScopes = viewCoordination?.[viewUid]?.metaCoordinationScopes;
       const viewMetaScopesBy = viewCoordination?.[viewUid]?.metaCoordinationScopesBy;
       const { newCoordinationSpace, newMetaCoordinationScopes, newMetaCoordinationScopesBy } = selectBarInMetaCoordinationScopesHelper(
@@ -195,13 +198,16 @@ function onCreateStore(set: Function) {
         spec: {
           ...state.spec,
           coordinationSpace: newCoordinationSpace,
-          metaCoordinationScopes: newMetaCoordinationScopes,
-          metaCoordinationScopesBy: newMetaCoordinationScopesBy,
+          metaCoordination: {
+            coordinationScopes: newMetaCoordinationScopes,
+            coordinationScopesBy: newMetaCoordinationScopesBy,
+          },
         },
       };
     }),
     unselectBar: (viewUid: string, letter: string) => set((state: any) => {
-      const { coordinationSpace, viewCoordination, metaCoordinationScopes, metaCoordinationScopesBy } = state.spec;
+      const { coordinationSpace, viewCoordination, metaCoordination = {} } = state.spec;
+      const { coordinationScopes: metaCoordinationScopes, coordinationScopesBy: metaCoordinationScopesBy } = metaCoordination;
       const viewMetaScopes = viewCoordination?.[viewUid]?.metaCoordinationScopes;
       const viewMetaScopesBy = viewCoordination?.[viewUid]?.metaCoordinationScopesBy;
       const { newCoordinationSpace, newMetaCoordinationScopes, newMetaCoordinationScopesBy } = unselectBarInMetaCoordinationScopesHelper(
@@ -216,8 +222,10 @@ function onCreateStore(set: Function) {
         spec: {
           ...state.spec,
           coordinationSpace: newCoordinationSpace,
-          metaCoordinationScopes: newMetaCoordinationScopes,
-          metaCoordinationScopesBy: newMetaCoordinationScopesBy,
+          metaCoordination: {
+            coordinationScopes: newMetaCoordinationScopes,
+            coordinationScopesBy: newMetaCoordinationScopesBy,
+          },
         },
       };
     }),

@@ -13,8 +13,10 @@ function buildSpecSchemaAux<T extends z.ZodType>(coordinationSpace: T) {
         'The coordination space stores the values for each scope of each coordination object.',
       )
       .optional(),
-    metaCoordinationScopes: z.record(z.string(), componentCoordinationScopes).optional(),
-    metaCoordinationScopesBy: z.record(z.string(), componentCoordinationScopesBy).optional(),
+    metaCoordination: z.object({
+      coordinationScopes: z.record(z.string(), componentCoordinationScopes).optional(),
+      coordinationScopesBy: z.record(z.string(), componentCoordinationScopesBy).optional(),
+    }).optional(),
     viewCoordination: z.record(
       z.string(),
       z.object({

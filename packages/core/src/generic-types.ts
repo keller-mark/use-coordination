@@ -51,8 +51,10 @@ type Config<
 > = {
   key?: string | number;
   coordinationSpace?: CoordinationSpaceT;
-  metaCoordinationScopes?: MetaCoordinationScopesT;
-  metaCoordinationScopesBy?: MetaCoordinationScopesByT;
+  metaCoordination?: {
+    coordinationScopes?: MetaCoordinationScopesT;
+    coordinationScopesBy?: MetaCoordinationScopesByT;
+  };
   viewCoordination?: ViewCoordinationT;
 };
 

@@ -8,16 +8,18 @@ export type CmvConfigObject = {
             [coordinationScopeName: string]: any;
         };
     };
-    metaCoordinationScopes?: {
-        [metaScopeName: string]: {
-            [coordinationTypeName: string]: string | string[];
+    metaCoordination?: {
+        coordinationScopes?: {
+            [metaScopeName: string]: {
+                [coordinationTypeName: string]: string | string[];
+            };
         };
-    };
-    metaCoordinationScopesBy?: {
-        [metaScopeName: string]: {
-            [coordinationTypeNameA: string]: {
-                [coordinationTypeNameB: string]: {
-                    [coordinationScopeName: string]: string | string[];
+        coordinationScopesBy?: {
+            [metaScopeName: string]: {
+                [coordinationTypeNameA: string]: {
+                    [coordinationTypeNameB: string]: {
+                        [coordinationScopeName: string]: string | string[];
+                    };
                 };
             };
         };

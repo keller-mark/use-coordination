@@ -336,7 +336,8 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
     };
   }),
   mergeCoordination: (newCoordinationValues: Record<string, any>, scopePrefix: string, viewUid: string) => set((state) => {
-    const { coordinationSpace = {}, viewCoordination = {}, metaCoordinationScopes = {}, metaCoordinationScopesBy = {} } = state.spec;
+    const { coordinationSpace = {}, viewCoordination = {}, metaCoordination = {} } = state.spec;
+    const { coordinationScopes: metaCoordinationScopes = {}, coordinationScopesBy: metaCoordinationScopesBy = {} } = metaCoordination;
     const {
       coordinationSpace: newCoordinationSpace,
       metaCoordinationScopes: newMetaCoordinationScopes,
@@ -386,8 +387,10 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
       coordinationSpace: {
         ...coordinationSpace,
       },
-      metaCoordinationScopes: mergedMeta,
-      metaCoordinationScopesBy: mergedMetaBy,
+      metaCoordination: {
+        coordinationScopes: mergedMeta,
+        coordinationScopesBy: mergedMetaBy,
+      },
       viewCoordination: {
         ...viewCoordination,
         [viewUid]: {
@@ -442,7 +445,7 @@ export function useViewMapping(viewUid: string) {
   const [coordinationScopesRaw, coordinationScopesByRaw] = useRawViewMapping(viewUid);
 
   const metaSpace = useCoordinationStoreShallow((state) => {
-    return state.spec.metaCoordinationScopes;
+    return state.spec.metaCoordination?.coordinationScopes;
   });
 
   const viewMetaScopes = useCoordinationStoreShallow((state) => {
@@ -458,7 +461,7 @@ export function useViewMapping(viewUid: string) {
   }, [coordinationScopesRaw, metaSpace, viewMetaScopes]);
 
   const metaSpaceBy = useCoordinationStoreShallow((state) => {
-    return state.spec.metaCoordinationScopesBy;
+    return state.spec.metaCoordination?.coordinationScopesBy;
   });
 
   const viewMetaScopesBy = useCoordinationStoreShallow((state) => {

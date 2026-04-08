@@ -32,19 +32,21 @@ describe('defineSpec', () => {
       });
     });
 
-    it('works with top-level metaCoordinationScopes and metaCoordinationScopesBy as siblings of viewCoordination', () => {
+    it('works with top-level metaCoordination as sibling of viewCoordination', () => {
       const spec = {
         coordinationSpace: {
           obsType: { A: 'cell', B: 'nucleus' },
           obsColor: { X: '#ff0000' as const, Y: '#00ff00' as const },
         },
-        metaCoordinationScopes: {
-          metaA: { obsType: 'A' as const },
-        },
-        metaCoordinationScopesBy: {
-          metaA: {
-            obsType: {
-              obsColor: { A: 'X' as const, B: 'Y' as const },
+        metaCoordination: {
+          coordinationScopes: {
+            metaA: { obsType: 'A' as const },
+          },
+          coordinationScopesBy: {
+            metaA: {
+              obsType: {
+                obsColor: { A: 'X' as const, B: 'Y' as const },
+              },
             },
           },
         },
@@ -68,10 +70,12 @@ describe('defineSpec', () => {
           obsType: { A: 'cell' as const },
           featureType: { F: 'gene' as const },
         },
-        metaCoordinationScopes: {
-          metaA: { obsType: 'A' as const },
+        metaCoordination: {
+          coordinationScopes: {
+            metaA: { obsType: 'A' as const },
+          },
+          coordinationScopesBy: {},
         },
-        metaCoordinationScopesBy: {},
         viewCoordination: {
           view1: {
             coordinationScopes: { featureType: 'F' as const },
@@ -88,11 +92,13 @@ describe('defineSpec', () => {
           obsType: { A: 'cell' as const },
           featureType: { F: 'gene' as const },
         },
-        metaCoordinationScopes: {
-          metaA: { obsType: 'A' as const },
-          metaB: { featureType: 'F' as const },
+        metaCoordination: {
+          coordinationScopes: {
+            metaA: { obsType: 'A' as const },
+            metaB: { featureType: 'F' as const },
+          },
+          coordinationScopesBy: {},
         },
-        metaCoordinationScopesBy: {},
         viewCoordination: {
           view1: {
             metaCoordinationScopes: ['metaA', 'metaB'] as ['metaA', 'metaB'],
@@ -113,19 +119,21 @@ describe('defineSpec', () => {
         spatialTargetC: { A: 0 as const, B: 1 as const },
         spatialChannelColor: { A: '#ff0000' as const, B: '#00ff00' as const },
       },
-      metaCoordinationScopes: {
-        metaA: {
-          spatialImageLayer: ['A'] as ['A'],
-        },
-      },
-      metaCoordinationScopesBy: {
-        metaA: {
-          spatialImageLayer: {
-            spatialImageChannel: { A: ['A', 'B'] as ['A', 'B'] },
+      metaCoordination: {
+        coordinationScopes: {
+          metaA: {
+            spatialImageLayer: ['A'] as ['A'],
           },
-          spatialImageChannel: {
-            spatialTargetC: { A: 'A' as const, B: 'B' as const },
-            spatialChannelColor: { A: 'A' as const, B: 'B' as const },
+        },
+        coordinationScopesBy: {
+          metaA: {
+            spatialImageLayer: {
+              spatialImageChannel: { A: ['A', 'B'] as ['A', 'B'] },
+            },
+            spatialImageChannel: {
+              spatialTargetC: { A: 'A' as const, B: 'B' as const },
+              spatialChannelColor: { A: 'A' as const, B: 'B' as const },
+            },
           },
         },
       },
@@ -145,39 +153,43 @@ describe('defineSpec', () => {
       expect(defineSpec(twoLevelSpec)).toBe(twoLevelSpec);
     });
 
-    it('rejects invalid scope names in metaCoordinationScopes values', () => {
+    it('rejects invalid scope names in metaCoordination.coordinationScopes values', () => {
       defineSpec({
         coordinationSpace: {
           spatialImageLayer: { A: '__dummy__' as const },
           spatialImageChannel: { A: '__dummy__' as const, B: '__dummy__' as const },
         },
-        metaCoordinationScopes: {
-          metaA: {
-            // @ts-expect-error 'Z' is not a valid scope for spatialImageLayer (only 'A' exists)
-            spatialImageLayer: 'Z',
+        metaCoordination: {
+          coordinationScopes: {
+            metaA: {
+              // @ts-expect-error 'Z' is not a valid scope for spatialImageLayer (only 'A' exists)
+              spatialImageLayer: 'Z',
+            },
           },
+          coordinationScopesBy: {},
         },
-        metaCoordinationScopesBy: {},
         viewCoordination: {
           spatial: { metaCoordinationScopes: 'metaA' as const },
         },
       });
     });
 
-    it('rejects invalid scope names in metaCoordinationScopesBy leaf values', () => {
+    it('rejects invalid scope names in metaCoordination.coordinationScopesBy leaf values', () => {
       defineSpec({
         coordinationSpace: {
           spatialImageLayer: { A: '__dummy__' as const },
           spatialImageChannel: { A: '__dummy__' as const, B: '__dummy__' as const },
           spatialTargetC: { A: 0 as const, B: 1 as const },
         },
-        metaCoordinationScopes: {},
-        metaCoordinationScopesBy: {
-          metaA: {
-            spatialImageChannel: {
-              spatialTargetC: {
-                // @ts-expect-error 'Z' is not a valid scope for spatialTargetC (only 'A' | 'B')
-                A: 'Z',
+        metaCoordination: {
+          coordinationScopes: {},
+          coordinationScopesBy: {
+            metaA: {
+              spatialImageChannel: {
+                spatialTargetC: {
+                  // @ts-expect-error 'Z' is not a valid scope for spatialTargetC (only 'A' | 'B')
+                  A: 'Z',
+                },
               },
             },
           },
@@ -196,8 +208,10 @@ describe('defineSpec', () => {
         coordinationSpace: {
           obsType: { A: 'cell' as const },
         },
-        metaCoordinationScopes: {},
-        metaCoordinationScopesBy: {},
+        metaCoordination: {
+          coordinationScopes: {},
+          coordinationScopesBy: {},
+        },
         viewCoordination: {
           view1: {
             coordinationScopes: {
@@ -209,36 +223,40 @@ describe('defineSpec', () => {
       });
     });
 
-    it('rejects metaCoordinationScopes names not present in top-level metaCoordinationScopes', () => {
+    it('rejects metaCoordinationScopes names not present in top-level metaCoordination.coordinationScopes', () => {
       defineSpec({
         coordinationSpace: {
           obsType: { A: 'cell' as const },
         },
-        metaCoordinationScopes: {
-          metaA: { obsType: 'A' as const },
+        metaCoordination: {
+          coordinationScopes: {
+            metaA: { obsType: 'A' as const },
+          },
+          coordinationScopesBy: {},
         },
-        metaCoordinationScopesBy: {},
         viewCoordination: {
           view1: {
-            // @ts-expect-error 'metaB' is not a key of the top-level metaCoordinationScopes
+            // @ts-expect-error 'metaB' is not a key of the top-level metaCoordination.coordinationScopes
             metaCoordinationScopes: 'metaB',
           },
         },
       });
     });
 
-    it('rejects metaCoordinationScopesBy names not present in top-level metaCoordinationScopesBy', () => {
+    it('rejects metaCoordinationScopesBy names not present in top-level metaCoordination.coordinationScopesBy', () => {
       defineSpec({
         coordinationSpace: {
           obsType: { A: 'cell' as const },
         },
-        metaCoordinationScopes: {},
-        metaCoordinationScopesBy: {
-          byA: {},
+        metaCoordination: {
+          coordinationScopes: {},
+          coordinationScopesBy: {
+            byA: {},
+          },
         },
         viewCoordination: {
           view1: {
-            // @ts-expect-error 'byB' is not a key of the top-level metaCoordinationScopesBy
+            // @ts-expect-error 'byB' is not a key of the top-level metaCoordination.coordinationScopesBy
             metaCoordinationScopesBy: 'byB',
           },
         },
@@ -250,13 +268,15 @@ describe('defineSpec', () => {
         coordinationSpace: {
           obsType: { A: 'cell' as const },
         },
-        metaCoordinationScopes: {
-          metaA: { obsType: 'A' as const },
+        metaCoordination: {
+          coordinationScopes: {
+            metaA: { obsType: 'A' as const },
+          },
+          coordinationScopesBy: {},
         },
-        metaCoordinationScopesBy: {},
         viewCoordination: {
           view1: {
-            // @ts-expect-error 'metaB' is not a key of the top-level metaCoordinationScopes
+            // @ts-expect-error 'metaB' is not a key of the top-level metaCoordination.coordinationScopes
             metaCoordinationScopes: ['metaA', 'metaB'] as const,
           },
         },
@@ -268,13 +288,15 @@ describe('defineSpec', () => {
         coordinationSpace: {
           obsType: { A: 'cell' as const },
         },
-        metaCoordinationScopes: {},
-        metaCoordinationScopesBy: {
-          byA: {},
+        metaCoordination: {
+          coordinationScopes: {},
+          coordinationScopesBy: {
+            byA: {},
+          },
         },
         viewCoordination: {
           view1: {
-            // @ts-expect-error 'byB' is not a key of the top-level metaCoordinationScopesBy
+            // @ts-expect-error 'byB' is not a key of the top-level metaCoordination.coordinationScopesBy
             metaCoordinationScopesBy: ['byA', 'byB'] as const,
           },
         },
