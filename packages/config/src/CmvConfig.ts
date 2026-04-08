@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { z } from 'zod';
+import type { CoordinationSpace, CoordinationScopesMapping, CoordinationScopesByMapping } from '@use-coordination/types';
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import { getNextScope, createPrefixedGetNextScopeNumeric } from '@use-coordination/utils';
 
@@ -8,22 +9,16 @@ type CoordinationType = string;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CoordinationValue = any;
 
-type CoordinationScopesMap = Record<CoordinationType, CoordinationScopeName | CoordinationScopeName[]>;
-type CoordinationScopesByMap = Record<
-  CoordinationType,
-  Record<CoordinationType, Record<CoordinationScopeName, CoordinationScopeName | CoordinationScopeName[]>>
->;
-
 interface ViewJson {
-  coordinationScopes?: CoordinationScopesMap;
-  coordinationScopesBy?: CoordinationScopesByMap;
+  coordinationScopes?: CoordinationScopesMapping<CoordinationSpace>;
+  coordinationScopesBy?: CoordinationScopesByMapping<CoordinationSpace>;
   metaCoordinationScopes?: CoordinationScopeName[];
   metaCoordinationScopesBy?: CoordinationScopeName[];
 }
 
 interface MetaCoordinationJson {
-  coordinationScopes?: Record<CoordinationScopeName, CoordinationScopesMap>;
-  coordinationScopesBy?: Record<CoordinationScopeName, CoordinationScopesByMap>;
+  coordinationScopes?: Record<CoordinationScopeName, CoordinationScopesMapping<CoordinationSpace>>;
+  coordinationScopesBy?: Record<CoordinationScopeName, CoordinationScopesByMapping<CoordinationSpace>>;
 }
 
 export interface CmvConfigJson {
@@ -81,9 +76,9 @@ interface LinkViewsByObjectOptions {
 
 function useCoordinationByObjectHelper(
   scopes: ProcessedLevel,
-  coordinationScopes: CoordinationScopesMap,
-  coordinationScopesBy: CoordinationScopesByMap,
-): [CoordinationScopesMap, CoordinationScopesByMap] {
+  coordinationScopes: CoordinationScopesMapping<CoordinationSpace>,
+  coordinationScopesBy: CoordinationScopesByMapping<CoordinationSpace>,
+): [CoordinationScopesMapping<CoordinationSpace>, CoordinationScopesByMapping<CoordinationSpace>] {
   // Set this.coordinationScopes and this.coordinationScopesBy by recursion on `scopes`.
   /*
     // Destructured, `scopes` might look like:
@@ -238,8 +233,8 @@ export class CmvConfigView<CT extends Record<string, z.ZodTypeAny> = Record<stri
    * names to coordination scope names, for multi-level coordination.
    */
   constructor(
-    coordinationScopes: CoordinationScopesMap | undefined,
-    coordinationScopesBy: CoordinationScopesByMap | undefined,
+    coordinationScopes: CoordinationScopesMapping<CoordinationSpace> | undefined,
+    coordinationScopesBy: CoordinationScopesByMapping<CoordinationSpace> | undefined,
     metaCoordinationScopes?: CoordinationScopeName[],
     metaCoordinationScopesBy?: CoordinationScopeName[],
   ) {
@@ -851,10 +846,10 @@ export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, 
 
 export interface CoordinationSpaceAndScopesResult {
   coordinationSpace: Record<CoordinationType, Record<CoordinationScopeName, CoordinationValue>>;
-  metaCoordinationScopes: Record<CoordinationScopeName, CoordinationScopesMap>;
-  metaCoordinationScopesBy: Record<CoordinationScopeName, CoordinationScopesByMap>;
-  coordinationScopes: CoordinationScopesMap | undefined;
-  coordinationScopesBy: CoordinationScopesByMap | undefined;
+  metaCoordinationScopes: Record<CoordinationScopeName, CoordinationScopesMapping<CoordinationSpace>>;
+  metaCoordinationScopesBy: Record<CoordinationScopeName, CoordinationScopesByMapping<CoordinationSpace>>;
+  coordinationScopes: CoordinationScopesMapping<CoordinationSpace> | undefined;
+  coordinationScopesBy: CoordinationScopesByMapping<CoordinationSpace> | undefined;
   viewMetaCoordinationScopes: CoordinationScopeName[] | undefined;
   viewMetaCoordinationScopesBy: CoordinationScopeName[] | undefined;
 }

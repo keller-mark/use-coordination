@@ -1,5 +1,5 @@
 {
-  "name": "@use-coordination/config",
+  "name": "@use-coordination/types",
   "version": "1.0.1",
   "author": "Mark Keller",
   "license": "MIT",
@@ -24,13 +24,7 @@
     "bundle": "pnpm exec vite build -c ../../scripts/vite.config.js",
     "test": "pnpm exec vitest --run"
   },
-  "dependencies": {
-    "@use-coordination/types": "workspace:*",
-    "@use-coordination/constants-internal": "workspace:*",
-    "@use-coordination/utils": "workspace:*"
-  },
   "devDependencies": {
-    "vitest": "^1.6.1",
-    "zod": "^4.3.0"
+    "vitest": "^1.6.1"
   }
 }

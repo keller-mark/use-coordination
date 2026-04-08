@@ -20,6 +20,7 @@
     "declarationMap": true
   },
   "references": [
+    { "path": "packages/types" },
     { "path": "packages/config" },
     { "path": "packages/constants-internal" },
     { "path": "packages/utils" },
