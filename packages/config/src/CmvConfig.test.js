@@ -352,13 +352,15 @@ describe('src/api/CmvConfig.js', () => {
             B: 'Non-Globally Sclerotic Glomeruli',
             C: 'Globally Sclerotic Glomeruli',
           },
-          metaCoordinationScopes: {
+        },
+        metaCoordination: {
+          coordinationScopes: {
             A: {
               spatialImageLayer: ['A'],
               spatialSegmentationLayer: ['A'],
             },
           },
-          metaCoordinationScopesBy: {
+          coordinationScopesBy: {
             A: {
               spatialImageLayer: {
                 image: { A: 'A' },
@@ -386,16 +388,12 @@ describe('src/api/CmvConfig.js', () => {
         },
         viewCoordination: {
           spatial: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['A'],
-              metaCoordinationScopesBy: ['A'],
-            },
+            metaCoordinationScopes: ['A'],
+            metaCoordinationScopesBy: ['A'],
           },
           layerController: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['A'],
-              metaCoordinationScopesBy: ['A'],
-            },
+            metaCoordinationScopes: ['A'],
+            metaCoordinationScopesBy: ['A'],
           },
         },
       });
@@ -477,13 +475,15 @@ describe('src/api/CmvConfig.js', () => {
             B: 'Non-Globally Sclerotic Glomeruli',
             C: 'Globally Sclerotic Glomeruli',
           },
-          metaCoordinationScopes: {
+        },
+        metaCoordination: {
+          coordinationScopes: {
             A: {
               spatialImageLayer: ['A'],
               spatialSegmentationLayer: ['A'],
             },
           },
-          metaCoordinationScopesBy: {
+          coordinationScopesBy: {
             A: {
               spatialImageLayer: {
                 image: { A: 'A' },
@@ -511,16 +511,12 @@ describe('src/api/CmvConfig.js', () => {
         },
         viewCoordination: {
           spatial: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['A'],
-              metaCoordinationScopesBy: ['A'],
-            },
+            metaCoordinationScopes: ['A'],
+            metaCoordinationScopesBy: ['A'],
           },
           layerController: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['A'],
-              metaCoordinationScopesBy: ['A'],
-            },
+            metaCoordinationScopes: ['A'],
+            metaCoordinationScopesBy: ['A'],
           },
         },
       });
@@ -602,13 +598,15 @@ describe('src/api/CmvConfig.js', () => {
             SOME_PREFIX_1: 'Non-Globally Sclerotic Glomeruli',
             SOME_PREFIX_2: 'Globally Sclerotic Glomeruli',
           },
-          metaCoordinationScopes: {
+        },
+        metaCoordination: {
+          coordinationScopes: {
             SOME_PREFIX_0: {
               spatialImageLayer: ['SOME_PREFIX_0'],
               spatialSegmentationLayer: ['SOME_PREFIX_0'],
             },
           },
-          metaCoordinationScopesBy: {
+          coordinationScopesBy: {
             SOME_PREFIX_0: {
               spatialImageLayer: {
                 image: { SOME_PREFIX_0: 'SOME_PREFIX_0' },
@@ -636,16 +634,12 @@ describe('src/api/CmvConfig.js', () => {
         },
         viewCoordination: {
           spatial: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['SOME_PREFIX_0'],
-              metaCoordinationScopesBy: ['SOME_PREFIX_0'],
-            },
+            metaCoordinationScopes: ['SOME_PREFIX_0'],
+            metaCoordinationScopesBy: ['SOME_PREFIX_0'],
           },
           layerController: {
-            coordinationScopes: {
-              metaCoordinationScopes: ['SOME_PREFIX_0'],
-              metaCoordinationScopesBy: ['SOME_PREFIX_0'],
-            },
+            metaCoordinationScopes: ['SOME_PREFIX_0'],
+            metaCoordinationScopesBy: ['SOME_PREFIX_0'],
           },
         },
       });

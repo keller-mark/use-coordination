@@ -8,6 +8,22 @@ export type CmvConfigObject = {
             [coordinationScopeName: string]: any;
         };
     };
+    metaCoordination?: {
+        coordinationScopes?: {
+            [metaScopeName: string]: {
+                [coordinationTypeName: string]: string | string[];
+            };
+        };
+        coordinationScopesBy?: {
+            [metaScopeName: string]: {
+                [coordinationTypeNameA: string]: {
+                    [coordinationTypeNameB: string]: {
+                        [coordinationScopeName: string]: string | string[];
+                    };
+                };
+            };
+        };
+    };
     viewCoordination?: {
         [viewUid: string]: {
             coordinationScopes?: {
@@ -20,6 +36,8 @@ export type CmvConfigObject = {
                     };
                 };
             };
+            metaCoordinationScopes?: string | string[];
+            metaCoordinationScopesBy?: string | string[];
         };
     };
 };
@@ -48,7 +66,7 @@ export type ZodCoordinationProviderProps = {
     initializer?: InitializerFunction;
     validateOnSpecChange?: boolean;
     validateSpec?: boolean;
-    coordinationTypes: Record<string, z.ZodTypeAny>;
+    coordinationTypes: Record<string, z.ZodType>;
     children: ReactNode;
     onCreateStore?: OnCreateStoreFunction;
     remountOnKeyChange?: boolean;

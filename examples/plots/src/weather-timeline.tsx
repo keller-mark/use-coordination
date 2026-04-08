@@ -7,6 +7,7 @@ import {
 } from 'd3-array';
 import { select } from 'd3-selection';
 import { useCoordination } from '@use-coordination/all';
+import type { WeatherCT } from './weather.js';
 
 function TimelinePlot(props: any) {
   const {
@@ -168,7 +169,7 @@ export function TimelineView(props: any) {
   const [
     { maxTempSelection, precipitationSelection },
     { setMaxTempSelection, setPrecipitationSelection },
-  ] = useCoordination(viewUid, ["maxTempSelection", "precipitationSelection"]);
+  ] = useCoordination<WeatherCT>(viewUid, ["maxTempSelection", "precipitationSelection"]);
 
   return (
     <TimelinePlot

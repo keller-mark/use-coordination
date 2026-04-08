@@ -16,27 +16,59 @@ type CoordinationScopesByMapping<T extends CoordinationSpace> = {
   };
 };
 
-type ViewCoordination<T extends CoordinationSpace> = {
+// Each meta-scope value maps coordination types to scope names within those types.
+type MetaCoordinationScopes<T extends CoordinationSpace> = {
+  [metaScopeName: string]: CoordinationScopesMapping<T>;
+};
+
+// Each meta-by-scope value maps coordination types to scopes-by mappings.
+type MetaCoordinationScopesBy<T extends CoordinationSpace> = {
+  [metaScopeName: string]: CoordinationScopesByMapping<T>;
+};
+
+type ViewCoordination<
+  T extends CoordinationSpace,
+  MetaScopes extends MetaCoordinationScopes<T>,
+  MetaScopesBy extends MetaCoordinationScopesBy<T>,
+> = {
   [viewId: string]: {
     coordinationScopes?: CoordinationScopesMapping<T>;
     coordinationScopesBy?: CoordinationScopesByMapping<T>;
+    metaCoordinationScopes?: keyof MetaScopes & string | (keyof MetaScopes & string)[];
+    metaCoordinationScopesBy?: keyof MetaScopesBy & string | (keyof MetaScopesBy & string)[];
   };
 };
 
 type Config<
   CoordinationSpaceT extends CoordinationSpace,
-  ViewCoordinationT extends ViewCoordination<CoordinationSpaceT>,
+  MetaCoordinationScopesT extends MetaCoordinationScopes<CoordinationSpaceT>,
+  MetaCoordinationScopesByT extends MetaCoordinationScopesBy<CoordinationSpaceT>,
+  ViewCoordinationT extends ViewCoordination<
+    CoordinationSpaceT,
+    MetaCoordinationScopesT,
+    MetaCoordinationScopesByT
+  >,
 > = {
   key?: string | number;
   coordinationSpace?: CoordinationSpaceT;
+  metaCoordination?: {
+    coordinationScopes?: MetaCoordinationScopesT;
+    coordinationScopesBy?: MetaCoordinationScopesByT;
+  };
   viewCoordination?: ViewCoordinationT;
 };
 
 export function defineSpec<
   CoordinationSpaceT extends CoordinationSpace,
-  ViewCoordinationT extends ViewCoordination<CoordinationSpaceT>,
+  MetaCoordinationScopesT extends MetaCoordinationScopes<CoordinationSpaceT>,
+  MetaCoordinationScopesByT extends MetaCoordinationScopesBy<CoordinationSpaceT>,
+  ViewCoordinationT extends ViewCoordination<
+    CoordinationSpaceT,
+    MetaCoordinationScopesT,
+    MetaCoordinationScopesByT
+  >,
 >(
-  spec: Config<CoordinationSpaceT, ViewCoordinationT>,
-): Config<CoordinationSpaceT, ViewCoordinationT> {
+  spec: Config<CoordinationSpaceT, MetaCoordinationScopesT, MetaCoordinationScopesByT, ViewCoordinationT>,
+): Config<CoordinationSpaceT, MetaCoordinationScopesT, MetaCoordinationScopesByT, ViewCoordinationT> {
   return spec;
 }

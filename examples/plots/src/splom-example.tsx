@@ -48,6 +48,7 @@ const pluginCoordinationTypes = {
   selectionRangeX: z.array(z.number()).length(2).nullable(),
   selectionRangeY: z.array(z.number()).length(2).nullable(),
 };
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,
@@ -285,7 +286,7 @@ function useScale(dimName: string, range: [number, number]) {
   });
 }
 
-function useSelectedPlotData(selectionDimX: string, selectionDimY: string, selectionRangeX: [number, number], selectionRangeY: [number, number]) {
+function useSelectedPlotData(selectionDimX: string | null, selectionDimY: string | null, selectionRangeX: number[] | null, selectionRangeY: number[] | null) {
   const { data, isLoading, isSuccess } = usePenguinsData();
   return useQuery({
     enabled: !isLoading && isSuccess,
@@ -330,7 +331,7 @@ function D3Scatterplot(props: any) {
     setSelectionDimY,
     setSelectionRangeX,
     setSelectionRangeY,
-  }] = useCoordination(viewUid, [
+  }] = useCoordination<CT>(viewUid, [
     "dimX",
     "dimY",
     "selectionDimX",
@@ -353,7 +354,7 @@ function D3Scatterplot(props: any) {
   const { data: xScale } = useScale(dimX, [marginLeft, width - marginLeft]);
   const { data: yScale } = useScale(dimY, [height-marginBottom, 0]);
   const { data: selectedPlotData } = useSelectedPlotData(selectionDimX, selectionDimY, selectionRangeX, selectionRangeY);
-  
+
   const brush = useMemo(() => {
     if(!xScale || !yScale) {
       return null;
@@ -369,7 +370,7 @@ function D3Scatterplot(props: any) {
         const [x2, y2] = e.selection[1];
         const rangeX = ([xScale.invert(x1), xScale.invert(x2)] as any).toSorted(compareNumbers);
         const rangeY = ([yScale.invert(y1), yScale.invert(y2)] as any).toSorted(compareNumbers);
-        
+
         setBrushSelection(rangeX, rangeY);
       }
     }
@@ -445,7 +446,7 @@ function D3Scatterplot(props: any) {
       .style('text-anchor', 'middle')
       .style('font-size', '12px')
       .text(dimX);
-    
+
     const yAxisTitle = g.append('text')
       .attr('x', -height/2)
       .attr('y', 38)
@@ -453,7 +454,7 @@ function D3Scatterplot(props: any) {
       .style('text-anchor', 'middle')
       .style('font-size', '12px')
       .text(dimY);
-    
+
     const circles = g.selectAll('circle')
       .data(plotData)
       .enter()
@@ -514,7 +515,7 @@ function PlotlyScatterplot(props: any) {
     setSelectionDimY,
     setSelectionRangeX,
     setSelectionRangeY,
-  }] = useCoordination(viewUid, [
+  }] = useCoordination<CT>(viewUid, [
     "dimX",
     "dimY",
     "selectionDimX",

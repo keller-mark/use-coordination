@@ -56,13 +56,11 @@ describe('provider/hooks.js', () => {
           },
         },
         {
-          // meta match should take precedence
-          metaCoordinationScopes: 'metaA',
           obsType: 'A',
         },
+        'metaA',
       )).toEqual({
         // meta match should take precedence
-        metaCoordinationScopes: 'metaA',
         obsType: 'B',
       });
     });
@@ -77,13 +75,11 @@ describe('provider/hooks.js', () => {
           },
         },
         {
-          // first meta match should take precedence
-          metaCoordinationScopes: ['metaA', 'metaB'],
           obsType: 'A',
         },
+        ['metaA', 'metaB'],
       )).toEqual({
         // first meta match should take precedence
-        metaCoordinationScopes: ['metaA', 'metaB'],
         featureType: 'D',
         obsType: 'C',
       });
@@ -103,10 +99,6 @@ describe('provider/hooks.js', () => {
           },
         },
         {
-          metaCoordinationScopesBy: 'metaA',
-          spatialSegmentationLayer: ['abc', 'def'],
-        },
-        {
           spatialSegmentationLayer: {
             spatialTargetC: {
               glomerulus: 'ghi',
@@ -114,6 +106,7 @@ describe('provider/hooks.js', () => {
             },
           },
         },
+        'metaA',
       )).toEqual({
         spatialSegmentationLayer: {
           spatialTargetC: {
@@ -144,10 +137,6 @@ describe('provider/hooks.js', () => {
           },
         },
         {
-          metaCoordinationScopesBy: ['metaA', 'metaB'],
-          spatialSegmentationLayer: ['abc', 'def'],
-        },
-        {
           spatialSegmentationLayer: {
             spatialTargetC: {
               glomerulus: 'ghi',
@@ -155,6 +144,7 @@ describe('provider/hooks.js', () => {
             },
           },
         },
+        ['metaA', 'metaB'],
       )).toEqual({
         spatialSegmentationLayer: {
           spatialLayerOpacity: {

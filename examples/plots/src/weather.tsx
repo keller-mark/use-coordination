@@ -11,10 +11,11 @@ import { WeatherBarsView } from './weather-bars.js';
 import { TempPrecipView } from './weather-temp-precip.js';
 import { TimelineView } from './weather-timeline.js';
 
-const pluginCoordinationTypes = {
+export const pluginCoordinationTypes = {
   maxTempSelection: z.array(z.number()).length(2).nullable(),
   precipitationSelection: z.array(z.number()).length(2).nullable(),
 };
+export type WeatherCT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,

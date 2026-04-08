@@ -25,7 +25,7 @@
     "test": "pnpm exec vitest --run"
   },
   "devDependencies": {
-    "vite": "^4.3.0",
-    "vitest": "^0.23.4"
+    "vite": "^5.4.0",
+    "vitest": "^1.6.1"
   }
 }

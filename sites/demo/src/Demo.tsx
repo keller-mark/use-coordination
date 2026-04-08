@@ -9,7 +9,7 @@ import {
   useCoordination,
 } from '@use-coordination/all';
 
-const initializationCounters = {};
+const initializationCounters: Record<string, number> = {};
 
 const NavBarGrid = styled(Grid)`
   border-bottom: 1px solid gray;
@@ -98,7 +98,7 @@ const SliderInputContainer = ({
     sliderValue,
   }, {
     setSliderValue,
-  }] = useCoordination(viewUid, ['sliderValue']);
+  }] = useCoordination<CT>(viewUid, ['sliderValue']);
 
   const renderCounter  = useRef(0);
   renderCounter.current = renderCounter.current + 1;
@@ -130,6 +130,7 @@ const SliderInputContainer = ({
 const pluginCoordinationTypes = {
   sliderValue: z.number(),
 };
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = {
   key: 1,

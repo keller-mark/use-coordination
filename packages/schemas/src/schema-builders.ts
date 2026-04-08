@@ -1,16 +1,11 @@
 import { z } from 'zod';
-import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import {
+  oneOrMoreCoordinationScopeNames,
   componentCoordinationScopes,
   componentCoordinationScopesBy,
 } from './shared.js';
 
-const baseCoordinationTypes = {
-  [META_COORDINATION_SCOPES]: z.record(z.any()).nullable(),
-  [META_COORDINATION_SCOPES_BY]: z.record(z.any()).nullable(),
-};
-
-function buildSpecSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
+function buildSpecSchemaAux<T extends z.ZodType>(coordinationSpace: T) {
   return z.object({
     key: z.union([z.string(), z.number()]).optional(),
     coordinationSpace: coordinationSpace
@@ -18,12 +13,19 @@ function buildSpecSchemaAux<T extends z.ZodTypeAny>(coordinationSpace: T) {
         'The coordination space stores the values for each scope of each coordination object.',
       )
       .optional(),
+    metaCoordination: z.object({
+      coordinationScopes: z.record(z.string(), componentCoordinationScopes).optional(),
+      coordinationScopesBy: z.record(z.string(), componentCoordinationScopesBy).optional(),
+    }).optional(),
     viewCoordination: z.record(
+      z.string(),
       z.object({
         coordinationScopes: componentCoordinationScopes
           .optional(),
         coordinationScopesBy: componentCoordinationScopesBy
           .optional(),
+        metaCoordinationScopes: oneOrMoreCoordinationScopeNames.optional(),
+        metaCoordinationScopesBy: oneOrMoreCoordinationScopeNames.optional()
       }),
     )
       .describe(
@@ -58,29 +60,26 @@ export const genericSpecSchema = buildSpecSchemaAux(
  * @returns The Zod schema.
  */
 export function buildSpecSchema<
-  T extends Record<string, z.ZodTypeAny>,
+  T extends Record<string, z.ZodType>,
 >(
   coordinationTypes: T,
 ) {
   return buildSpecSchemaAux(
-    z.object(
+    z.strictObject(
       // Wrap each value schema in z.record()
       Object.fromEntries(
-        [
-          ...Object.entries(baseCoordinationTypes),
-          // Merge with coordination type schemas.
-          ...Object.entries(coordinationTypes),
-        ].map(([ctName, ctValueSchema]) => ([
+        Object.entries(coordinationTypes).map(([ctName, ctValueSchema]) => ([
             ctName,
             z.record(
               // For now, assume the key type is string (though it would be
               // slightly nicer if we could use the coordinationScopeName schema here).
               // Once https://github.com/colinhacks/zod/issues/2746 gets resolved
               // then we can try that approach again, but it should not be a big deal.
+              z.string(),
               ctValueSchema.optional(),
             ).optional(),
           ])),
       ),
-    ).strict(),
+    ),
   );
 }

@@ -7,6 +7,7 @@ import {
 } from 'd3-array';
 import { select } from 'd3-selection';
 import { useCoordination } from '@use-coordination/all';
+import type { CT } from './plots-example.js';
 
 const scaleBand = vega_scale('band');
 
@@ -144,7 +145,7 @@ export function D3BarPlotView(props: any) {
   const [
     { barSelection },
     { setBarSelection },
-  ] = useCoordination(viewUid, ["barSelection"]);
+  ] = useCoordination<CT>(viewUid, ["barSelection"]);
 
   return (
     <>

@@ -3,6 +3,7 @@ import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
   useCoordination,
+  defineSpec,
 } from '@use-coordination/all';
 import { z } from 'zod';
 import { SelectScope } from './example-utils.js';
@@ -26,7 +27,7 @@ const SliderInputContainer = ({
     sliderValue,
   }, {
     setSliderValue,
-  }] = useCoordination(viewUid, ['sliderValue']);
+  }] = useCoordination<CT>(viewUid, ['sliderValue']);
   return (
     <SliderInput
       sliderValue={sliderValue}
@@ -39,8 +40,9 @@ const SliderInputContainer = ({
 const pluginCoordinationTypes = {
   sliderValue: z.number(),
 };
+type CT = typeof pluginCoordinationTypes;
 
-const initialSpec = {
+const initialSpec = defineSpec({
   key: 1,
   coordinationSpace: {
     "sliderValue": {
@@ -66,7 +68,7 @@ const initialSpec = {
       },
     },
   },
-};
+});
 
 export function BaseExample() {
   const [spec, setSpec] = React.useState<any>(initialSpec);

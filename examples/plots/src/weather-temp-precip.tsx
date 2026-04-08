@@ -9,6 +9,7 @@ import {
 import { brush as d3_brush } from 'd3-brush';
 import { select } from 'd3-selection';
 import { useCoordination } from '@use-coordination/all';
+import type { WeatherCT } from './weather.js';
 
 const compareNumbers = (a: number, b: number) => a - b;
 
@@ -253,7 +254,7 @@ export function TempPrecipView(props: any) {
   const [
     { maxTempSelection, precipitationSelection },
     { setMaxTempSelection, setPrecipitationSelection },
-  ] = useCoordination(viewUid, ["maxTempSelection", "precipitationSelection"]);
+  ] = useCoordination<WeatherCT>(viewUid, ["maxTempSelection", "precipitationSelection"]);
 
   return (
     <TempPrecipPlot

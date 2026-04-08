@@ -36,7 +36,7 @@ const SliderInputContainer = ({
     channelValue,
   }, {
     setChannelValue,
-  }] = useCoordination(viewUid, ['channelValue']);
+  }] = useCoordination<CT>(viewUid, ['channelValue']);
   return (
     <SliderInput
       sliderValue={channelValue}
@@ -93,8 +93,8 @@ const ColorfulSliderInput = ({
 const ColorfulSliderInputContainer = ({
   viewUid,
 }: any) => {
-  const channelScopes = useCoordinationScopes(viewUid, "channel");
-  const channelCoordination = useCoordinationL1(viewUid, "channel", ["channelValue"]);
+  const channelScopes = useCoordinationScopes<CT>(viewUid, "channel");
+  const channelCoordination = useCoordinationL1<CT>(viewUid, "channel", ["channelValue"]);
   return (
     <ColorfulSliderInput
       channelScopes={channelScopes}
@@ -107,6 +107,7 @@ const pluginCoordinationTypes = {
   channel: z.literal('__dummy__'),
   channelValue: z.number(),
 };
+type CT = typeof pluginCoordinationTypes;
 
 const initialSpec = {
   key: 1,

@@ -3,8 +3,6 @@ import {
   ZodCoordinationProvider,
   ZodErrorBoundary,
   defineSpec,
-  META_COORDINATION_SCOPES,
-  META_COORDINATION_SCOPES_BY,
   getMetaScope,
   getMetaScopeBy,
   createPrefixedGetNextScopeNumeric,
@@ -20,10 +18,11 @@ import { MultilevelColors } from './multilevel-colors.js';
 const getNextSelectionScope = createPrefixedGetNextScopeNumeric("S");
 const getNextColorScope = createPrefixedGetNextScopeNumeric("C");
 
-const pluginCoordinationTypes = {
+export const pluginCoordinationTypes = {
   barSelection: z.string().nullable(),
   barColor: z.string().nullable(),
 };
+export type MultiLevelCT = typeof pluginCoordinationTypes;
 
 const initialSpec = defineSpec({
   key: 1,
@@ -34,12 +33,14 @@ const initialSpec = defineSpec({
     barColor: {
       C0: "#ff0000",
     },
-    metaCoordinationScopes: {
+  },
+  metaCoordination: {
+    coordinationScopes: {
       A: {
         barSelection: ["S0"],
       }
     },
-    metaCoordinationScopesBy: {
+    coordinationScopesBy: {
       A: {
         barSelection: {
           barColor: {
@@ -51,44 +52,34 @@ const initialSpec = defineSpec({
   },
   viewCoordination: {
     vegaLite: {
-      coordinationScopes: {
-        metaCoordinationScopes: "A",
-        metaCoordinationScopesBy: "A"
-      },
+      metaCoordinationScopes: "A",
+      metaCoordinationScopesBy: "A",
     },
     d3: {
-      coordinationScopes: {
-        metaCoordinationScopes: "A",
-        metaCoordinationScopesBy: "A"
-      },
+      metaCoordinationScopes: "A",
+      metaCoordinationScopesBy: "A",
     },
     barColorPicker: {
-      coordinationScopes: {
-        metaCoordinationScopes: "A",
-        metaCoordinationScopesBy: "A"
-      },
+      metaCoordinationScopes: "A",
+      metaCoordinationScopesBy: "A",
     }
   },
 });
 
 // Define custom logic for updating the coordination space in user-land.
-function selectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, letter: string, coordinationSpace: any) {
+function selectBarInMetaCoordinationScopesHelper(viewMetaScopes: any, viewMetaScopesBy: any, letter: string, coordinationSpace: any, metaCoordinationScopes: any, metaCoordinationScopesBy: any) {
   const nextSelectionScope = getNextSelectionScope(Object.keys(coordinationSpace.barSelection));
   const nextColorScope = getNextColorScope(Object.keys(coordinationSpace.barColor));
 
   const nextSelectionValue = letter;
   const nextColor = "#ff00ff";
 
-  // Get the current meta-coordination scopes for the bar selection type.
-  const metaCoordinationScopes = coordinationSpace[META_COORDINATION_SCOPES];
-  const metaCoordinationScopesBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
-
   let newMetaCoordinationScopes = metaCoordinationScopes;
   let newMetaCoordinationScopesBy = metaCoordinationScopesBy;
   let newCoordinationSpace = coordinationSpace;
 
-  const selectionMetaScope = getMetaScope(coordinationSpace, coordinationScopesRaw, "barSelection");
-  const colorByMetaScope = getMetaScopeBy(coordinationSpace, coordinationScopesRaw, "barSelection", "barColor", null);
+  const selectionMetaScope = getMetaScope(metaCoordinationScopes, viewMetaScopes, "barSelection");
+  const colorByMetaScope = getMetaScopeBy(metaCoordinationScopesBy, viewMetaScopesBy, "barSelection", "barColor", null);
 
   if(selectionMetaScope && colorByMetaScope) {
     const prevSelectionScopes = metaCoordinationScopes
@@ -119,8 +110,6 @@ function selectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, let
 
     newCoordinationSpace = {
       ...coordinationSpace,
-      [META_COORDINATION_SCOPES]: newMetaCoordinationScopes,
-      [META_COORDINATION_SCOPES_BY]: newMetaCoordinationScopesBy,
       barSelection: {
         ...coordinationSpace.barSelection,
         [nextSelectionScope]: nextSelectionValue,
@@ -131,24 +120,20 @@ function selectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, let
       },
     };
   }
-  
-  return newCoordinationSpace;
+
+  return { newCoordinationSpace, newMetaCoordinationScopes, newMetaCoordinationScopesBy };
 }
 
-function unselectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, letter: string, coordinationSpace: any) {
+function unselectBarInMetaCoordinationScopesHelper(viewMetaScopes: any, viewMetaScopesBy: any, letter: string, coordinationSpace: any, metaCoordinationScopes: any, metaCoordinationScopesBy: any) {
   const selectionScopeToRemove = Object.entries(coordinationSpace.barSelection)
     .find(([scope, value]) => value === letter)?.[0];
-
-  // Get the current meta-coordination scopes for the bar selection type.
-  const metaCoordinationScopes = coordinationSpace[META_COORDINATION_SCOPES];
-  const metaCoordinationScopesBy = coordinationSpace[META_COORDINATION_SCOPES_BY];
 
   let newMetaCoordinationScopes = metaCoordinationScopes;
   let newMetaCoordinationScopesBy = metaCoordinationScopesBy;
   let newCoordinationSpace = coordinationSpace;
 
-  const selectionMetaScope = getMetaScope(coordinationSpace, coordinationScopesRaw, "barSelection");
-  const colorByMetaScope = getMetaScopeBy(coordinationSpace, coordinationScopesRaw, "barSelection", "barColor", null);
+  const selectionMetaScope = getMetaScope(metaCoordinationScopes, viewMetaScopes, "barSelection");
+  const colorByMetaScope = getMetaScopeBy(metaCoordinationScopesBy, viewMetaScopesBy, "barSelection", "barColor", null);
 
   if(selectionScopeToRemove && selectionMetaScope && colorByMetaScope) {
     const colorScopeToRemove = metaCoordinationScopesBy?.[colorByMetaScope]?.barSelection?.barColor?.[selectionScopeToRemove];
@@ -180,8 +165,6 @@ function unselectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, l
 
     newCoordinationSpace = {
       ...coordinationSpace,
-      [META_COORDINATION_SCOPES]: newMetaCoordinationScopes,
-      [META_COORDINATION_SCOPES_BY]: newMetaCoordinationScopesBy,
       barSelection: Object.fromEntries(
         Object.entries(coordinationSpace.barSelection)
           .filter(([scope, value]) => scope !== selectionScopeToRemove),
@@ -192,40 +175,58 @@ function unselectBarInMetaCoordinationScopesHelper(coordinationScopesRaw: any, l
       ),
     };
   }
-  
-  return newCoordinationSpace;
+
+  return { newCoordinationSpace, newMetaCoordinationScopes, newMetaCoordinationScopesBy };
 }
 
 function onCreateStore(set: Function) {
   return {
     selectBar: (viewUid: string, letter: string) => set((state: any) => {
-      const { coordinationSpace, viewCoordination } = state.spec;
-      const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
-      const newSpec = {
-        ...state.spec,
-        coordinationSpace: selectBarInMetaCoordinationScopesHelper(
-          coordinationScopesRaw,
-          letter,
-          coordinationSpace,
-        ),
-      };
+      const { coordinationSpace, viewCoordination, metaCoordination = {} } = state.spec;
+      const { coordinationScopes: metaCoordinationScopes, coordinationScopesBy: metaCoordinationScopesBy } = metaCoordination;
+      const viewMetaScopes = viewCoordination?.[viewUid]?.metaCoordinationScopes;
+      const viewMetaScopesBy = viewCoordination?.[viewUid]?.metaCoordinationScopesBy;
+      const { newCoordinationSpace, newMetaCoordinationScopes, newMetaCoordinationScopesBy } = selectBarInMetaCoordinationScopesHelper(
+        viewMetaScopes,
+        viewMetaScopesBy,
+        letter,
+        coordinationSpace,
+        metaCoordinationScopes,
+        metaCoordinationScopesBy,
+      );
       return {
-        spec: newSpec,
+        spec: {
+          ...state.spec,
+          coordinationSpace: newCoordinationSpace,
+          metaCoordination: {
+            coordinationScopes: newMetaCoordinationScopes,
+            coordinationScopesBy: newMetaCoordinationScopesBy,
+          },
+        },
       };
     }),
     unselectBar: (viewUid: string, letter: string) => set((state: any) => {
-      const { coordinationSpace, viewCoordination } = state.spec;
-      const coordinationScopesRaw = viewCoordination?.[viewUid]?.coordinationScopes;
-      const newSpec = {
-        ...state.spec,
-        coordinationSpace: unselectBarInMetaCoordinationScopesHelper(
-          coordinationScopesRaw,
-          letter,
-          coordinationSpace,
-        ),
-      };
+      const { coordinationSpace, viewCoordination, metaCoordination = {} } = state.spec;
+      const { coordinationScopes: metaCoordinationScopes, coordinationScopesBy: metaCoordinationScopesBy } = metaCoordination;
+      const viewMetaScopes = viewCoordination?.[viewUid]?.metaCoordinationScopes;
+      const viewMetaScopesBy = viewCoordination?.[viewUid]?.metaCoordinationScopesBy;
+      const { newCoordinationSpace, newMetaCoordinationScopes, newMetaCoordinationScopesBy } = unselectBarInMetaCoordinationScopesHelper(
+        viewMetaScopes,
+        viewMetaScopesBy,
+        letter,
+        coordinationSpace,
+        metaCoordinationScopes,
+        metaCoordinationScopesBy,
+      );
       return {
-        spec: newSpec,
+        spec: {
+          ...state.spec,
+          coordinationSpace: newCoordinationSpace,
+          metaCoordination: {
+            coordinationScopes: newMetaCoordinationScopes,
+            coordinationScopesBy: newMetaCoordinationScopesBy,
+          },
+        },
       };
     }),
   };

@@ -36,7 +36,7 @@
     "@use-coordination/trrack-helpers": "workspace:*",
     "@trrack/vis-react": "^1.5.0",
     "lodash-es": "^4.17.21",
-    "zod": "^3.21.4",
+    "zod": "^4.3.0",
     "d3-fetch": "^3.0.1",
     "d3-array": "^2.4.0",
     "d3-brush": "^3.0.0",
