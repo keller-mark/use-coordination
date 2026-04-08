@@ -1,6 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, expectTypeOf } from 'vitest';
+import { z } from 'zod';
 import {
   CmvConfig,
+  CmvConfigView,
+  CmvConfigMetaCoordinationScope,
+  CmvConfigCoordinationScope,
   CL,
 } from './CmvConfig.js';
 
@@ -701,7 +705,7 @@ describe('src/api/CmvConfig.js', () => {
         key: 'My config',
       });
     });
-    
+
     it('can load a view config from JSON', () => {
       const config = new CmvConfig('My config');
       const v1 = config.addView('spatial');
@@ -761,6 +765,75 @@ describe('src/api/CmvConfig.js', () => {
           },
         },
         key: 'My config',
+      });
+    });
+    it('generic CT param constrains coordination type names', () => {
+      const pluginCoordinationTypes = {
+        embeddingZoom: z.number().nullable(),
+        embeddingType: z.string(),
+        dataset: z.string(),
+      };
+      type CT = typeof pluginCoordinationTypes;
+
+      // Valid coordination types are accepted at runtime and produce correct JSON.
+      const config = new CmvConfig<CT>('My config');
+      const [zoomScope] = config.addCoordination(['embeddingZoom']);
+      zoomScope.setValue(10);
+      const pca = config.addView('pca');
+      pca.useCoordination([zoomScope]);
+      config.linkViews([pca], ['embeddingType'], ['PCA']);
+
+      expect(config.toJSON()).toEqual({
+        key: 'My config',
+        coordinationSpace: {
+          embeddingZoom: { A: 10 },
+          embeddingType: { A: 'PCA' },
+        },
+        viewCoordination: {
+          pca: {
+            coordinationScopes: {
+              embeddingZoom: 'A',
+              embeddingType: 'A',
+            },
+          },
+        },
+      });
+
+      // Return type of addCoordination is CmvConfigCoordinationScope[].
+      expectTypeOf(config.addCoordination(['embeddingZoom'])).toEqualTypeOf<CmvConfigCoordinationScope[]>();
+
+      // Return type of addView is CmvConfigView<CT>.
+      expectTypeOf(config.addView('x')).toEqualTypeOf<CmvConfigView<CT>>();
+      // Return type of addMetaCoordination is CmvConfigMetaCoordinationScope<CT>.
+      expectTypeOf(config.addMetaCoordination()).toEqualTypeOf<CmvConfigMetaCoordinationScope<CT>>();
+
+      // ProcessedLevelOf is CT-branded: scopes from one CT cannot be passed to views/meta-scopes of another CT.
+      const configB = new CmvConfig<{ otherType: z.ZodString }>('config B');
+      const viewB = configB.addView('v');
+      const metaB = configB.addMetaCoordination();
+      const scopesA = config.addCoordinationByObject({ embeddingZoom: 10 });
+      // @ts-expect-error scopes from CT cannot be used with a CmvConfigView<different CT>
+      viewB.useCoordinationByObject(scopesA);
+      // @ts-expect-error scopes from CT cannot be used with a CmvConfigMetaCoordinationScope<different CT>
+      metaB.useCoordinationByObject(scopesA);
+
+      // Invalid coordination types are rejected by TypeScript.
+      const config2 = new CmvConfig<CT>('type checks');
+      const view2 = config2.addView('v');
+      // @ts-expect-error 'notAType' is not a key of CT
+      config2.addCoordination(['notAType']);
+      // @ts-expect-error 'notAType' is not a key of CT
+      config2.linkViews([view2], ['notAType']);
+      // @ts-expect-error 'notAType' is not a key of CT
+      config2.setCoordinationValue('notAType', 'A', 0);
+      // @ts-expect-error 'notAType' is not a key of CT
+      config2.addCoordinationByObject({ notAType: 0 });
+      // @ts-expect-error 'notAType' is not a key of CT
+      config2.linkViewsByObject([view2], { notAType: CL([{}]) });
+
+      config2.linkViewsByObject([view2], {
+        // @ts-expect-error 10 is not assignable to string (z.infer<z.ZodString>)
+        embeddingType: 10,
       });
     });
   });

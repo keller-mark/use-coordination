@@ -29,6 +29,7 @@
     "@use-coordination/utils": "workspace:*"
   },
   "devDependencies": {
-    "vitest": "^1.6.1"
+    "vitest": "^1.6.1",
+    "zod": "^4.3.0"
   }
 }
