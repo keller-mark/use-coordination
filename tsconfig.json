@@ -21,9 +21,9 @@
   },
   "references": [
     { "path": "packages/types" },
-    { "path": "packages/config" },
     { "path": "packages/constants-internal" },
     { "path": "packages/utils" },
+    { "path": "packages/config" },
     { "path": "packages/schemas" },
     { "path": "packages/trrack-helpers" },
     { "path": "packages/graphviz-renderer" },
