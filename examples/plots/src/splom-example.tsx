@@ -338,7 +338,7 @@ function D3Scatterplot(props: any) {
     "selectionDimY",
     "selectionRangeX",
     "selectionRangeY",
-  ] as const);
+  ]);
 
   const setBrushSelection = useCallback((rangeX: null|[number, number], rangeY: null|[number, number]) => {
     setSelectionRangeX(rangeX);
@@ -354,7 +354,7 @@ function D3Scatterplot(props: any) {
   const { data: xScale } = useScale(dimX, [marginLeft, width - marginLeft]);
   const { data: yScale } = useScale(dimY, [height-marginBottom, 0]);
   const { data: selectedPlotData } = useSelectedPlotData(selectionDimX, selectionDimY, selectionRangeX, selectionRangeY);
-  
+
   const brush = useMemo(() => {
     if(!xScale || !yScale) {
       return null;
@@ -370,7 +370,7 @@ function D3Scatterplot(props: any) {
         const [x2, y2] = e.selection[1];
         const rangeX = ([xScale.invert(x1), xScale.invert(x2)] as any).toSorted(compareNumbers);
         const rangeY = ([yScale.invert(y1), yScale.invert(y2)] as any).toSorted(compareNumbers);
-        
+
         setBrushSelection(rangeX, rangeY);
       }
     }
@@ -446,7 +446,7 @@ function D3Scatterplot(props: any) {
       .style('text-anchor', 'middle')
       .style('font-size', '12px')
       .text(dimX);
-    
+
     const yAxisTitle = g.append('text')
       .attr('x', -height/2)
       .attr('y', 38)
@@ -454,7 +454,7 @@ function D3Scatterplot(props: any) {
       .style('text-anchor', 'middle')
       .style('font-size', '12px')
       .text(dimY);
-    
+
     const circles = g.selectAll('circle')
       .data(plotData)
       .enter()
