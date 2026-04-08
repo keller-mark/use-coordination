@@ -312,11 +312,11 @@ export class CmvConfigView<CT extends Record<string, z.ZodTypeAny> = Record<stri
 }
 
 // would import as CL for convenience
-class CoordinationLevel {
-  value: CoordinationInput | CoordinationInput[];
+class CoordinationLevel<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>> {
+  value: CoordinationInputOf<CT> | CoordinationInputOf<CT>[];
   cachedValue: ProcessedLevelValue | null;
 
-  constructor(value: CoordinationInput | CoordinationInput[]) {
+  constructor(value: CoordinationInputOf<CT> | CoordinationInputOf<CT>[]) {
     this.value = value;
     this.cachedValue = null;
   }
@@ -334,8 +334,8 @@ class CoordinationLevel {
   }
 }
 
-export function CL(value: CoordinationInput | CoordinationInput[]): CoordinationLevel {
-  return new CoordinationLevel(value);
+export function CL<CT extends Record<string, z.ZodTypeAny> = Record<string, z.ZodTypeAny>>(value: CoordinationInputOf<CT> | CoordinationInputOf<CT>[]): CoordinationLevel<CT> {
+  return new CoordinationLevel<CT>(value);
 }
 
 /**

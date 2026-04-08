@@ -772,6 +772,7 @@ describe('src/api/CmvConfig.js', () => {
         embeddingZoom: z.number().nullable(),
         embeddingType: z.string(),
         dataset: z.string(),
+        imageLayer: z.string(),
       };
       type CT = typeof pluginCoordinationTypes;
 
@@ -844,6 +845,16 @@ describe('src/api/CmvConfig.js', () => {
       config2.linkViews([view2], ['embeddingType'], ['test']);
       // @ts-expect-error
       config2.linkViews([view2], ['embeddingType', 'embeddingZoom'], ['test', 'test']);
+
+      config2.linkViewsByObject([view2], {
+        // @ts-expect-error
+        embeddingZoom: 'test',
+        imageLayer: CL<CT>([{
+          // @ts-expect-error
+          notAType: 0,
+          embeddingType: 'test',
+        }])
+      });
     });
   });
 });
