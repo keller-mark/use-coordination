@@ -1,7 +1,12 @@
 {
   "name": "@use-coordination/utils",
   "version": "1.0.1",
-  "description": "",
+  "author": "Mark Keller",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keller-mark/use-coordination.git"
+  },
+  "license": "MIT",
   "type": "module",
   "main": "dist-tsc/index.js",
   "publishConfig": {
@@ -23,7 +28,5 @@
     "bundle": "pnpm exec vite build -c ../../scripts/vite.config.js",
     "test": "pnpm exec vitest --run -r ../../ --dir ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT"
+  "keywords": []
 }

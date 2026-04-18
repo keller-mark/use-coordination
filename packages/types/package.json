@@ -2,6 +2,10 @@
   "name": "@use-coordination/types",
   "version": "1.0.1",
   "author": "Mark Keller",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keller-mark/use-coordination.git"
+  },
   "license": "MIT",
   "type": "module",
   "main": "dist-tsc/index.js",
