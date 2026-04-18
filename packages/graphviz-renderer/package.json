@@ -1,6 +1,6 @@
 {
   "name": "@use-coordination/graphviz-renderer",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "",
   "type": "module",
   "main": "dist-tsc/index.js",
