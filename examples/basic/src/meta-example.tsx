@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { SelectScope, MetaSelectScope } from './example-utils.js';
 
 const SliderInput = ({
-  sliderValue, 
+  sliderValue,
   setSliderValue,
 }: any) => {
   function handleChange(e: any) {
@@ -48,7 +48,9 @@ const initialMetaSpec = {
       "B": 0.75,
       "C": 0.25
     },
-    metaCoordinationScopes: {
+  },
+  metaCoordination: {
+    coordinationScopes: {
       A: {
         sliderValue: "A",
       },
@@ -62,19 +64,16 @@ const initialMetaSpec = {
   },
   viewCoordination: {
     slider1: {
-      coordinationScopes: {
-        metaCoordinationScopes: "A",
-      },
+      coordinationScopes: {},
+      metaCoordinationScopes: "A",
     },
     slider2: {
-      coordinationScopes: {
-        metaCoordinationScopes: "B",
-      },
+      coordinationScopes: {},
+      metaCoordinationScopes: "B",
     },
     slider3: {
-      coordinationScopes: {
-        metaCoordinationScopes: "C",
-      },
+      coordinationScopes: {},
+      metaCoordinationScopes: "C",
     },
   },
 };
@@ -115,4 +114,3 @@ export function MetaCoordinationExample() {
     </>
   );
 }
-
