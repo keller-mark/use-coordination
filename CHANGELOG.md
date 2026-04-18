@@ -1,4 +1,15 @@
 
+## 2.0.0
+
+### Major Changes
+
+- Move meta-coordination into separate properties. Improve type-checking for hook functions. (`@use-coordination/json-schema`, `@use-coordination/schemas`, `@use-coordination/config`, `@use-coordination/core`) ([#104](https://github.com/keller-mark/use-coordination/pull/104))
+
+### Patch Changes
+
+- Add a shared `@use-coordination/types` sub-package. Improve type-checking in CmvConfig. (`@use-coordination/config`, `@use-coordination/types`, `@use-coordination/core`) ([#107](https://github.com/keller-mark/use-coordination/pull/107))
+
+
 ## 1.0.1
 
 ### Patch Changes
