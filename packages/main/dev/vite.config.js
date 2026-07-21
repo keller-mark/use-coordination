@@ -21,7 +21,12 @@ export default defineConfig({
       formats: ['es', 'umd'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: (id) => (
+        id === 'react'
+        || id === 'react-dom'
+        || id.startsWith('react/')
+        || id.startsWith('react-dom/')
+      ),
       output: {
         globals: {
           react: 'React',
