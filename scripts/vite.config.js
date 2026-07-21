@@ -33,7 +33,14 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', ...moreExternals],
+      // Externalize react (including subpath imports like react/jsx-runtime)
+      external: (id) => (
+        id === 'react'
+        || id === 'react-dom'
+        || id.startsWith('react/')
+        || id.startsWith('react-dom/')
+        || moreExternals.includes(id)
+      ),
       output: {
         globals: {
           react: 'React',
