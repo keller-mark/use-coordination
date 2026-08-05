@@ -4,8 +4,6 @@
 
 ## Usage
 
-Install globally to get the `usecoord` executable on your `PATH`:
-
 ```sh
 npm install @use-coordination/cli
 usecoord --help
