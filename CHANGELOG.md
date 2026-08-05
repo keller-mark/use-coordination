@@ -1,4 +1,15 @@
 
+## 2.0.1
+
+### Patch Changes
+
+- Add a CLI. (`@use-coordination/cli`) ([#111](https://github.com/keller-mark/use-coordination/pull/111))
+
+- Fix externalization of react and react-dom. (`use-coordination`) ([#108](https://github.com/keller-mark/use-coordination/pull/108))
+
+- Upgrade node version for gh actions. (`docs`) ([#109](https://github.com/keller-mark/use-coordination/pull/109))
+
+
 ## 2.0.0
 
 ### Major Changes
