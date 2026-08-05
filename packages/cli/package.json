@@ -1,0 +1,50 @@
+{
+  "name": "@use-coordination/cli",
+  "version": "2.0.0",
+  "description": "Command-line interface for building and editing use-coordination specs.",
+  "author": "Mark Keller",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keller-mark/use-coordination.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "dist-tsc/index.js",
+  "bin": {
+    "usecoord": "dist-tsc/cli.js"
+  },
+  "publishConfig": {
+    "main": "dist-tsc/index.js",
+    "module": "dist-tsc/index.js",
+    "exports": {
+      ".": {
+        "types": "./dist-tsc/index.d.ts",
+        "import": "./dist-tsc/index.js"
+      }
+    }
+  },
+  "files": [
+    "src",
+    "dist-tsc",
+    "skill"
+  ],
+  "scripts": {
+    "test": "pnpm exec vitest --run",
+    "exec-cli": "tsc --build && node ./dist-tsc/cli.js"
+  },
+  "dependencies": {
+    "@use-coordination/config": "workspace:*",
+    "@use-coordination/schemas": "workspace:*",
+    "@use-coordination/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "vitest": "^1.6.1",
+    "zod": "^4.3.0"
+  },
+  "keywords": [
+    "cli",
+    "coordinated-multiple-views",
+    "use-coordination"
+  ]
+}

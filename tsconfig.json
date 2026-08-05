@@ -25,6 +25,7 @@
     { "path": "packages/utils" },
     { "path": "packages/config" },
     { "path": "packages/schemas" },
+    { "path": "packages/cli" },
     { "path": "packages/trrack-helpers" },
     { "path": "packages/graphviz-renderer" },
     { "path": "packages/flow-editor" },
