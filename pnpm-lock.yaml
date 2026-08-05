@@ -48,7 +48,7 @@ importers:
         version: 5.59.7(eslint@8.18.0)(typescript@5.8.3)
       '@vitejs/plugin-react':
         specifier: ^4.3.0
-        version: 4.7.0(vite@5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6))
+        version: 4.7.0(vite@5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6))
       '@vitest/ui':
         specifier: ^1.6.1
         version: 1.6.1(vitest@1.6.1)
@@ -129,10 +129,10 @@ importers:
         version: 8.4.2
       vite:
         specifier: ^5.4.0
-        version: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+        version: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
       vitest:
         specifier: ^1.6.1
-        version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
 
   examples/basic:
     dependencies:
@@ -350,6 +350,28 @@ importers:
         specifier: ^18.0.0
         version: 18.2.0
 
+  packages/cli:
+    dependencies:
+      '@use-coordination/config':
+        specifier: workspace:*
+        version: link:../config
+      '@use-coordination/schemas':
+        specifier: workspace:*
+        version: link:../schemas
+      '@use-coordination/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@types/node':
+        specifier: ^18.0.0
+        version: 18.19.130
+      vitest:
+        specifier: ^1.6.1
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+      zod:
+        specifier: ^4.3.0
+        version: 4.3.6
+
   packages/config:
     dependencies:
       '@use-coordination/constants-internal':
@@ -364,7 +386,7 @@ importers:
     devDependencies:
       vitest:
         specifier: ^1.6.1
-        version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
       zod:
         specifier: ^4.3.0
         version: 4.3.6
@@ -373,10 +395,10 @@ importers:
     devDependencies:
       vite:
         specifier: ^5.4.0
-        version: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+        version: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
       vitest:
         specifier: ^1.6.1
-        version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
 
   packages/core:
     dependencies:
@@ -422,10 +444,10 @@ importers:
         version: 18.2.0
       vite:
         specifier: ^5.4.0
-        version: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+        version: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
       vitest:
         specifier: ^1.6.1
-        version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
 
   packages/flow-editor:
     dependencies:
@@ -468,10 +490,10 @@ importers:
         version: 18.2.0
       vite:
         specifier: ^5.4.0
-        version: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+        version: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
       vitest:
         specifier: ^1.6.1
-        version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
 
   packages/graphviz-renderer:
     dependencies:
@@ -527,7 +549,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.0.0(vite@4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6))
+        version: 4.0.0(vite@4.3.8(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6))
       cross-env:
         specifier: ^7.0.0
         version: 7.0.3
@@ -536,7 +558,7 @@ importers:
         version: 3.0.2
       vite:
         specifier: ^4.3.0
-        version: 4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+        version: 4.3.8(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
 
   packages/main/prod:
     dependencies:
@@ -552,7 +574,7 @@ importers:
     devDependencies:
       '@vitejs/plugin-react':
         specifier: ^4.0.0
-        version: 4.0.0(vite@4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6))
+        version: 4.0.0(vite@4.3.8(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6))
       cross-env:
         specifier: ^7.0.0
         version: 7.0.3
@@ -564,7 +586,7 @@ importers:
         version: 5.9.0(rollup@3.23.0)
       vite:
         specifier: ^4.3.0
-        version: 4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+        version: 4.3.8(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
 
   packages/schemas:
     dependencies:
@@ -592,10 +614,10 @@ importers:
         version: 0.6.3
       vite:
         specifier: ^5.4.0
-        version: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+        version: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
       vitest:
         specifier: ^1.6.1
-        version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
       zod-to-json-schema:
         specifier: ^3.25.0
         version: 3.25.1(zod@4.3.6)
@@ -623,16 +645,16 @@ importers:
         version: 18.2.0
       vite:
         specifier: ^5.4.0
-        version: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+        version: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
       vitest:
         specifier: ^1.6.1
-        version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
 
   packages/types:
     devDependencies:
       vitest:
         specifier: ^1.6.1
-        version: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+        version: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
 
   packages/utils: {}
 
@@ -1107,12 +1129,14 @@ packages:
   '@babel/plugin-proposal-async-generator-functions@7.17.12':
     resolution: {integrity: sha512-RWVvqD1ooLKP6IqWTA5GyFVX2isGEgC5iFxKzfYOIy/QEFdxYyCybBDtIGjipHpb9bDWHzcqGqFakf+mVmBTdQ==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-async-generator-functions instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-class-properties@7.17.12':
     resolution: {integrity: sha512-U0mI9q8pW5Q9EaTHFPwSVusPMV/DV9Mm8p7csqROFLtIE9rBF5piLqyrBGigftALrBcsBGu4m38JneAe7ZDLXw==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -1126,12 +1150,14 @@ packages:
   '@babel/plugin-proposal-class-static-block@7.18.0':
     resolution: {integrity: sha512-t+8LsRMMDE74c6sV7KShIw13sqbqd58tlqNrsWoWBTIMw7SVQ0cZ905wLNS/FBCy/3PyooRHLFFlfrUNyyz5lA==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-static-block instead.
     peerDependencies:
       '@babel/core': ^7.12.0
 
   '@babel/plugin-proposal-dynamic-import@7.16.7':
     resolution: {integrity: sha512-I8SW9Ho3/8DRSdmDdH3gORdyUuYnk1m4cMxUAdu5oy4n3OfN8flDEH+d60iG7dUfi0KkYwSvoalHzzdRzpWHTg==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-dynamic-import instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -1144,24 +1170,28 @@ packages:
   '@babel/plugin-proposal-export-namespace-from@7.17.12':
     resolution: {integrity: sha512-j7Ye5EWdwoXOpRmo5QmRyHPsDIe6+u70ZYZrd7uz+ebPYFKfRcLcNu3Ro0vOlJ5zuv8rU7xa+GttNiRzX56snQ==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-export-namespace-from instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-json-strings@7.17.12':
     resolution: {integrity: sha512-rKJ+rKBoXwLnIn7n6o6fulViHMrOThz99ybH+hKHcOZbnN14VuMnH9fo2eHE69C8pO4uX1Q7t2HYYIDmv8VYkg==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-json-strings instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-logical-assignment-operators@7.17.12':
     resolution: {integrity: sha512-EqFo2s1Z5yy+JeJu7SFfbIUtToJTVlC61/C7WLKDntSw4Sz6JNAIfL7zQ74VvirxpjB5kz/kIx0gCcb+5OEo2Q==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-logical-assignment-operators instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-nullish-coalescing-operator@7.17.12':
     resolution: {integrity: sha512-ws/g3FSGVzv+VH86+QvgtuJL/kR67xaEIF2x0iPqdDfYW6ra6JF3lKVBkWynRLcNtIC1oCTfDRVxmm2mKzy+ag==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-nullish-coalescing-operator instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -1175,17 +1205,20 @@ packages:
   '@babel/plugin-proposal-numeric-separator@7.16.7':
     resolution: {integrity: sha512-vQgPMknOIgiuVqbokToyXbkY/OmmjAzr/0lhSIbG/KmnzXPGwW/AdhdKpi+O4X/VkWiWjnkKOBiqJrTaC98VKw==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-numeric-separator instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-object-rest-spread@7.12.1':
     resolution: {integrity: sha512-s6SowJIjzlhx8o7lsFx5zmY4At6CTtDvgNQDdPzkBQucle58A6b/TTeEBYtyDgmcXjUTM+vE8YOGHZzzbc/ioA==}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-object-rest-spread@7.18.0':
     resolution: {integrity: sha512-nbTv371eTrFabDfHLElkn9oyf9VG+VKK6WMzhY2o4eHKaG19BToD9947zzGMO6I/Irstx9d8CwX6njPNIAR/yw==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -1199,12 +1232,14 @@ packages:
   '@babel/plugin-proposal-optional-catch-binding@7.16.7':
     resolution: {integrity: sha512-eMOH/L4OvWSZAE1VkHbr1vckLG1WUcHGJSLqqQwl2GaUqG6QjddvrOaTUMNYiv77H5IKPMZ9U9P7EaHwvAShfA==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-catch-binding instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-optional-chaining@7.17.12':
     resolution: {integrity: sha512-7wigcOs/Z4YWlK7xxjkvaIw84vGhDv/P1dFGQap0nHkc8gFKY/r+hXc8Qzf5k1gY7CvGIcHqAnOagVKJJ1wVOQ==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-chaining instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -1218,18 +1253,21 @@ packages:
   '@babel/plugin-proposal-private-methods@7.17.12':
     resolution: {integrity: sha512-SllXoxo19HmxhDWm3luPz+cPhtoTSKLJE9PXshsfrOzBqs60QP0r8OaJItrPhAj0d7mZMnNF0Y1UUggCDgMz1A==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-methods instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-private-property-in-object@7.17.12':
     resolution: {integrity: sha512-/6BtVi57CJfrtDNKfK5b66ydK2J5pXUKBKSPD2G1whamMuEnZWgoOIfO8Vf9F/DoD4izBLD/Au4NMQfruzzykg==}
     engines: {node: '>=6.9.0'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-property-in-object instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
   '@babel/plugin-proposal-unicode-property-regex@7.17.12':
     resolution: {integrity: sha512-Wb9qLjXf3ZazqXA7IvI7ozqRIXIGPtSo+L5coFmEkhTQK18ao4UDDD0zdTGAarmbLj2urpRwrc6893cu5Bfh0A==}
     engines: {node: '>=4'}
+    deprecated: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-unicode-property-regex instead.
     peerDependencies:
       '@babel/core': ^7.0.0-0
 
@@ -2444,9 +2482,11 @@ packages:
   '@humanwhocodes/config-array@0.9.5':
     resolution: {integrity: sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw==}
     engines: {node: '>=10.10.0'}
+    deprecated: Use @eslint/config-array instead
 
   '@humanwhocodes/object-schema@1.2.1':
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
+    deprecated: Use @eslint/object-schema instead
 
   '@isaacs/ttlcache@1.4.1':
     resolution: {integrity: sha512-RQgQ4uQ+pLbqXfOmieB91ejmLwvSgv9nLx6sT6sD83s7umBypgg+OIBOBbEUiJXrfpnp9j0mRhYYdzp9uqq3lA==}
@@ -2719,6 +2759,7 @@ packages:
   '@mui/base@5.0.0-beta.16':
     resolution: {integrity: sha512-OYxhC81c9bO0wobGcM8rrY5bRwpCXAI21BL0P2wz/2vTv4ek7ALz9+U5M8wgdmtRNUhmCmAB4L2WRwFRf5Cd8Q==}
     engines: {node: '>=12.0.0'}
+    deprecated: This package has been replaced by @base-ui-components/react
     peerDependencies:
       '@types/react': ^17.0.0 || ^18.0.0
       react: ^17.0.0 || ^18.0.0
@@ -3822,8 +3863,8 @@ packages:
   '@types/node@17.0.45':
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
 
-  '@types/node@18.0.0':
-    resolution: {integrity: sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==}
+  '@types/node@18.19.130':
+    resolution: {integrity: sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==}
 
   '@types/normalize-package-data@2.4.1':
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -4147,11 +4188,13 @@ packages:
 
   acorn-dynamic-import@4.0.0:
     resolution: {integrity: sha512-d3OEjQV4ROpoflsnUA8HozoIR504TFxNivYEUi6uwz0IYhBkTDXGuWlNdMtybRt3nqVx/L6XqMt0FxkXuWKZhw==}
+    deprecated: This is probably built in to whatever tool you're using. If you still need it... idk
     peerDependencies:
       acorn: ^6.0.0
 
   acorn-import-assertions@1.8.0:
     resolution: {integrity: sha512-m7VZ3jwz4eK6A4Vtt8Ew1/mNbP24u0FhdyfA7fSvnJR6LMdfOYnmuIrrJAgrYfYJ10F/otaHTtrtrtmHdMNzEw==}
+    deprecated: package has been renamed to acorn-import-attributes
     peerDependencies:
       acorn: ^8
 
@@ -4995,13 +5038,15 @@ packages:
 
   core-js-pure@3.23.2:
     resolution: {integrity: sha512-t6u7H4Ff/yZNk+zqTr74UjCcZ3k8ApBryeLLV4rYQd9aF3gqmjjGjjR44ENfeBMH8VVvSynIjAJ0mUuFhzQtrA==}
+    deprecated: core-js-pure@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js-pure.
 
   core-js@2.6.12:
     resolution: {integrity: sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==}
-    deprecated: core-js@<3.4 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Please, upgrade your dependencies to the actual version of core-js.
+    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
 
   core-js@3.23.2:
     resolution: {integrity: sha512-ELJOWxNrJfOH/WK4VJ3Qd+fOqZuOuDNDJz0xG6Bt4mGg2eO/UT9CljCrbqDGovjLKUrGajEEBcoTOc0w+yBYeQ==}
+    deprecated: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -6082,6 +6127,7 @@ packages:
   eslint@8.18.0:
     resolution: {integrity: sha512-As1EfFMVk7Xc6/CvhssHUjsAQSkpfXvUGMFC3ce8JDe6WvqCgRrLOBQbVpsBFr1X1V+RACOadnzVvcUS5ni2bA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.3.2:
@@ -6501,10 +6547,12 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-dirs@3.0.0:
     resolution: {integrity: sha512-v8ho2DS5RiCjftj1nD9NmnfaOzTdud7RRnVd9kFNOjqZbISlx5DQ+OrTkywgd0dIt7oFCvKetZSHoHcP3sDdiA==}
@@ -6905,6 +6953,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.3:
     resolution: {integrity: sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw==}
@@ -7810,6 +7859,7 @@ packages:
 
   mini-create-react-context@0.4.1:
     resolution: {integrity: sha512-YWCYEmd5CQeHGSAKrYvXgmzzkrvssZcuuQDDeqkT+PziKGMgE+0MCCtcKbROzocGBG1meBLl2FotlRwf4gAzbQ==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     peerDependencies:
       prop-types: ^15.0.0
       react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
@@ -9318,6 +9368,7 @@ packages:
   right-pad@1.0.1:
     resolution: {integrity: sha512-bYBjgxmkvTAfgIYy328fmkwhp39v8lwVgWhhrzxPV3yHtcSqyYKe9/XOhvW48UFjATg3VuJbpsp5822ACNvkmw==}
     engines: {node: '>= 0.10'}
+    deprecated: Use String.prototype.padEnd() instead
 
   rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
@@ -9326,6 +9377,7 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   robust-predicates@3.0.2:
@@ -10200,6 +10252,9 @@ packages:
   unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
 
+  undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
   unescape@1.0.1:
     resolution: {integrity: sha512-O0+af1Gs50lyH1nUu3ZyYS1cRh01Q/kUKatTOkSs7jukXE6/NebucDVxyiDsA9AQ4JC1V1jUH9EO8JX2nMDgGQ==}
     engines: {node: '>=0.10.0'}
@@ -10380,10 +10435,12 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@9.0.0:
     resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uzip-module@1.0.3:
@@ -14936,7 +14993,7 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       jest-mock: 29.7.0
 
   '@jest/expect-utils@29.5.0':
@@ -14947,7 +15004,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -14960,7 +15017,7 @@ snapshots:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       '@types/yargs': 15.0.19
       chalk: 4.1.2
 
@@ -14969,7 +15026,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       '@types/yargs': 17.0.24
       chalk: 4.1.2
 
@@ -16816,11 +16873,11 @@ snapshots:
   '@types/body-parser@1.19.2':
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/bonjour@3.5.10':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/buble@0.20.1':
     dependencies:
@@ -16837,11 +16894,11 @@ snapshots:
   '@types/connect-history-api-fallback@1.3.5':
     dependencies:
       '@types/express-serve-static-core': 4.17.29
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/connect@3.4.35':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/d3-array@3.0.3': {}
 
@@ -16978,7 +17035,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.17.29':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
 
@@ -17003,7 +17060,7 @@ snapshots:
 
   '@types/http-proxy@1.17.9':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/is-ci@3.0.0':
     dependencies:
@@ -17030,7 +17087,7 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/lodash-es@4.17.12':
     dependencies:
@@ -17058,7 +17115,9 @@ snapshots:
 
   '@types/node@17.0.45': {}
 
-  '@types/node@18.0.0': {}
+  '@types/node@18.19.130':
+    dependencies:
+      undici-types: 5.26.5
 
   '@types/normalize-package-data@2.4.1': {}
 
@@ -17121,13 +17180,13 @@ snapshots:
 
   '@types/responselike@1.0.0':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/retry@0.12.0': {}
 
   '@types/sax@1.2.4':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/scheduler@0.16.2': {}
 
@@ -17142,11 +17201,11 @@ snapshots:
   '@types/serve-static@1.13.10':
     dependencies:
       '@types/mime': 1.3.2
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/sockjs@0.3.33':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/stack-utils@2.0.1': {}
 
@@ -17160,7 +17219,7 @@ snapshots:
 
   '@types/ws@8.5.3':
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
 
   '@types/yargs-parser@21.0.0': {}
 
@@ -17354,17 +17413,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@4.0.0(vite@4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6))':
+  '@vitejs/plugin-react@4.0.0(vite@4.3.8(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6))':
     dependencies:
       '@babel/core': 7.21.8
       '@babel/plugin-transform-react-jsx-self': 7.21.0(@babel/core@7.21.8)
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.21.8)
       react-refresh: 0.14.0
-      vite: 4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+      vite: 4.3.8(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-react@4.7.0(vite@5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6))':
+  '@vitejs/plugin-react@4.7.0(vite@5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6))':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.29.0)
@@ -17372,7 +17431,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.27
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+      vite: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
     transitivePeerDependencies:
       - supports-color
 
@@ -17419,7 +17478,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.0.0
       sirv: 2.0.4
-      vitest: 1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
+      vitest: 1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6)
 
   '@vitest/utils@1.6.1':
     dependencies:
@@ -18278,7 +18337,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -18289,7 +18348,7 @@ snapshots:
 
   chromium-edge-launcher@1.0.0:
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -19925,7 +19984,7 @@ snapshots:
 
   eval@0.1.8:
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       require-like: 0.1.2
 
   event-target-shim@5.0.1: {}
@@ -21176,7 +21235,7 @@ snapshots:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -21204,13 +21263,13 @@ snapshots:
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       jest-util: 29.7.0
 
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       chalk: 4.1.2
       ci-info: 3.8.0
       graceful-fs: 4.2.11
@@ -21227,13 +21286,13 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -24848,6 +24907,8 @@ snapshots:
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
 
+  undici-types@5.26.5: {}
+
   unescape@1.0.1:
     dependencies:
       extend-shallow: 2.0.1
@@ -25436,13 +25497,13 @@ snapshots:
       unist-util-stringify-position: 2.0.3
       vfile-message: 2.0.4
 
-  vite-node@1.6.1(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6):
+  vite-node@1.6.1(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6):
     dependencies:
       cac: 6.7.14
       debug: 4.3.4
       pathe: 1.1.2
       picocolors: 1.1.1
-      vite: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+      vite: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -25464,24 +25525,24 @@ snapshots:
       fsevents: 2.3.2
       sass: 1.62.1
 
-  vite@4.3.8(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6):
+  vite@4.3.8(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6):
     dependencies:
       esbuild: 0.17.19
       postcss: 8.4.23
       rollup: 3.23.0
     optionalDependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       fsevents: 2.3.2
       sass: 1.62.1
       terser: 5.17.6
 
-  vite@5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6):
+  vite@5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.8
       rollup: 4.59.0
     optionalDependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       fsevents: 2.3.3
       sass: 1.62.1
       terser: 5.17.6
@@ -25490,7 +25551,7 @@ snapshots:
     dependencies:
       '@types/chai': 4.3.5
       '@types/chai-subset': 1.3.3
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       chai: 4.3.7
       debug: 4.3.4
       local-pkg: 0.4.3
@@ -25508,7 +25569,7 @@ snapshots:
       - stylus
       - supports-color
 
-  vitest@1.6.1(@types/node@18.0.0)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6):
+  vitest@1.6.1(@types/node@18.19.130)(@vitest/ui@1.6.1)(jsdom@25.0.1)(sass@1.62.1)(terser@5.17.6):
     dependencies:
       '@vitest/expect': 1.6.1
       '@vitest/runner': 1.6.1
@@ -25527,11 +25588,11 @@ snapshots:
       strip-literal: 2.1.1
       tinybench: 2.9.0
       tinypool: 0.8.4
-      vite: 5.4.21(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
-      vite-node: 1.6.1(@types/node@18.0.0)(sass@1.62.1)(terser@5.17.6)
+      vite: 5.4.21(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
+      vite-node: 1.6.1(@types/node@18.19.130)(sass@1.62.1)(terser@5.17.6)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.19.130
       '@vitest/ui': 1.6.1(vitest@1.6.1)
       jsdom: 25.0.1
     transitivePeerDependencies:

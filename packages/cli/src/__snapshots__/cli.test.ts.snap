@@ -1,0 +1,1375 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`usecoord > --skill > has a stable outline 1`] = `
+"# \`usecoord\` reference
+## Invocation model
+# Chain transforms; each applies one change.
+# Read an existing spec, edit it, write it back.
+# End a pipeline with a query.
+## Spec shape
+### Key concepts
+### Normalization
+## Authoring workflow
+## Value parsing
+## Creation
+### \`usecoord init [--key <key>]\`
+## Transforms — views
+### \`usecoord add-view <view_uid>\`
+### \`usecoord remove-view <view_uid>\`
+## Transforms — coordination space
+### \`usecoord add-coordination <type> [--scope <name>] [--value <json>]\`
+### \`usecoord set-coordination-value <type> <scope> <value>\`
+### \`usecoord remove-coordination <type> <scope>\`
+## Transforms — wiring views to scopes
+### \`usecoord use-coordination <view_uid> <type> <scope>\`
+### \`usecoord unuse-coordination <view_uid> <type>\`
+## Transforms — multi-view linking
+### \`usecoord link-views <type> --views <uid> [<uid> ...] [--scope <name>] [--value <json>]\`
+### \`usecoord link-views-by-object --views <uid> [<uid> ...] --input <json> [--no-meta] [--scope-prefix <p>]\`
+#### The \`{"$CL": ...}\` sentinel
+## Transforms — passthrough
+### \`usecoord print\`
+### \`usecoord validate\`
+## Queries (terminal)
+## Recipes
+### Two views linked, a third independent
+### Coordinate several types across the same views
+### Adjust an existing spec in place
+### Unlink one view from a shared scope
+### Inspect a spec
+## Errors and troubleshooting
+## Guidance for agents
+"
+`;
+
+exports[`usecoord > argument parsing > accepts --option=value 1`] = `
+"$ usecoord init --key=my-spec
+stdout:
+  {
+    "key": "my-spec",
+    "coordinationSpace": {},
+    "viewCoordination": {}
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > argument parsing > errors on a missing option value 1`] = `
+"$ usecoord add-coordination zoom --scope
+  stderr| usecoord add-coordination: expected a value after "--scope"
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > argument parsing > errors on a missing required argument 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord use-coordination v1 myValue
+  stderr| usecoord use-coordination: missing required argument(s) <scope>
+  stderr| usage: usecoord use-coordination <view_uid> <type> <scope>
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > argument parsing > errors on an unexpected argument 1`] = `
+"$ usecoord add-view v1 v2
+  stderr| usecoord add-view: unexpected argument "v2"
+  stderr| usage: usecoord add-view <view_uid>
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > argument parsing > errors on an unknown command 1`] = `
+"$ usecoord add-vieww v1
+  stderr| usecoord add-vieww: unknown command "add-vieww"
+  stderr| run "usecoord --help" for the list of commands
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > argument parsing > errors on an unknown option 1`] = `
+"$ usecoord add-view v1 --scope zoomA
+  stderr| usecoord add-view: unknown option "--scope"
+  stderr| usage: usecoord add-view <view_uid>
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > argument parsing > parses plain strings which are not JSON as strings 1`] = `
+"$ usecoord add-coordination obsType --scope obsTypeA --value cell
+$ usecoord add-coordination obsColorEncoding --scope A --value '"cellSetSelection"'
+$ usecoord add-coordination spatialTargetX --scope A --value -1.5
+$ usecoord add-coordination spatialLayerVisible --scope A --value false
+$ usecoord add-coordination obsSetSelection --scope A --value null
+stdout:
+  {
+    "coordinationSpace": {
+      "obsType": {
+        "obsTypeA": "cell"
+      },
+      "obsColorEncoding": {
+        "A": "cellSetSelection"
+      },
+      "spatialTargetX": {
+        "A": -1.5
+      },
+      "spatialLayerVisible": {
+        "A": false
+      },
+      "obsSetSelection": {
+        "A": null
+      }
+    },
+    "viewCoordination": {}
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > authoring workflow > builds the spec from the README 1`] = `
+"$ usecoord init --key my-spec
+$ usecoord add-view v1
+$ usecoord add-view v2
+$ usecoord add-view v3
+$ usecoord link-views myValue --views v1 v2 --scope myValueScope1 --value 99
+$ usecoord add-coordination myValue --scope myValueScope2 --value 20
+$ usecoord use-coordination v3 myValue myValueScope2
+$ usecoord set-coordination-value myValue myValueScope2 21
+$ usecoord validate
+  stderr| Valid
+stdout:
+  {
+    "key": "my-spec",
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 21
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > coordination space > adds a scope with an explicit name 1`] = `
+"$ usecoord init
+$ usecoord add-coordination zoom --scope zoomA --value 10
+stdout:
+  {
+    "coordinationSpace": {
+      "zoom": {
+        "zoomA": 10
+      }
+    },
+    "viewCoordination": {}
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > coordination space > auto-names a scope, reporting the name on stderr 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord add-coordination myValue
+  stderr| added scope "A" of coordination type "myValue"
+$ usecoord add-coordination zoom --value '{"level":2}'
+  stderr| added scope "A" of coordination type "zoom"
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20,
+        "A": null
+      },
+      "zoom": {
+        "A": {
+          "level": 2
+        }
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > coordination space > removes a scope, dropping the type when it becomes empty 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord remove-coordination myValue myValueScope2
+$ usecoord remove-coordination myValue myValueScope1
+$ usecoord remove-coordination myValue nope
+stdout:
+  {
+    "coordinationSpace": {},
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > coordination space > sets a coordination value, creating the scope if needed 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord set-coordination-value myValue myValueScope1 100
+$ usecoord set-coordination-value obsType obsTypeA cell
+$ usecoord set-coordination-value obsSetSelection setA '[["Cell Type","B cell"]]'
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 100,
+        "myValueScope2": 20
+      },
+      "obsType": {
+        "obsTypeA": "cell"
+      },
+      "obsSetSelection": {
+        "setA": [
+          [
+            "Cell Type",
+            "B cell"
+          ]
+        ]
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > coordination space > upserts a scope with an explicit name, without clobbering the value 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord add-coordination myValue --scope myValueScope1
+$ usecoord add-coordination myValue --scope myValueScope3
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20,
+        "myValueScope3": null
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > help > prints the global help 1`] = `
+"$ usecoord --help
+stdout:
+  usecoord — build and edit use-coordination specs.
+  
+  usecoord is a stateless filter: unless noted, each command reads a spec
+  from stdin (an empty spec if stdin is empty) and writes to stdout.
+  Transforms emit the resulting spec; queries emit information and end a pipeline.
+  
+  usage: usecoord <command> [args...]
+  
+  Creation:
+    init                     Emit a fresh empty spec, ignoring stdin.
+  
+  Transforms — views:
+    add-view                 Add a view with no scopes attached. No-op if it already exists.
+    remove-view              Remove a view. No-op if absent.
+  
+  Transforms — coordination space:
+    add-coordination         Add a scope of a coordination type.
+    set-coordination-value   Upsert a scope's value, creating the scope if needed.
+    remove-coordination      Remove a scope, dropping its type if it becomes empty. No-op if absent.
+  
+  Transforms — wiring views to scopes:
+    use-coordination         Map a view to a scope of a coordination type.
+    unuse-coordination       Remove a coordination type from a view's coordinationScopes. No-op if absent.
+  
+  Transforms — multi-view linking:
+    link-views               Create a shared scope of a coordination type and attach it to every named view.
+    link-views-by-object     Set up multi-level and/or meta-coordination across the named views.
+  
+  Transforms — passthrough:
+    print                    Re-emit the spec, normalized and pretty-printed.
+    validate                 Validate against the JSON schema, passing the spec through unchanged.
+  
+  Queries:
+    list-views               Emit one view UID per line.
+    get-view                 Emit a view's mapping object as JSON.
+    list-coordination-types  Emit one coordination type per line.
+    list-scopes              Emit one scope name of a coordination type per line.
+    get-coordination-value   Emit a scope's value as JSON.
+  
+  Run "usecoord <command> --help" for the arguments of one command.
+  Run "usecoord --skill" for the full reference document (markdown).
+exit code: 0
+"
+`;
+
+exports[`usecoord > help > prints the help of one command 1`] = `
+"$ usecoord link-views-by-object --help
+stdout:
+  Set up multi-level and/or meta-coordination across the named views.
+  
+  usage: usecoord link-views-by-object --views <uid> [<uid> ...] --input <json> [--no-meta] [--scope-prefix <p>]
+  
+  arguments:
+    --views <uid> [<uid> ...]  The UIDs of the views to link.
+    --input <json>             The (potentially nested) coordination input object. Use {"$CL": ...} for a nested coordination level.
+    --no-meta                  Attach scopes directly to views instead of via meta-coordination.
+    --scope-prefix <p>         A prefix for all generated scope names.
+exit code: 0
+"
+`;
+
+exports[`usecoord > help > prints the help of one command via the help command 1`] = `
+"$ usecoord help add-coordination
+stdout:
+  Add a scope of a coordination type.
+  
+  usage: usecoord add-coordination <type> [--scope <name>] [--value <json>]
+  
+  arguments:
+    <type>          The coordination type.
+    --scope <name>  The coordination scope name. Auto-named when omitted.
+    --value <json>  The coordination value (parsed as JSON when possible).
+exit code: 0
+"
+`;
+
+exports[`usecoord > init > emits an empty spec 1`] = `
+"$ usecoord init
+stdout:
+  {
+    "coordinationSpace": {},
+    "viewCoordination": {}
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > init > emits an empty spec with a numeric key 1`] = `
+"$ usecoord init --key 42
+stdout:
+  {
+    "key": 42,
+    "coordinationSpace": {},
+    "viewCoordination": {}
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > init > emits an empty spec with a string key 1`] = `
+"$ usecoord init --key my-spec
+stdout:
+  {
+    "key": "my-spec",
+    "coordinationSpace": {},
+    "viewCoordination": {}
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > init > ignores stdin 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord init
+stdout:
+  {
+    "coordinationSpace": {},
+    "viewCoordination": {}
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > link-views > auto-names the shared scope, reporting the name on stderr 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord link-views myValue --views v1 v2 --value '"linked"'
+  stderr| linked views on scope "A" of coordination type "myValue"
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20,
+        "A": "linked"
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "A"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "A"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > link-views > errors when no views are passed 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord link-views zoom --scope zoomA
+  stderr| usecoord link-views: expected at least one view UID after --views
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > link-views > links views on an explicitly named scope, creating missing views 1`] = `
+"$ usecoord init
+$ usecoord link-views zoom --views v1 v2 v3 --scope zoomA --value 10
+stdout:
+  {
+    "coordinationSpace": {
+      "zoom": {
+        "zoomA": 10
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "zoom": "zoomA"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "zoom": "zoomA"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "zoom": "zoomA"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > link-views-by-object > attaches the scopes directly to the views with --no-meta 1`] = `
+"$ usecoord link-views-by-object --views spatial --input '{"spatialImageLayer":{"$CL":[{"fileUid":"my-image","spatialLayerVisible":true,"spatialImageChannel":{"$CL":[{"spatialTargetC":0,"spatialChannelColor":[255,0,0]},{"spatialTargetC":1,"spatialChannelColor":[0,255,0]}]}}]}}' --no-meta
+stdout:
+  {
+    "coordinationSpace": {
+      "spatialImageLayer": {
+        "A": "__dummy__"
+      },
+      "fileUid": {
+        "A": "my-image"
+      },
+      "spatialLayerVisible": {
+        "A": true
+      },
+      "spatialImageChannel": {
+        "A": "__dummy__",
+        "B": "__dummy__"
+      },
+      "spatialTargetC": {
+        "A": 0,
+        "B": 1
+      },
+      "spatialChannelColor": {
+        "A": [
+          255,
+          0,
+          0
+        ],
+        "B": [
+          0,
+          255,
+          0
+        ]
+      }
+    },
+    "viewCoordination": {
+      "spatial": {
+        "coordinationScopes": {
+          "spatialImageLayer": [
+            "A"
+          ]
+        },
+        "coordinationScopesBy": {
+          "spatialImageLayer": {
+            "fileUid": {
+              "A": "A"
+            },
+            "spatialLayerVisible": {
+              "A": "A"
+            },
+            "spatialImageChannel": {
+              "A": [
+                "A",
+                "B"
+              ]
+            }
+          },
+          "spatialImageChannel": {
+            "spatialTargetC": {
+              "A": "A",
+              "B": "B"
+            },
+            "spatialChannelColor": {
+              "A": "A",
+              "B": "B"
+            }
+          }
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > link-views-by-object > errors when --input is absent 1`] = `
+"$ usecoord link-views-by-object --views v1
+  stderr| usecoord link-views-by-object: expected the option "--input" to be passed
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > link-views-by-object > errors when --input is not JSON 1`] = `
+"$ usecoord link-views-by-object --views v1 --input zoom
+  stderr| usecoord link-views-by-object: could not parse --input as JSON: <parser message>
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > link-views-by-object > errors when the $CL sentinel has sibling keys 1`] = `
+"$ usecoord link-views-by-object --views v1 --input '{"spatialImageLayer":{"$CL":[{"fileUid":"a"}],"other":1}}'
+  stderr| usecoord link-views-by-object: "$CL" must be the only key of the object which contains it
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > link-views-by-object > errors when the $CL sentinel value is not an object 1`] = `
+"$ usecoord link-views-by-object --views v1 --input '{"spatialImageLayer":{"$CL":10}}'
+  stderr| usecoord link-views-by-object: expected the value of "$CL" to be an object or an array of objects
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > link-views-by-object > prefixes the generated scope names 1`] = `
+"$ usecoord link-views-by-object --views spatial lc --input '{"zoom":10,"obsType":"cell"}' --scope-prefix init
+stdout:
+  {
+    "coordinationSpace": {
+      "zoom": {
+        "init0": 10
+      },
+      "obsType": {
+        "init0": "cell"
+      }
+    },
+    "metaCoordination": {
+      "coordinationScopes": {
+        "init0": {
+          "zoom": "init0",
+          "obsType": "init0"
+        }
+      },
+      "coordinationScopesBy": {
+        "init0": {}
+      }
+    },
+    "viewCoordination": {
+      "spatial": {
+        "metaCoordinationScopes": [
+          "init0"
+        ],
+        "metaCoordinationScopesBy": [
+          "init0"
+        ]
+      },
+      "lc": {
+        "metaCoordinationScopes": [
+          "init0"
+        ],
+        "metaCoordinationScopesBy": [
+          "init0"
+        ]
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > link-views-by-object > sets up meta-coordination across views 1`] = `
+"$ usecoord init
+$ usecoord add-view spatial
+$ usecoord link-views-by-object --views spatial lc --input '{"spatialImageLayer":{"$CL":[{"fileUid":"my-image","spatialLayerVisible":true,"spatialImageChannel":{"$CL":[{"spatialTargetC":0,"spatialChannelColor":[255,0,0]},{"spatialTargetC":1,"spatialChannelColor":[0,255,0]}]}}]}}'
+stdout:
+  {
+    "coordinationSpace": {
+      "spatialImageLayer": {
+        "A": "__dummy__"
+      },
+      "fileUid": {
+        "A": "my-image"
+      },
+      "spatialLayerVisible": {
+        "A": true
+      },
+      "spatialImageChannel": {
+        "A": "__dummy__",
+        "B": "__dummy__"
+      },
+      "spatialTargetC": {
+        "A": 0,
+        "B": 1
+      },
+      "spatialChannelColor": {
+        "A": [
+          255,
+          0,
+          0
+        ],
+        "B": [
+          0,
+          255,
+          0
+        ]
+      }
+    },
+    "metaCoordination": {
+      "coordinationScopes": {
+        "A": {
+          "spatialImageLayer": [
+            "A"
+          ]
+        }
+      },
+      "coordinationScopesBy": {
+        "A": {
+          "spatialImageLayer": {
+            "fileUid": {
+              "A": "A"
+            },
+            "spatialLayerVisible": {
+              "A": "A"
+            },
+            "spatialImageChannel": {
+              "A": [
+                "A",
+                "B"
+              ]
+            }
+          },
+          "spatialImageChannel": {
+            "spatialTargetC": {
+              "A": "A",
+              "B": "B"
+            },
+            "spatialChannelColor": {
+              "A": "A",
+              "B": "B"
+            }
+          }
+        }
+      }
+    },
+    "viewCoordination": {
+      "spatial": {
+        "metaCoordinationScopes": [
+          "A"
+        ],
+        "metaCoordinationScopesBy": [
+          "A"
+        ]
+      },
+      "lc": {
+        "metaCoordinationScopes": [
+          "A"
+        ],
+        "metaCoordinationScopesBy": [
+          "A"
+        ]
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > normalizes the example spec used as stdin by the tests below 1`] = `
+"stdin:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+$ usecoord print
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > print > emits an empty spec for empty stdin 1`] = `
+"stdin: (whitespace only)
+$ usecoord print
+stdout:
+  {
+    "coordinationSpace": {},
+    "viewCoordination": {}
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > print > normalizes and pretty-prints the spec 1`] = `
+"stdin:
+  {"key":"messy","coordinationSpace":{"zoom":{"zoomA":10},"obsType":null},"metaCoordination":{"coordinationScopes":{},"coordinationScopesBy":{}},"viewCoordination":{"v1":{"coordinationScopes":{},"metaCoordinationScopes":"metaA","metaCoordinationScopesBy":[]},"v2":null}}
+$ usecoord print
+stdout:
+  {
+    "key": "messy",
+    "coordinationSpace": {
+      "zoom": {
+        "zoomA": 10
+      },
+      "obsType": {}
+    },
+    "viewCoordination": {
+      "v1": {
+        "metaCoordinationScopes": [
+          "metaA"
+        ]
+      },
+      "v2": {}
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > queries > errors when getting an absent coordination value 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord get-coordination-value myValue nope
+  stderr| usecoord get-coordination-value: the coordination space does not contain a scope "nope" of coordination type "myValue"
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > queries > errors when getting an absent view 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord get-view nope
+  stderr| usecoord get-view: the spec does not contain a view "nope"
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > queries > gets a coordination value 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord get-coordination-value myValue myValueScope1
+stdout:
+  99
+exit code: 0
+"
+`;
+
+exports[`usecoord > queries > gets a coordination value at the end of a pipeline 1`] = `
+"$ usecoord init
+$ usecoord add-coordination zoom --scope zoomA --value '{"level":[1,2]}'
+$ usecoord get-coordination-value zoom zoomA
+stdout:
+  {
+    "level": [
+      1,
+      2
+    ]
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > queries > gets a view mapping object 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord get-view v1
+stdout:
+  {
+    "coordinationScopes": {
+      "myValue": "myValueScope1"
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > queries > lists no views for an empty spec 1`] = `
+"$ usecoord init
+$ usecoord list-views
+stdout:
+  (empty)
+exit code: 0
+"
+`;
+
+exports[`usecoord > queries > lists the coordination types 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord list-coordination-types
+stdout:
+  myValue
+exit code: 0
+"
+`;
+
+exports[`usecoord > queries > lists the scopes of a coordination type 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord list-scopes myValue
+stdout:
+  myValueScope1
+  myValueScope2
+exit code: 0
+"
+`;
+
+exports[`usecoord > queries > lists the views 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord list-views
+stdout:
+  v1
+  v2
+  v3
+exit code: 0
+"
+`;
+
+exports[`usecoord > queries > warns when listing the scopes of an absent coordination type 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord list-scopes nope
+  stderr| usecoord: warning: the coordination space does not contain a coordination type "nope"
+stdout:
+  (empty)
+exit code: 0
+"
+`;
+
+exports[`usecoord > spec parsing > errors when stdin is not JSON 1`] = `
+"stdin:
+  not json
+$ usecoord print
+  stderr| usecoord print: could not parse the spec from stdin as JSON: <parser message>
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > spec parsing > errors when stdin is not a JSON object 1`] = `
+"stdin:
+  [1, 2]
+$ usecoord print
+  stderr| usecoord print: expected the spec to be a JSON object
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > spec parsing > errors when the coordination space is not an object 1`] = `
+"stdin:
+  {"coordinationSpace": 10}
+$ usecoord print
+  stderr| usecoord print: expected spec.coordinationSpace to be an object
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > validate > reports a valid spec and passes it through 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord validate
+  stderr| Valid
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > validate > reports the issues of an invalid spec and exits non-zero 1`] = `
+"stdin:
+  {"coordinationSpace":{"myValue":{"myValueScope1":99}},"viewCoordination":{"v1":{"coordinationScopes":{"myValue":5}},"v2":{"coordinationScopes":{"myValue":["myValueScope1",3]}}}}
+$ usecoord validate
+  stderr| Invalid:
+  stderr|   viewCoordination.v1.coordinationScopes.myValue: Invalid input
+  stderr|   viewCoordination.v2.coordinationScopes.myValue: Invalid input
+  exit code| 1
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": 5
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": [
+            "myValueScope1",
+            3
+          ]
+        }
+      }
+    }
+  }
+exit code: 1
+"
+`;
+
+exports[`usecoord > validate > sits mid-pipeline 1`] = `
+"$ usecoord init
+$ usecoord add-coordination zoom --scope zoomA --value 10
+$ usecoord validate
+  stderr| Valid
+$ usecoord link-views zoom --views v1 v2 --scope zoomA
+$ usecoord validate
+  stderr| Valid
+stdout:
+  {
+    "coordinationSpace": {
+      "zoom": {
+        "zoomA": 10
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "zoom": "zoomA"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "zoom": "zoomA"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > views > adds views 1`] = `
+"$ usecoord init
+$ usecoord add-view v1
+$ usecoord add-view v2
+stdout:
+  {
+    "coordinationSpace": {},
+    "viewCoordination": {
+      "v1": {},
+      "v2": {}
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > views > is a no-op when adding an existing view 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord add-view v1
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > views > is a no-op when removing an absent view 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord remove-view nope
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > views > removes a view 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord remove-view v2
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > wiring views to scopes > errors when the view is absent 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord use-coordination nope myValue myValueScope1
+  stderr| usecoord use-coordination: the spec does not contain a view "nope" (add it with "usecoord add-view nope")
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > wiring views to scopes > maps a view to a scope 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord use-coordination v3 myValue myValueScope1
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > wiring views to scopes > unmaps a view from a coordination type 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord unuse-coordination v1 myValue
+$ usecoord unuse-coordination v1 myValue
+$ usecoord unuse-coordination nope myValue
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {},
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > wiring views to scopes > warns when the scope is absent from the coordination space 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord use-coordination v1 zoom zoomA
+  stderr| usecoord: warning: the coordination space does not contain a scope "zoomA" of coordination type "zoom"
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1",
+          "zoom": "zoomA"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
