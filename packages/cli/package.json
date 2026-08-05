@@ -29,7 +29,8 @@
     "skill"
   ],
   "scripts": {
-    "test": "pnpm exec vitest --run"
+    "test": "pnpm exec vitest --run",
+    "exec-cli": "tsc --build && node ./dist-tsc/cli.js"
   },
   "dependencies": {
     "@use-coordination/config": "workspace:*",

@@ -2,6 +2,46 @@
 
 `usecoord` builds and edits use-coordination specs, which declaratively link multiple views (interactive plots / control components) on shared pieces of state (a *coordination space*).
 
+## Usage
+
+Install globally to get the `usecoord` executable on your `PATH`:
+
+```sh
+npm install @use-coordination/cli
+usecoord --help
+```
+
+Or invoke it without installing, via `npx`:
+
+```sh
+npx @use-coordination/cli --help
+```
+
+## Development
+
+Setup:
+
+```sh
+pnpm install
+pnpm run build-tsc
+```
+
+Then run the compiled CLI directly with `node`:
+
+```sh
+cd packages/cli 
+pnpm run exec-cli --skill
+echo '{}' | pnpm run exec-cli init
+```
+
+After changing files under `src/`, re-run `pnpm run build-tsc` (or `pnpm run
+start-tsc` from the repo root to watch and rebuild automatically) before
+re-invoking the CLI. To run the test suite instead:
+
+```sh
+pnpm --filter @use-coordination/cli test
+```
+
 ## Stateless pipe model
 
 `usecoord` is a **stateless, idempotent Unix filter**: the input spec is read from **stdin** (an empty spec is used when stdin is empty, so you can start from scratch), and the transformed spec is written to **stdout**. Chain commands with pipes — each applies one transformation.
