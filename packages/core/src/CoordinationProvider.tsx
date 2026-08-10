@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import {
   CoordinationStoreProvider,
   createCoordinationStore,

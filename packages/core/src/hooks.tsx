@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable react-refresh/only-export-components */
-import { useRef, useMemo, createContext, useContext } from 'react';
+import React, { useRef, useMemo, createContext, useContext } from 'react';
 import { create, useStore } from 'zustand';
 import { useShallow } from 'zustand/shallow';
 import { subscribeWithSelector } from 'zustand/middleware';
