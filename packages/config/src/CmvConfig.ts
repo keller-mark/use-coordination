@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { z } from 'zod';
-import type { CoordinationSpace, CoordinationScopesMapping, CoordinationScopesByMapping } from '@use-coordination/types';
+import type { CoordinationSpace, CoordinationScopesMapping, CoordinationScopesByMapping, CoordinationValues } from '@use-coordination/types';
 import { META_COORDINATION_SCOPES, META_COORDINATION_SCOPES_BY } from '@use-coordination/constants-internal';
 import { getNextScope, createPrefixedGetNextScopeNumeric } from '@use-coordination/utils';
 
@@ -14,6 +14,7 @@ interface ViewJson {
   coordinationScopesBy?: CoordinationScopesByMapping<CoordinationSpace>;
   metaCoordinationScopes?: CoordinationScopeName[];
   metaCoordinationScopesBy?: CoordinationScopeName[];
+  coordinationValues?: CoordinationValues;
 }
 
 interface MetaCoordinationJson {
@@ -231,18 +232,24 @@ export class CmvConfigView<CT extends Record<string, z.ZodTypeAny> = Record<stri
    * names to coordination scope names.
    * @param {object} coordinationScopesBy A mapping from coordination type
    * names to coordination scope names, for multi-level coordination.
+   * @param {string[]} metaCoordinationScopes The meta-coordination scope names.
+   * @param {string[]} metaCoordinationScopesBy The meta-coordination-by scope names.
+   * @param {object} coordinationValues A mapping from coordination type names
+   * to coordination values which this view defines directly.
    */
   constructor(
     coordinationScopes: CoordinationScopesMapping<CoordinationSpace> | undefined,
     coordinationScopesBy: CoordinationScopesByMapping<CoordinationSpace> | undefined,
     metaCoordinationScopes?: CoordinationScopeName[],
     metaCoordinationScopesBy?: CoordinationScopeName[],
+    coordinationValues?: CoordinationValues,
   ) {
     this.view = {
       coordinationScopes,
       coordinationScopesBy,
       metaCoordinationScopes,
       metaCoordinationScopesBy,
+      coordinationValues,
     };
   }
 
@@ -282,6 +289,22 @@ export class CmvConfigView<CT extends Record<string, z.ZodTypeAny> = Record<stri
     );
     this.view.coordinationScopes = nextCoordinationScopes;
     this.view.coordinationScopesBy = nextCoordinationScopesBy;
+    return this;
+  }
+
+  /**
+   * Set coordination values on this view directly, without a coordination
+   * scope in the coordination space as an intermediary.
+   * These values take precedence over any coordination scope
+   * (from coordinationScopes or metaCoordinationScopes) for the same type.
+   * @param {object} cValues A mapping from coordination type names to values.
+   * @returns {CmvConfigView} This, to allow chaining.
+   */
+  setCoordinationValues(cValues: CoordinationValues): this {
+    this.view.coordinationValues = {
+      ...(this.view.coordinationValues || {}),
+      ...cValues,
+    };
     return this;
   }
 
@@ -837,6 +860,7 @@ export class CmvConfig<CT extends Record<string, z.ZodTypeAny> = Record<string, 
         viewObj.coordinationScopesBy,
         viewObj.metaCoordinationScopes,
         viewObj.metaCoordinationScopesBy,
+        viewObj.coordinationValues,
       );
       vc.config.viewCoordination[viewUid] = newView;
     });

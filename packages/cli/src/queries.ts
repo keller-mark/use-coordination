@@ -1,6 +1,7 @@
 import {
   getCoordinationScopes,
   getCoordinationValue,
+  getViewCoordinationValues,
   getViewMapping,
 } from './access.js';
 import type { CommandContext } from './context.js';
@@ -91,4 +92,29 @@ export function getValue(
     );
   }
   ctx.writeLine(serializeValue(getCoordinationValue(spec, cType, cScope)));
+}
+
+/**
+ * Emit the value which one view defines directly for one coordination type.
+ * @param spec The spec.
+ * @param viewUid The view UID.
+ * @param cType The coordination type.
+ * @param ctx The command context.
+ */
+export function getViewValue(
+  spec: NormalizedSpec,
+  viewUid: ViewUid,
+  cType: CoordinationTypeName,
+  ctx: CommandContext,
+): void {
+  if (getViewMapping(spec, viewUid) === undefined) {
+    throw new CliError(`the spec does not contain a view "${viewUid}"`);
+  }
+  const cValues = getViewCoordinationValues(spec, viewUid);
+  if (cValues === undefined || !Object.hasOwn(cValues, cType)) {
+    throw new CliError(
+      `the view "${viewUid}" does not define a value of coordination type "${cType}"`,
+    );
+  }
+  ctx.writeLine(serializeValue(cValues[cType]));
 }

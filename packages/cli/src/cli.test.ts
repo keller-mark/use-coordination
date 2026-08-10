@@ -298,6 +298,61 @@ describe('usecoord', () => {
     });
   });
 
+  describe('view-level values', () => {
+    it('sets a value on a view directly', async () => {
+      expect(await transcript([
+        ['add-view', 'v4'],
+        ['set-view-coordination-value', 'v4', 'myValue', '42'],
+        ['set-view-coordination-value', 'v4', 'obsType', 'cell'],
+      ], EXAMPLE_SPEC)).toMatchSnapshot();
+    });
+    it('warns when the view is also mapped to a scope of the same type', async () => {
+      expect(await one(['set-view-coordination-value', 'v1', 'myValue', '42'], EXAMPLE_SPEC))
+        .toMatchSnapshot();
+    });
+    it('errors when the view is absent', async () => {
+      expect(await one(['set-view-coordination-value', 'nope', 'myValue', '42'], EXAMPLE_SPEC))
+        .toMatchSnapshot();
+    });
+    it('is idempotent', async () => {
+      const argv = ['set-view-coordination-value', 'v3', 'panelTitle', 'Right panel'];
+      const once = await runCli(argv, async () => EXAMPLE_SPEC.text);
+      const twice = await runCli(argv, async () => once.stdout);
+      expect(twice.stdout).toBe(once.stdout);
+    });
+    it('unsets a value, dropping coordinationValues when it becomes empty', async () => {
+      expect(await transcript([
+        ['set-view-coordination-value', 'v3', 'myValue', '42'],
+        ['unset-view-coordination-value', 'v3', 'myValue'],
+        ['unset-view-coordination-value', 'v3', 'myValue'],
+        ['unset-view-coordination-value', 'nope', 'myValue'],
+      ], EXAMPLE_SPEC)).toMatchSnapshot();
+    });
+    it('survives a round-trip through the object-oriented API', async () => {
+      expect(await transcript([
+        ['set-view-coordination-value', 'v3', 'myValue', '42'],
+        // link-views without --scope goes through CmvConfig.
+        ['link-views', 'zoom', '--views', 'v1', 'v2', '--value', '10'],
+      ], EXAMPLE_SPEC)).toMatchSnapshot();
+    });
+    it('gets a value which a view defines directly', async () => {
+      expect(await transcript([
+        ['set-view-coordination-value', 'v3', 'myValue', '{"level":2}'],
+        ['get-view-coordination-value', 'v3', 'myValue'],
+      ], EXAMPLE_SPEC)).toMatchSnapshot();
+    });
+    it('validates against the JSON schema', async () => {
+      expect(await transcript([
+        ['set-view-coordination-value', 'v3', 'panelTitle', 'Right panel'],
+        ['validate'],
+      ], EXAMPLE_SPEC)).toMatchSnapshot();
+    });
+    it('errors when the view does not define a value of the type', async () => {
+      expect(await one(['get-view-coordination-value', 'v1', 'myValue'], EXAMPLE_SPEC))
+        .toMatchSnapshot();
+    });
+  });
+
   describe('link-views', () => {
     it('links views on an explicitly named scope, creating missing views', async () => {
       expect(await transcript([

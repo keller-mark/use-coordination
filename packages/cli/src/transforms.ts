@@ -198,6 +198,66 @@ export function useCoordination(
 }
 
 /**
+ * Set a value on a view directly, without a coordination scope as an
+ * intermediary (`viewCoordination[view].coordinationValues[type]`).
+ * @param spec The spec.
+ * @param viewUid The view UID.
+ * @param cType The coordination type.
+ * @param cValue The coordination value.
+ * @param ctx The command context.
+ * @returns The next spec.
+ */
+export function setViewCoordinationValue(
+  spec: NormalizedSpec,
+  viewUid: ViewUid,
+  cType: CoordinationTypeName,
+  cValue: JsonValue,
+  ctx: CommandContext,
+): NormalizedSpec {
+  const view = getViewMapping(spec, viewUid);
+  if (view === undefined) {
+    throw new CliError(
+      `the spec does not contain a view "${viewUid}" (add it with "usecoord add-view ${viewUid}")`,
+    );
+  }
+  if (view.coordinationScopes !== undefined && Object.hasOwn(view.coordinationScopes, cType)) {
+    ctx.warn(
+      `the view "${viewUid}" is also mapped to a scope of coordination type "${cType}"; the value set here takes precedence`,
+    );
+  }
+  const nextView = buildView({
+    ...view,
+    coordinationValues: { ...(view.coordinationValues ?? {}), [cType]: cValue },
+  });
+  return setView(spec, viewUid, nextView);
+}
+
+/**
+ * Remove a coordination type from a view's `coordinationValues`.
+ * No-op if the view or the coordination type is absent.
+ * @param spec The spec.
+ * @param viewUid The view UID.
+ * @param cType The coordination type.
+ * @returns The next spec.
+ */
+export function unsetViewCoordinationValue(
+  spec: NormalizedSpec,
+  viewUid: ViewUid,
+  cType: CoordinationTypeName,
+): NormalizedSpec {
+  const view = getViewMapping(spec, viewUid);
+  if (view === undefined || view.coordinationValues === undefined
+    || !Object.hasOwn(view.coordinationValues, cType)) {
+    return spec;
+  }
+  const nextView = buildView({
+    ...view,
+    coordinationValues: omitKey(view.coordinationValues, cType),
+  });
+  return setView(spec, viewUid, nextView);
+}
+
+/**
  * Remove a coordination type from a view's `coordinationScopes`.
  * No-op if the view or the coordination type is absent.
  * @param spec The spec.

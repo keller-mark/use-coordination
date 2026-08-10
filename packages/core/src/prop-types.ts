@@ -38,6 +38,9 @@ export type CmvConfigObject = {
             };
             metaCoordinationScopes?: string | string[];
             metaCoordinationScopesBy?: string | string[];
+            coordinationValues?: {
+                [coordinationTypeName: string]: any;
+            };
         };
     };
 };

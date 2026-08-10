@@ -1,4 +1,5 @@
 import type {
+  CliCoordinationValues,
   CliView,
   CoordinationScopeName,
   CoordinationTypeName,
@@ -76,4 +77,27 @@ export function getViewMapping(
 
 export function hasView(spec: NormalizedSpec, viewUid: ViewUid): boolean {
   return Object.hasOwn(spec.viewCoordination, viewUid);
+}
+
+/**
+ * Get the values which one view defines directly (its `coordinationValues`).
+ * @param spec The spec.
+ * @param viewUid The view UID.
+ * @returns The mapping from coordination type to value,
+ * or undefined if the view is absent or defines no values directly.
+ */
+export function getViewCoordinationValues(
+  spec: NormalizedSpec,
+  viewUid: ViewUid,
+): CliCoordinationValues | undefined {
+  return getViewMapping(spec, viewUid)?.coordinationValues;
+}
+
+export function hasViewCoordinationValue(
+  spec: NormalizedSpec,
+  viewUid: ViewUid,
+  cType: CoordinationTypeName,
+): boolean {
+  const cValues = getViewCoordinationValues(spec, viewUid);
+  return cValues !== undefined && Object.hasOwn(cValues, cType);
 }
