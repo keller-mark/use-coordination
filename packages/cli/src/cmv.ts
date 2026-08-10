@@ -12,11 +12,11 @@ export type CmvConfigInstance = CmvConfig;
 export type CmvConfigViewInstance = ReturnType<CmvConfigInstance['addView']>;
 
 /** The sentinel used to represent `CL(...)` in JSON input. */
-export const CL_SENTINEL = '$CL';
+export const CL_SENTINEL = '$level';
 
 /**
  * The shape of the `input` argument of `CmvConfig.linkViewsByObject`,
- * after the `{"$CL": ...}` sentinels have been revived into
+ * after the `{"$level": ...}` sentinels have been revived into
  * `CoordinationLevel` instances.
  */
 export type RevivedCoordinationInput = Record<string, unknown>;
@@ -70,7 +70,7 @@ export function getScopeNames(
 }
 
 /**
- * Revive the `{"$CL": ...}` sentinels within a JSON value into
+ * Revive the `{"$level": ...}` sentinels within a JSON value into
  * `CoordinationLevel` instances, so that the result can be passed to
  * `CmvConfig.linkViewsByObject`.
  * @param input The JSON value to revive.

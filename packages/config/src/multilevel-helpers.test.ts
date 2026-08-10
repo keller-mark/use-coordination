@@ -24,13 +24,13 @@ describe('src/multilevel-helpers.js', () => {
       // Same input and output as the `addCoordinationByObject` unit tests.
       expect(expandMultiLevelObject({
         spatialImageLayer: {
-          $CL: [
+          $level: [
             {
               image: { $value: 'S-1905-017737_bf' },
               spatialLayerVisible: { $value: true },
               spatialLayerOpacity: { $value: 1 },
               spatialImageChannel: {
-                $CL: [
+                $level: [
                   {
                     spatialTargetC: { $value: 0 },
                     spatialChannelColor: { $value: [255, 0, 0] },
@@ -45,13 +45,13 @@ describe('src/multilevel-helpers.js', () => {
           ],
         },
         spatialSegmentationLayer: {
-          $CL: [
+          $level: [
             {
               image: { $value: 'S-1905-017737' },
               spatialLayerVisible: { $value: true },
               spatialLayerOpacity: { $value: 1 },
               spatialSegmentationChannel: {
-                $CL: [
+                $level: [
                   {
                     obsType: { $value: 'Cortical Interstitia' },
                     spatialTargetC: { $value: 0 },
@@ -126,7 +126,7 @@ describe('src/multilevel-helpers.js', () => {
     it('expands a non-array coordination level', () => {
       expect(expandMultiLevelObject({
         spatialImageLayer: {
-          $CL: {
+          $level: {
             image: { $value: 'S-1905-017737_bf' },
             spatialLayerOpacity: { $value: 1 },
           },
@@ -152,10 +152,10 @@ describe('src/multilevel-helpers.js', () => {
     it('references existing coordination scopes without modifying them', () => {
       expect(expandMultiLevelObject({
         spatialImageLayer: {
-          $CL: [
+          $level: [
             {
               spatialImageChannel: {
-                $CL: [
+                $level: [
                   {
                     spatialTargetC: { $value: 0 },
                     spatialChannelColor: { $value: [255, 0, 0] },
@@ -219,7 +219,7 @@ describe('src/multilevel-helpers.js', () => {
     it('supports a scope prefix', () => {
       expect(expandMultiLevelObject({
         spatialImageLayer: {
-          $CL: [
+          $level: [
             { image: { $value: 'S-1905-017737_bf' } },
           ],
         },
@@ -241,10 +241,10 @@ describe('src/multilevel-helpers.js', () => {
 
     it('treats the contents of $value verbatim', () => {
       expect(expandMultiLevelObject({
-        myObjectType: { $value: { $CL: 1, nested: { $scope: 'A' } } },
+        myObjectType: { $value: { $level: 1, nested: { $scope: 'A' } } },
       })).toEqual({
         coordinationSpace: {
-          myObjectType: { A: { $CL: 1, nested: { $scope: 'A' } } },
+          myObjectType: { A: { $level: 1, nested: { $scope: 'A' } } },
         },
         coordinationScopes: {
           myObjectType: 'A',
@@ -274,18 +274,18 @@ describe('src/multilevel-helpers.js', () => {
     it('errors when a sentinel key has sibling keys', () => {
       expect(() => expandMultiLevelObject({
         // @ts-expect-error Testing runtime validation.
-        spatialImageLayer: { $CL: [{ image: { $value: 'a' } }], other: 1 },
+        spatialImageLayer: { $level: [{ image: { $value: 'a' } }], other: 1 },
       })).toThrow(/to be the only key of the object which contains it/);
     });
 
-    it('errors when the $CL value is not an object', () => {
+    it('errors when the $level value is not an object', () => {
       expect(() => expandMultiLevelObject({
         // @ts-expect-error Testing runtime validation.
-        spatialImageLayer: { $CL: 10 },
+        spatialImageLayer: { $level: 10 },
       })).toThrow(/to be an object or an array of objects/);
       expect(() => expandMultiLevelObject({
         // @ts-expect-error Testing runtime validation.
-        spatialImageLayer: { $CL: [10] },
+        spatialImageLayer: { $level: [10] },
       })).toThrow(/Expected each coordination level to be an object of coordination types/);
     });
 
@@ -344,12 +344,12 @@ describe('src/multilevel-helpers.js', () => {
         },
       })).toEqual({
         spatialImageLayer: {
-          $CL: [
+          $level: [
             {
               image: { $value: 'S-1905-017737_bf' },
               spatialLayerVisible: { $value: true },
               spatialImageChannel: {
-                $CL: [
+                $level: [
                   {
                     spatialTargetC: { $value: 0 },
                     spatialChannelColor: { $value: [255, 0, 0] },
@@ -382,7 +382,7 @@ describe('src/multilevel-helpers.js', () => {
         },
       })).toEqual({
         spatialImageLayer: {
-          $CL: {
+          $level: {
             image: { $value: 'S-1905-017737_bf' },
           },
         },
@@ -406,7 +406,7 @@ describe('src/multilevel-helpers.js', () => {
         },
       })).toEqual({
         spatialImageChannel: {
-          $CL: [
+          $level: [
             {
               // Absent from the coordination space.
               spatialTargetC: { $scope: 'A' },
@@ -497,13 +497,13 @@ describe('src/multilevel-helpers.js', () => {
     it('round-trips the output of expandMultiLevelObject', () => {
       const inputObj = {
         spatialImageLayer: {
-          $CL: [
+          $level: [
             {
               image: { $value: 'S-1905-017737_bf' },
               spatialLayerVisible: { $value: true },
               spatialLayerOpacity: { $value: 1 },
               spatialImageChannel: {
-                $CL: [
+                $level: [
                   {
                     spatialTargetC: { $value: 0 },
                     spatialChannelColor: { $value: [255, 0, 0] },
@@ -530,7 +530,7 @@ describe('src/multilevel-helpers.js', () => {
       // so the value is inlined rather than referenced.
       const expanded = expandMultiLevelObject({
         spatialImageChannel: {
-          $CL: [
+          $level: [
             {
               spatialTargetC: { $value: 0 },
               spatialChannelColor: { $scope: 'myExistingColorScope' },
@@ -544,7 +544,7 @@ describe('src/multilevel-helpers.js', () => {
       });
       expect(tryCollapseMultiLevelObject(expanded)).toEqual({
         spatialImageChannel: {
-          $CL: [
+          $level: [
             {
               spatialTargetC: { $value: 0 },
               spatialChannelColor: { $value: [0, 0, 255] },

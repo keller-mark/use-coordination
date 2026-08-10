@@ -254,21 +254,21 @@ their channels; use `link-views` for flat, single-value coordination.
 Scope names in the output are generated, so this command is **not idempotent**: running it twice
 creates a second, parallel set of scopes.
 
-#### The `{"$CL": ...}` sentinel
+#### The `{"$level": ...}` sentinel
 
 The library marks a nested coordination *level* (rather than a literal value) with its `CL(...)`
-helper. `CL(...)` cannot be written in JSON, so express it as `{"$CL": <value>}`; the CLI revives
-each such object into `CL(<value>)` before applying the input. `$CL` must be the only key of the
+helper. `CL(...)` cannot be written in JSON, so express it as `{"$level": <value>}`; the CLI revives
+each such object into `CL(<value>)` before applying the input. `$level` must be the only key of the
 object containing it, and its value must be an object or an array of objects.
 
 ```jsonc
 // One image layer with two channels, coordinated across --views:
 {
-  "spatialImageLayer": { "$CL": [
+  "spatialImageLayer": { "$level": [
     {
       "fileUid": "my-image",
       "spatialLayerVisible": true,
-      "spatialImageChannel": { "$CL": [
+      "spatialImageChannel": { "$level": [
         { "spatialTargetC": 0, "spatialChannelColor": [255, 0, 0] },
         { "spatialTargetC": 1, "spatialChannelColor": [0, 255, 0] }
       ]}
@@ -277,7 +277,7 @@ object containing it, and its value must be an object or an array of objects.
 }
 ```
 
-An array under `$CL` means "one scope per element" (two channels above); a plain object means a
+An array under `$level` means "one scope per element" (two channels above); a plain object means a
 single nested level. Scopes for the levels themselves hold the placeholder value `"__dummy__"`,
 which is expected — the meaningful values live in the leaf types.
 
@@ -373,7 +373,7 @@ stages still run and see empty stdin, which produces an *empty* spec rather than
 | `expected at least one view UID after --views` | `--views` was omitted or consumed no values. |
 | `could not parse the spec from stdin as JSON` | stdin was not a JSON spec — often a previous stage failed, or a shell redirect truncated the file. |
 | `expected the option "--input" to be passed` | `link-views-by-object` requires `--input`. |
-| `"$CL" must be the only key of the object which contains it` | Move the sibling keys into the object inside `$CL`. |
+| `"$level" must be the only key of the object which contains it` | Move the sibling keys into the object inside `$level`. |
 | `warning: the coordination space does not contain a scope ...` | The mapping was still written; add the scope with `add-coordination`, or fix the typo. |
 
 ## Guidance for agents

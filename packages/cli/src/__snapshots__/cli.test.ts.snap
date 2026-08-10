@@ -26,7 +26,7 @@ exports[`usecoord > --skill > has a stable outline 1`] = `
 ## Transforms — multi-view linking
 ### \`usecoord link-views <type> --views <uid> [<uid> ...] [--scope <name>] [--value <json>]\`
 ### \`usecoord link-views-by-object --views <uid> [<uid> ...] --input <json> [--no-meta] [--scope-prefix <p>]\`
-#### The \`{"$CL": ...}\` sentinel
+#### The \`{"$level": ...}\` sentinel
 ## Transforms — passthrough
 ### \`usecoord print\`
 ### \`usecoord validate\`
@@ -355,44 +355,44 @@ exports[`usecoord > help > prints the global help 1`] = `
 "$ usecoord --help
 stdout:
   usecoord — build and edit use-coordination specs.
-  
+
   usecoord is a stateless filter: unless noted, each command reads a spec
   from stdin (an empty spec if stdin is empty) and writes to stdout.
   Transforms emit the resulting spec; queries emit information and end a pipeline.
-  
+
   usage: usecoord <command> [args...]
-  
+
   Creation:
     init                     Emit a fresh empty spec, ignoring stdin.
-  
+
   Transforms — views:
     add-view                 Add a view with no scopes attached. No-op if it already exists.
     remove-view              Remove a view. No-op if absent.
-  
+
   Transforms — coordination space:
     add-coordination         Add a scope of a coordination type.
     set-coordination-value   Upsert a scope's value, creating the scope if needed.
     remove-coordination      Remove a scope, dropping its type if it becomes empty. No-op if absent.
-  
+
   Transforms — wiring views to scopes:
     use-coordination         Map a view to a scope of a coordination type.
     unuse-coordination       Remove a coordination type from a view's coordinationScopes. No-op if absent.
-  
+
   Transforms — multi-view linking:
     link-views               Create a shared scope of a coordination type and attach it to every named view.
     link-views-by-object     Set up multi-level and/or meta-coordination across the named views.
-  
+
   Transforms — passthrough:
     print                    Re-emit the spec, normalized and pretty-printed.
     validate                 Validate against the JSON schema, passing the spec through unchanged.
-  
+
   Queries:
     list-views               Emit one view UID per line.
     get-view                 Emit a view's mapping object as JSON.
     list-coordination-types  Emit one coordination type per line.
     list-scopes              Emit one scope name of a coordination type per line.
     get-coordination-value   Emit a scope's value as JSON.
-  
+
   Run "usecoord <command> --help" for the arguments of one command.
   Run "usecoord --skill" for the full reference document (markdown).
 exit code: 0
@@ -403,12 +403,12 @@ exports[`usecoord > help > prints the help of one command 1`] = `
 "$ usecoord link-views-by-object --help
 stdout:
   Set up multi-level and/or meta-coordination across the named views.
-  
+
   usage: usecoord link-views-by-object --views <uid> [<uid> ...] --input <json> [--no-meta] [--scope-prefix <p>]
-  
+
   arguments:
     --views <uid> [<uid> ...]  The UIDs of the views to link.
-    --input <json>             The (potentially nested) coordination input object. Use {"$CL": ...} for a nested coordination level.
+    --input <json>             The (potentially nested) coordination input object. Use {"$level": ...} for a nested coordination level.
     --no-meta                  Attach scopes directly to views instead of via meta-coordination.
     --scope-prefix <p>         A prefix for all generated scope names.
 exit code: 0
@@ -419,9 +419,9 @@ exports[`usecoord > help > prints the help of one command via the help command 1
 "$ usecoord help add-coordination
 stdout:
   Add a scope of a coordination type.
-  
+
   usage: usecoord add-coordination <type> [--scope <name>] [--value <json>]
-  
+
   arguments:
     <type>          The coordination type.
     --scope <name>  The coordination scope name. Auto-named when omitted.
@@ -556,7 +556,7 @@ exit code: 0
 `;
 
 exports[`usecoord > link-views-by-object > attaches the scopes directly to the views with --no-meta 1`] = `
-"$ usecoord link-views-by-object --views spatial --input '{"spatialImageLayer":{"$CL":[{"fileUid":"my-image","spatialLayerVisible":true,"spatialImageChannel":{"$CL":[{"spatialTargetC":0,"spatialChannelColor":[255,0,0]},{"spatialTargetC":1,"spatialChannelColor":[0,255,0]}]}}]}}' --no-meta
+"$ usecoord link-views-by-object --views spatial --input '{"spatialImageLayer":{"$level":[{"fileUid":"my-image","spatialLayerVisible":true,"spatialImageChannel":{"$level":[{"spatialTargetC":0,"spatialChannelColor":[255,0,0]},{"spatialTargetC":1,"spatialChannelColor":[0,255,0]}]}}]}}' --no-meta
 stdout:
   {
     "coordinationSpace": {
@@ -650,9 +650,9 @@ exit code: 1
 "
 `;
 
-exports[`usecoord > link-views-by-object > errors when the $CL sentinel has sibling keys 1`] = `
-"$ usecoord link-views-by-object --views v1 --input '{"spatialImageLayer":{"$CL":[{"fileUid":"a"}],"other":1}}'
-  stderr| usecoord link-views-by-object: "$CL" must be the only key of the object which contains it
+exports[`usecoord > link-views-by-object > errors when the $level sentinel has sibling keys 1`] = `
+"$ usecoord link-views-by-object --views v1 --input '{"spatialImageLayer":{"$level":[{"fileUid":"a"}],"other":1}}'
+  stderr| usecoord link-views-by-object: "$level" must be the only key of the object which contains it
   exit code| 1
 stdout:
   (empty)
@@ -660,9 +660,9 @@ exit code: 1
 "
 `;
 
-exports[`usecoord > link-views-by-object > errors when the $CL sentinel value is not an object 1`] = `
-"$ usecoord link-views-by-object --views v1 --input '{"spatialImageLayer":{"$CL":10}}'
-  stderr| usecoord link-views-by-object: expected the value of "$CL" to be an object or an array of objects
+exports[`usecoord > link-views-by-object > errors when the $level sentinel value is not an object 1`] = `
+"$ usecoord link-views-by-object --views v1 --input '{"spatialImageLayer":{"$level":10}}'
+  stderr| usecoord link-views-by-object: expected the value of "$level" to be an object or an array of objects
   exit code| 1
 stdout:
   (empty)
@@ -719,7 +719,7 @@ exit code: 0
 exports[`usecoord > link-views-by-object > sets up meta-coordination across views 1`] = `
 "$ usecoord init
 $ usecoord add-view spatial
-$ usecoord link-views-by-object --views spatial lc --input '{"spatialImageLayer":{"$CL":[{"fileUid":"my-image","spatialLayerVisible":true,"spatialImageChannel":{"$CL":[{"spatialTargetC":0,"spatialChannelColor":[255,0,0]},{"spatialTargetC":1,"spatialChannelColor":[0,255,0]}]}}]}}'
+$ usecoord link-views-by-object --views spatial lc --input '{"spatialImageLayer":{"$level":[{"fileUid":"my-image","spatialLayerVisible":true,"spatialImageChannel":{"$level":[{"spatialTargetC":0,"spatialChannelColor":[255,0,0]},{"spatialTargetC":1,"spatialChannelColor":[0,255,0]}]}}]}}'
 stdout:
   {
     "coordinationSpace": {

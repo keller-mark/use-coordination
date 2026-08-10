@@ -14,7 +14,7 @@ import {
 } from './CmvConfig.js';
 
 /** The sentinel used to represent `CL(...)`, i.e., a nested coordination level. */
-export const CL_SENTINEL = '$CL';
+export const CL_SENTINEL = '$level';
 /** The sentinel used to represent an initial coordination value. */
 export const VALUE_SENTINEL = '$value';
 /** The sentinel used to reference a coordination scope which already exists. */
@@ -34,7 +34,7 @@ const DUMMY_VALUE = '__dummy__';
  * which happens to be an object is never mistaken for a nested level.
  */
 export type MultiLevelValue = (
-  { $CL: MultiLevelObject | MultiLevelObject[] }
+  { $level: MultiLevelObject | MultiLevelObject[] }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | { $value: any }
   | { $scope: string }
@@ -175,7 +175,7 @@ function reviveLevel(
  * into a coordination space and the scope mappings which reference it.
  * @param inputObj A (potentially nested) object with coordination types as keys, and
  * values being objects which contain exactly one of the sentinel keys
- * `$CL` (a nested coordination level, or an array of them),
+ * `$level` (a nested coordination level, or an array of them),
  * `$value` (an initial coordination value), or
  * `$scope` (the name of a coordination scope which already exists).
  * @param options Optional.
@@ -191,12 +191,12 @@ export function expandMultiLevelObject(
   /*
     Input:
     {
-      spatialImageLayer: { "$CL": [
+      spatialImageLayer: { "$level": [
         {
           image: { "$value": 'S-1905-017737_bf' },
           spatialLayerVisible: { "$value": true },
           spatialLayerOpacity: { "$value": 1 },
-          spatialImageChannel: { "$CL": [
+          spatialImageChannel: { "$level": [
             {
               spatialTargetC: { "$value": 0 },
               spatialChannelColor: { "$value": [255, 0, 0] },
