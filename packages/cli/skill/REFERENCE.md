@@ -66,7 +66,8 @@ Meta commands (these ignore stdin and emit text, not a spec):
       "coordinationScopes": { "<coordinationType>": "<scope>" },
       "coordinationScopesBy": { /* multi-level mappings */ },
       "metaCoordinationScopes": ["<metaScope>"],
-      "metaCoordinationScopesBy": ["<metaScope>"]
+      "metaCoordinationScopesBy": ["<metaScope>"],
+      "coordinationValues": { "<coordinationType>": <coordinationValue> }
     }
   }
 }
@@ -85,14 +86,19 @@ Meta commands (these ignore stdin and emit text, not a spec):
   (`metaCoordinationScopes`) instead of listing them itself. Produced by `link-views-by-object`.
 - **Multi-level coordination** — `coordinationScopesBy` maps a *parent* scope to child scopes,
   which is how repeated structures (image layers, channels) are represented.
+- **View-level value** — `viewCoordination[view].coordinationValues[type]` holds a value on the
+  view itself, with no scope as an intermediary. Use it when a value belongs to one view only and
+  will never be shared. It **takes precedence** over that view's `coordinationScopes` and
+  `metaCoordinationScopes` for the same type (but not over a finer-grained `coordinationScopesBy`
+  mapping), and the app writes updates back to it.
 
 ### Normalization
 
 Every command normalizes the spec it emits, so output is stable and re-runnable:
 
 - `coordinationSpace` and `viewCoordination` are always present, even when empty.
-- Empty `coordinationScopes` / `coordinationScopesBy` objects and empty meta-scope arrays are
-  dropped from view mapping objects, leaving `{}` for an uncoordinated view.
+- Empty `coordinationScopes` / `coordinationScopesBy` / `coordinationValues` objects and empty
+  meta-scope arrays are dropped from view mapping objects, leaving `{}` for an uncoordinated view.
 - A single meta scope name is expanded to a one-element array
   (`"metaCoordinationScopes": "A"` becomes `["A"]`); both forms are valid per the schema.
 - A `null` in place of a coordination type's scopes becomes `{}`.
@@ -110,9 +116,11 @@ Every command normalizes the spec it emits, so output is stable and re-runnable:
      `usecoord use-coordination <view> <type> <name>` — for finer control (coordinate only some
      views, or give views different scopes of the same type).
 4. `usecoord set-coordination-value <type> <scope> <value>` — set or adjust a value later.
-5. `usecoord validate` — check against the JSON schema; it sits mid-pipeline.
-6. Inspect with the query commands: `list-views`, `get-view`, `list-coordination-types`,
-   `list-scopes`, `get-coordination-value`.
+5. `usecoord set-view-coordination-value <view> <type> <value>` — for a value which belongs to
+   one view alone, skipping the coordination space entirely.
+6. `usecoord validate` — check against the JSON schema; it sits mid-pipeline.
+7. Inspect with the query commands: `list-views`, `get-view`, `list-coordination-types`,
+   `list-scopes`, `get-coordination-value`, `get-view-coordination-value`.
 
 ## Value parsing
 
@@ -201,6 +209,38 @@ filled in later, but is usually a typo.
 
 Remove a coordination type from a view's `coordinationScopes`. No-op if the view or the type is
 absent.
+
+## Transforms — view-level values
+
+### `usecoord set-view-coordination-value <view_uid> <type> <value>`
+
+Set `viewCoordination[view].coordinationValues[type] = value`, so the view holds the value itself
+instead of pointing at a scope. Idempotent. **Errors** if the view is missing (add it first with
+`add-view`). **Warns** on stderr, but still succeeds, if the view is also mapped to a scope of the
+same type — the direct value wins, which makes the scope mapping dead weight.
+
+Prefer this over a single-view scope when the value will never be shared; prefer
+`add-coordination` + `use-coordination` when another view might need to be linked on it later,
+since moving a value out of `coordinationValues` means rewriting the view.
+
+```sh
+$ usecoord init | usecoord add-view v1 | usecoord set-view-coordination-value v1 zoom 10
+{
+  "coordinationSpace": {},
+  "viewCoordination": {
+    "v1": {
+      "coordinationValues": {
+        "zoom": 10
+      }
+    }
+  }
+}
+```
+
+### `usecoord unset-view-coordination-value <view_uid> <type>`
+
+Remove a coordination type from a view's `coordinationValues`. No-op if the view or the type is
+absent. Any `coordinationScopes` mapping for that type on the same view takes effect again.
 
 ## Transforms — multi-view linking
 
@@ -307,10 +347,15 @@ type names are meaningful to the consuming app.
 | Command | Output |
 |---|---|
 | `usecoord list-views` | One view UID per line. |
-| `usecoord get-view <view_uid>` | The view's mapping object as JSON (`coordinationScopes`, `coordinationScopesBy`, `metaCoordinationScopes`, `metaCoordinationScopesBy`). Errors if the view is absent. |
+| `usecoord get-view <view_uid>` | The view's mapping object as JSON (`coordinationScopes`, `coordinationScopesBy`, `metaCoordinationScopes`, `metaCoordinationScopesBy`, `coordinationValues`). Errors if the view is absent. |
 | `usecoord list-coordination-types` | One coordination type per line. |
 | `usecoord list-scopes <type>` | One scope name (of `type`) per line. Warns on stderr and prints nothing if the type is absent. |
 | `usecoord get-coordination-value <type> <scope>` | The scope's value as JSON. Errors if the type or scope is absent. |
+| `usecoord get-view-coordination-value <view_uid> <type>` | The value the view defines directly for `type`, as JSON. Errors if the view is absent or defines no value of that type. |
+
+`list-coordination-types` and `list-scopes` describe the **coordination space** only. A type which
+appears solely in some view's `coordinationValues` has no scopes, so it shows up in `get-view`
+rather than in those two listings.
 
 ## Recipes
 
@@ -348,6 +393,15 @@ usecoord unuse-coordination v2 zoom < spec.json \
   | usecoord use-coordination v2 zoom zoomB
 ```
 
+### A value which belongs to one view only
+
+```sh
+usecoord init \
+  | usecoord link-views zoom --views v1 v2 --scope zoomA --value 3 \
+  | usecoord set-view-coordination-value v1 panelTitle 'Left panel' \
+  | usecoord set-view-coordination-value v2 panelTitle 'Right panel'
+```
+
 ### Inspect a spec
 
 ```sh
@@ -355,6 +409,7 @@ usecoord list-views < spec.json
 usecoord get-view v1 < spec.json
 usecoord list-scopes zoom < spec.json
 usecoord get-coordination-value zoom zoomA < spec.json
+usecoord get-view-coordination-value v1 panelTitle < spec.json
 ```
 
 ## Errors and troubleshooting
@@ -369,12 +424,14 @@ stages still run and see empty stdin, which produces an *empty* spec rather than
 | `unknown command "..."` | Typo; run `usecoord --help`. |
 | `unknown option "--..."` | Option not valid for that command; run `usecoord <command> --help`. |
 | `missing required argument(s) <...>` | Positional argument omitted; the usage line follows the message. |
-| `the spec does not contain a view "..."` | `use-coordination` on a missing view; `add-view` first, or use `link-views`, which creates views. |
+| `the spec does not contain a view "..."` | `use-coordination` or `set-view-coordination-value` on a missing view; `add-view` first, or use `link-views`, which creates views. |
+| `the view "..." does not define a value of coordination type "..."` | `get-view-coordination-value` for a type the view does not hold directly; it may be coordinated via a scope instead — check `get-view`. |
 | `expected at least one view UID after --views` | `--views` was omitted or consumed no values. |
 | `could not parse the spec from stdin as JSON` | stdin was not a JSON spec — often a previous stage failed, or a shell redirect truncated the file. |
 | `expected the option "--input" to be passed` | `link-views-by-object` requires `--input`. |
 | `"$CL" must be the only key of the object which contains it` | Move the sibling keys into the object inside `$CL`. |
 | `warning: the coordination space does not contain a scope ...` | The mapping was still written; add the scope with `add-coordination`, or fix the typo. |
+| `warning: the view "..." is also mapped to a scope of coordination type ...` | Both were kept, but the view-level value wins; drop one with `unuse-coordination` or `unset-view-coordination-value`. |
 
 ## Guidance for agents
 
@@ -385,6 +442,10 @@ stages still run and see empty stdin, which produces an *empty* spec rather than
 - Coordination type names are app-specific and are not validated. Take them from the app's
   documentation or from an existing spec (`usecoord list-coordination-types`), and do not invent
   new ones when linking views in an existing app.
-- Read values back with `get-coordination-value` rather than re-parsing the spec by hand.
+- Reach for a coordination scope by default. Use `set-view-coordination-value` only for state
+  that is genuinely local to one view (a title, a per-view toggle) — anything two views might
+  ever share belongs in the coordination space.
+- Read values back with `get-coordination-value` (or `get-view-coordination-value` for a
+  view-level value) rather than re-parsing the spec by hand.
 - After editing a spec that a user hand-wrote, `usecoord print` output is normalized, so the diff
   may include key reordering and pruned empty objects. That is expected and semantically neutral.

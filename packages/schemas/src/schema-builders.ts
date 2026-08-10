@@ -5,7 +5,10 @@ import {
   componentCoordinationScopesBy,
 } from './shared.js';
 
-function buildSpecSchemaAux<T extends z.ZodType>(coordinationSpace: T) {
+function buildSpecSchemaAux<T extends z.ZodType, U extends z.ZodType>(
+  coordinationSpace: T,
+  coordinationValues: U,
+) {
   return z.object({
     key: z.union([z.string(), z.number()]).optional(),
     coordinationSpace: coordinationSpace
@@ -25,7 +28,12 @@ function buildSpecSchemaAux<T extends z.ZodType>(coordinationSpace: T) {
         coordinationScopesBy: componentCoordinationScopesBy
           .optional(),
         metaCoordinationScopes: oneOrMoreCoordinationScopeNames.optional(),
-        metaCoordinationScopesBy: oneOrMoreCoordinationScopeNames.optional()
+        metaCoordinationScopesBy: oneOrMoreCoordinationScopeNames.optional(),
+        coordinationValues: coordinationValues
+          .describe(
+            'Mapping from coordination types to values, for values which do not need to be coordinated with other views. These take precedence over coordinationScopes and metaCoordinationScopes.',
+          )
+          .optional(),
       }),
     )
       .describe(
@@ -47,7 +55,13 @@ export const genericSpecSchema = buildSpecSchemaAux(
       // Coordination Value
       z.any()
     ).nullable()
-  )
+  ),
+  z.record(
+    // Coordination Type
+    z.string(),
+    // Coordination Value
+    z.any(),
+  ),
 );
 
 /**
@@ -78,6 +92,16 @@ export function buildSpecSchema<
               z.string(),
               ctValueSchema.optional(),
             ).optional(),
+          ])),
+      ),
+    ),
+    // For view-level coordinationValues, the value schemas are used directly
+    // (there is no coordination scope name as an intermediary).
+    z.strictObject(
+      Object.fromEntries(
+        Object.entries(coordinationTypes).map(([ctName, ctValueSchema]) => ([
+            ctName,
+            ctValueSchema.optional(),
           ])),
       ),
     ),

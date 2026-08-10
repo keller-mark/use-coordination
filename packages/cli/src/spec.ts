@@ -4,6 +4,7 @@ import type {
   CliCoordinationScopes,
   CliCoordinationScopesBy,
   CliCoordinationSpace,
+  CliCoordinationValues,
   CliMetaCoordination,
   CliMetaCoordinationScopes,
   CliMetaCoordinationScopesBy,
@@ -107,6 +108,19 @@ function normalizeScopesByMapping(
   return isEmptyObject(input) ? undefined : (input as CliCoordinationScopesBy);
 }
 
+function normalizeCoordinationValues(
+  input: unknown,
+  path: string,
+): CliCoordinationValues | undefined {
+  if (input === undefined || input === null) {
+    return undefined;
+  }
+  if (!isPlainObject(input)) {
+    throw new CliError(`expected ${path} to be an object`);
+  }
+  return isEmptyObject(input) ? undefined : (input as CliCoordinationValues);
+}
+
 /**
  * Construct a view mapping object with a canonical key order,
  * pruning any empty sub-objects.
@@ -119,16 +133,19 @@ export function buildView(parts: CliView): CliView {
     coordinationScopesBy,
     metaCoordinationScopes,
     metaCoordinationScopesBy,
+    coordinationValues,
   } = parts;
   const hasScopes = coordinationScopes !== undefined && !isEmptyObject(coordinationScopes);
   const hasScopesBy = coordinationScopesBy !== undefined && !isEmptyObject(coordinationScopesBy);
   const hasMeta = metaCoordinationScopes !== undefined && metaCoordinationScopes.length > 0;
   const hasMetaBy = metaCoordinationScopesBy !== undefined && metaCoordinationScopesBy.length > 0;
+  const hasValues = coordinationValues !== undefined && !isEmptyObject(coordinationValues);
   return {
     ...(hasScopes ? { coordinationScopes } : {}),
     ...(hasScopesBy ? { coordinationScopesBy } : {}),
     ...(hasMeta ? { metaCoordinationScopes } : {}),
     ...(hasMetaBy ? { metaCoordinationScopesBy } : {}),
+    ...(hasValues ? { coordinationValues } : {}),
   };
 }
 
@@ -155,11 +172,16 @@ function normalizeView(input: unknown, viewUid: string): CliView {
     input.metaCoordinationScopesBy,
     `spec.viewCoordination.${viewUid}.metaCoordinationScopesBy`,
   );
+  const coordinationValues = normalizeCoordinationValues(
+    input.coordinationValues,
+    `spec.viewCoordination.${viewUid}.coordinationValues`,
+  );
   return buildView({
     coordinationScopes,
     coordinationScopesBy,
     metaCoordinationScopes,
     metaCoordinationScopesBy,
+    coordinationValues,
   });
 }
 

@@ -3,6 +3,7 @@ import type {
   CoordinationSpace,
   CoordinationScopesMapping,
   CoordinationScopesByMapping,
+  CoordinationValues,
   MetaCoordinationScopes,
   MetaCoordinationScopesBy,
   ViewCoordination,
@@ -29,6 +30,7 @@ export type ViewUid = string;
 export type CliCoordinationSpace = CoordinationSpace;
 export type CliCoordinationScopes = CoordinationScopesMapping<CliCoordinationSpace>;
 export type CliCoordinationScopesBy = CoordinationScopesByMapping<CliCoordinationSpace>;
+export type CliCoordinationValues = CoordinationValues;
 export type CliMetaCoordinationScopes = MetaCoordinationScopes<CliCoordinationSpace>;
 export type CliMetaCoordinationScopesBy = MetaCoordinationScopesBy<CliCoordinationSpace>;
 
@@ -37,12 +39,15 @@ export type CliMetaCoordinationScopesBy = MetaCoordinationScopesBy<CliCoordinati
  * The one-or-more meta scope names allowed by the JSON schema are
  * normalized to arrays by `normalizeSpec`, which matches the
  * representation used internally by `CmvConfig`.
+ * `coordinationValues` holds the values which the view defines directly,
+ * without a coordination scope as an intermediary.
  */
 export interface CliView {
   coordinationScopes?: CliCoordinationScopes;
   coordinationScopesBy?: CliCoordinationScopesBy;
   metaCoordinationScopes?: CoordinationScopeName[];
   metaCoordinationScopesBy?: CoordinationScopeName[];
+  coordinationValues?: CliCoordinationValues;
 }
 
 export type CliViewCoordination = {

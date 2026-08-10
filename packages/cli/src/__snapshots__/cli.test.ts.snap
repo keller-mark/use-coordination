@@ -23,6 +23,9 @@ exports[`usecoord > --skill > has a stable outline 1`] = `
 ## Transforms — wiring views to scopes
 ### \`usecoord use-coordination <view_uid> <type> <scope>\`
 ### \`usecoord unuse-coordination <view_uid> <type>\`
+## Transforms — view-level values
+### \`usecoord set-view-coordination-value <view_uid> <type> <value>\`
+### \`usecoord unset-view-coordination-value <view_uid> <type>\`
 ## Transforms — multi-view linking
 ### \`usecoord link-views <type> --views <uid> [<uid> ...] [--scope <name>] [--value <json>]\`
 ### \`usecoord link-views-by-object --views <uid> [<uid> ...] --input <json> [--no-meta] [--scope-prefix <p>]\`
@@ -36,6 +39,7 @@ exports[`usecoord > --skill > has a stable outline 1`] = `
 ### Coordinate several types across the same views
 ### Adjust an existing spec in place
 ### Unlink one view from a shared scope
+### A value which belongs to one view only
 ### Inspect a spec
 ## Errors and troubleshooting
 ## Guidance for agents
@@ -363,35 +367,40 @@ stdout:
   usage: usecoord <command> [args...]
   
   Creation:
-    init                     Emit a fresh empty spec, ignoring stdin.
+    init                           Emit a fresh empty spec, ignoring stdin.
   
   Transforms — views:
-    add-view                 Add a view with no scopes attached. No-op if it already exists.
-    remove-view              Remove a view. No-op if absent.
+    add-view                       Add a view with no scopes attached. No-op if it already exists.
+    remove-view                    Remove a view. No-op if absent.
   
   Transforms — coordination space:
-    add-coordination         Add a scope of a coordination type.
-    set-coordination-value   Upsert a scope's value, creating the scope if needed.
-    remove-coordination      Remove a scope, dropping its type if it becomes empty. No-op if absent.
+    add-coordination               Add a scope of a coordination type.
+    set-coordination-value         Upsert a scope's value, creating the scope if needed.
+    remove-coordination            Remove a scope, dropping its type if it becomes empty. No-op if absent.
   
   Transforms — wiring views to scopes:
-    use-coordination         Map a view to a scope of a coordination type.
-    unuse-coordination       Remove a coordination type from a view's coordinationScopes. No-op if absent.
+    use-coordination               Map a view to a scope of a coordination type.
+    unuse-coordination             Remove a coordination type from a view's coordinationScopes. No-op if absent.
+  
+  Transforms — view-level values:
+    set-view-coordination-value    Set a value on a view directly, without a scope as an intermediary.
+    unset-view-coordination-value  Remove a coordination type from a view's coordinationValues. No-op if absent.
   
   Transforms — multi-view linking:
-    link-views               Create a shared scope of a coordination type and attach it to every named view.
-    link-views-by-object     Set up multi-level and/or meta-coordination across the named views.
+    link-views                     Create a shared scope of a coordination type and attach it to every named view.
+    link-views-by-object           Set up multi-level and/or meta-coordination across the named views.
   
   Transforms — passthrough:
-    print                    Re-emit the spec, normalized and pretty-printed.
-    validate                 Validate against the JSON schema, passing the spec through unchanged.
+    print                          Re-emit the spec, normalized and pretty-printed.
+    validate                       Validate against the JSON schema, passing the spec through unchanged.
   
   Queries:
-    list-views               Emit one view UID per line.
-    get-view                 Emit a view's mapping object as JSON.
-    list-coordination-types  Emit one coordination type per line.
-    list-scopes              Emit one scope name of a coordination type per line.
-    get-coordination-value   Emit a scope's value as JSON.
+    list-views                     Emit one view UID per line.
+    get-view                       Emit a view's mapping object as JSON.
+    list-coordination-types        Emit one coordination type per line.
+    list-scopes                    Emit one scope name of a coordination type per line.
+    get-coordination-value         Emit a scope's value as JSON.
+    get-view-coordination-value    Emit a value from a view's coordinationValues as JSON.
   
   Run "usecoord <command> --help" for the arguments of one command.
   Run "usecoord --skill" for the full reference document (markdown).
@@ -1146,6 +1155,238 @@ stdout:
       "v2": {
         "coordinationScopes": {
           "zoom": "zoomA"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > view-level values > errors when the view does not define a value of the type 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord get-view-coordination-value v1 myValue
+  stderr| usecoord get-view-coordination-value: the view "v1" does not define a value of coordination type "myValue"
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > view-level values > errors when the view is absent 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord set-view-coordination-value nope myValue 42
+  stderr| usecoord set-view-coordination-value: the spec does not contain a view "nope" (add it with "usecoord add-view nope")
+  exit code| 1
+stdout:
+  (empty)
+exit code: 1
+"
+`;
+
+exports[`usecoord > view-level values > gets a value which a view defines directly 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord set-view-coordination-value v3 myValue '{"level":2}'
+  stderr| usecoord: warning: the view "v3" is also mapped to a scope of coordination type "myValue"; the value set here takes precedence
+$ usecoord get-view-coordination-value v3 myValue
+stdout:
+  {
+    "level": 2
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > view-level values > sets a value on a view directly 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord add-view v4
+$ usecoord set-view-coordination-value v4 myValue 42
+$ usecoord set-view-coordination-value v4 obsType cell
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      },
+      "v4": {
+        "coordinationValues": {
+          "myValue": 42,
+          "obsType": "cell"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > view-level values > survives a round-trip through the object-oriented API 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord set-view-coordination-value v3 myValue 42
+  stderr| usecoord: warning: the view "v3" is also mapped to a scope of coordination type "myValue"; the value set here takes precedence
+$ usecoord link-views zoom --views v1 v2 --value 10
+  stderr| linked views on scope "A" of coordination type "zoom"
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      },
+      "zoom": {
+        "A": 10
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1",
+          "zoom": "A"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1",
+          "zoom": "A"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        },
+        "coordinationValues": {
+          "myValue": 42
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > view-level values > unsets a value, dropping coordinationValues when it becomes empty 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord set-view-coordination-value v3 myValue 42
+  stderr| usecoord: warning: the view "v3" is also mapped to a scope of coordination type "myValue"; the value set here takes precedence
+$ usecoord unset-view-coordination-value v3 myValue
+$ usecoord unset-view-coordination-value v3 myValue
+$ usecoord unset-view-coordination-value nope myValue
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > view-level values > validates against the JSON schema 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord set-view-coordination-value v3 panelTitle 'Right panel'
+$ usecoord validate
+  stderr| Valid
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
+        },
+        "coordinationValues": {
+          "panelTitle": "Right panel"
+        }
+      }
+    }
+  }
+exit code: 0
+"
+`;
+
+exports[`usecoord > view-level values > warns when the view is also mapped to a scope of the same type 1`] = `
+"stdin: <EXAMPLE_SPEC>
+$ usecoord set-view-coordination-value v1 myValue 42
+  stderr| usecoord: warning: the view "v1" is also mapped to a scope of coordination type "myValue"; the value set here takes precedence
+stdout:
+  {
+    "coordinationSpace": {
+      "myValue": {
+        "myValueScope1": 99,
+        "myValueScope2": 20
+      }
+    },
+    "viewCoordination": {
+      "v1": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        },
+        "coordinationValues": {
+          "myValue": 42
+        }
+      },
+      "v2": {
+        "coordinationScopes": {
+          "myValue": "myValueScope1"
+        }
+      },
+      "v3": {
+        "coordinationScopes": {
+          "myValue": "myValueScope2"
         }
       }
     }

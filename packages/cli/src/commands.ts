@@ -19,6 +19,7 @@ export type CommandSection =
   | 'Transforms — views'
   | 'Transforms — coordination space'
   | 'Transforms — wiring views to scopes'
+  | 'Transforms — view-level values'
   | 'Transforms — multi-view linking'
   | 'Transforms — passthrough'
   | 'Queries';
@@ -234,6 +235,39 @@ const unuseCoordinationCommand = defineTransform({
   },
 });
 
+const setViewCoordinationValueCommand = defineTransform({
+  kind: 'transform',
+  name: 'set-view-coordination-value',
+  section: 'Transforms — view-level values',
+  summary: 'Set a value on a view directly, without a scope as an intermediary.',
+  usage: 'usecoord set-view-coordination-value <view_uid> <type> <value>',
+  positionals: [
+    { name: 'view_uid', required: true, description: 'The view UID.' },
+    { name: 'type', required: true, description: 'The coordination type.' },
+    { name: 'value', required: true, description: 'The coordination value (parsed as JSON when possible).' },
+  ],
+  options: {},
+  run({ positionals: [viewUid, cType, rawValue] }, spec, ctx) {
+    return transforms.setViewCoordinationValue(spec, viewUid, cType, parseValue(rawValue), ctx);
+  },
+});
+
+const unsetViewCoordinationValueCommand = defineTransform({
+  kind: 'transform',
+  name: 'unset-view-coordination-value',
+  section: 'Transforms — view-level values',
+  summary: "Remove a coordination type from a view's coordinationValues. No-op if absent.",
+  usage: 'usecoord unset-view-coordination-value <view_uid> <type>',
+  positionals: [
+    { name: 'view_uid', required: true, description: 'The view UID.' },
+    { name: 'type', required: true, description: 'The coordination type.' },
+  ],
+  options: {},
+  run({ positionals: [viewUid, cType] }, spec) {
+    return transforms.unsetViewCoordinationValue(spec, viewUid, cType);
+  },
+});
+
 const linkViewsCommand = defineTransform({
   kind: 'transform',
   name: 'link-views',
@@ -396,6 +430,22 @@ const getCoordinationValueCommand = defineQuery({
   },
 });
 
+const getViewCoordinationValueCommand = defineQuery({
+  kind: 'query',
+  name: 'get-view-coordination-value',
+  section: 'Queries',
+  summary: "Emit a value from a view's coordinationValues as JSON.",
+  usage: 'usecoord get-view-coordination-value <view_uid> <type>',
+  positionals: [
+    { name: 'view_uid', required: true, description: 'The view UID.' },
+    { name: 'type', required: true, description: 'The coordination type.' },
+  ],
+  options: {},
+  run({ positionals: [viewUid, cType] }, spec, ctx) {
+    queries.getViewValue(spec, viewUid, cType, ctx);
+  },
+});
+
 export const COMMANDS: readonly AnyCommand[] = [
   initCommand,
   addViewCommand,
@@ -405,6 +455,8 @@ export const COMMANDS: readonly AnyCommand[] = [
   removeCoordinationCommand,
   useCoordinationCommand,
   unuseCoordinationCommand,
+  setViewCoordinationValueCommand,
+  unsetViewCoordinationValueCommand,
   linkViewsCommand,
   linkViewsByObjectCommand,
   printCommand,
@@ -414,6 +466,7 @@ export const COMMANDS: readonly AnyCommand[] = [
   listCoordinationTypesCommand,
   listScopesCommand,
   getCoordinationValueCommand,
+  getViewCoordinationValueCommand,
 ];
 
 export const COMMAND_SECTIONS: readonly CommandSection[] = [
@@ -421,6 +474,7 @@ export const COMMAND_SECTIONS: readonly CommandSection[] = [
   'Transforms — views',
   'Transforms — coordination space',
   'Transforms — wiring views to scopes',
+  'Transforms — view-level values',
   'Transforms — multi-view linking',
   'Transforms — passthrough',
   'Queries',
