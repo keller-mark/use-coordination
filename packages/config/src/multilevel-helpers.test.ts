@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { expandMultiLevelObject } from './multilevel-helpers.js';
+import { expandMultiLevelObject, tryCollapseMultiLevelObject } from './multilevel-helpers.js';
 
 describe('src/multilevel-helpers.js', () => {
   describe('expandMultiLevelObject', () => {
@@ -297,6 +297,261 @@ describe('src/multilevel-helpers.js', () => {
       expect(() => expandMultiLevelObject({
         spatialChannelColor: { $scope: '' },
       })).toThrow(/to be a non-empty string/);
+    });
+  });
+
+  describe('tryCollapseMultiLevelObject', () => {
+    it('collapses a single-level object', () => {
+      expect(tryCollapseMultiLevelObject({
+        coordinationSpace: {
+          embeddingZoom: { A: 10 },
+          embeddingTargetX: { A: 11 },
+        },
+        coordinationScopes: {
+          embeddingZoom: 'A',
+          embeddingTargetX: 'A',
+        },
+        coordinationScopesBy: {},
+      })).toEqual({
+        embeddingZoom: { $value: 10 },
+        embeddingTargetX: { $value: 11 },
+      });
+    });
+
+    it('collapses a multi-level object', () => {
+      expect(tryCollapseMultiLevelObject({
+        coordinationSpace: {
+          spatialImageLayer: { A: '__dummy__' },
+          image: { A: 'S-1905-017737_bf' },
+          spatialLayerVisible: { A: true },
+          spatialImageChannel: { A: '__dummy__', B: '__dummy__' },
+          spatialTargetC: { A: 0, B: 1 },
+          spatialChannelColor: { A: [255, 0, 0], B: [0, 255, 0] },
+        },
+        coordinationScopes: {
+          spatialImageLayer: ['A'],
+        },
+        coordinationScopesBy: {
+          spatialImageLayer: {
+            image: { A: 'A' },
+            spatialLayerVisible: { A: 'A' },
+            spatialImageChannel: { A: ['A', 'B'] },
+          },
+          spatialImageChannel: {
+            spatialTargetC: { A: 'A', B: 'B' },
+            spatialChannelColor: { A: 'A', B: 'B' },
+          },
+        },
+      })).toEqual({
+        spatialImageLayer: {
+          $CL: [
+            {
+              image: { $value: 'S-1905-017737_bf' },
+              spatialLayerVisible: { $value: true },
+              spatialImageChannel: {
+                $CL: [
+                  {
+                    spatialTargetC: { $value: 0 },
+                    spatialChannelColor: { $value: [255, 0, 0] },
+                  },
+                  {
+                    spatialTargetC: { $value: 1 },
+                    spatialChannelColor: { $value: [0, 255, 0] },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      });
+    });
+
+    it('preserves whether a coordination level is an array', () => {
+      expect(tryCollapseMultiLevelObject({
+        coordinationSpace: {
+          spatialImageLayer: { A: '__dummy__' },
+          image: { A: 'S-1905-017737_bf' },
+        },
+        coordinationScopes: {
+          spatialImageLayer: 'A',
+        },
+        coordinationScopesBy: {
+          spatialImageLayer: {
+            image: { A: 'A' },
+          },
+        },
+      })).toEqual({
+        spatialImageLayer: {
+          $CL: {
+            image: { $value: 'S-1905-017737_bf' },
+          },
+        },
+      });
+    });
+
+    it('references scopes which are shared or absent from the coordination space', () => {
+      expect(tryCollapseMultiLevelObject({
+        coordinationSpace: {
+          spatialImageChannel: { A: '__dummy__', B: '__dummy__' },
+          spatialChannelColor: { shared: [255, 0, 0] },
+        },
+        coordinationScopes: {
+          spatialImageChannel: ['A', 'B'],
+        },
+        coordinationScopesBy: {
+          spatialImageChannel: {
+            spatialTargetC: { A: 'A', B: 'B' },
+            spatialChannelColor: { A: 'shared', B: 'shared' },
+          },
+        },
+      })).toEqual({
+        spatialImageChannel: {
+          $CL: [
+            {
+              // Absent from the coordination space.
+              spatialTargetC: { $scope: 'A' },
+              // Shared between the two channels.
+              spatialChannelColor: { $scope: 'shared' },
+            },
+            {
+              spatialTargetC: { $scope: 'B' },
+              spatialChannelColor: { $scope: 'shared' },
+            },
+          ],
+        },
+      });
+    });
+
+    it('returns null when a coordination level is shared', () => {
+      expect(tryCollapseMultiLevelObject({
+        coordinationSpace: {
+          spatialImageLayer: { A: '__dummy__', B: '__dummy__' },
+          spatialImageChannel: { A: '__dummy__' },
+          spatialTargetC: { A: 0 },
+        },
+        coordinationScopes: {
+          spatialImageLayer: ['A', 'B'],
+        },
+        coordinationScopesBy: {
+          spatialImageLayer: {
+            // Both layers reference the same channel.
+            spatialImageChannel: { A: ['A'], B: ['A'] },
+          },
+          spatialImageChannel: {
+            spatialTargetC: { A: 'A' },
+          },
+        },
+      })).toBeNull();
+    });
+
+    it('returns null when a scopes-by entry is unreachable', () => {
+      expect(tryCollapseMultiLevelObject({
+        coordinationSpace: {
+          spatialImageLayer: { A: '__dummy__', B: '__dummy__' },
+          image: { A: 'a', B: 'b' },
+        },
+        coordinationScopes: {
+          spatialImageLayer: ['A'],
+        },
+        coordinationScopesBy: {
+          spatialImageLayer: {
+            // The mapping for layer B is not reachable from `coordinationScopes`.
+            image: { A: 'A', B: 'B' },
+          },
+        },
+      })).toBeNull();
+    });
+
+    it('returns null when multiple scopes of a non-level type are used', () => {
+      expect(tryCollapseMultiLevelObject({
+        coordinationSpace: {
+          obsType: { A: 'cell', B: 'nucleus' },
+        },
+        coordinationScopes: {
+          obsType: ['A', 'B'],
+        },
+        coordinationScopesBy: {},
+      })).toBeNull();
+    });
+
+    it('returns null when the mappings are cyclic', () => {
+      expect(tryCollapseMultiLevelObject({
+        coordinationSpace: {
+          spatialImageLayer: { A: '__dummy__' },
+          spatialImageChannel: { A: '__dummy__' },
+        },
+        coordinationScopes: {
+          spatialImageLayer: ['A'],
+        },
+        coordinationScopesBy: {
+          spatialImageLayer: {
+            spatialImageChannel: { A: ['A'] },
+          },
+          spatialImageChannel: {
+            spatialImageLayer: { A: ['A'] },
+          },
+        },
+      })).toBeNull();
+    });
+
+    it('round-trips the output of expandMultiLevelObject', () => {
+      const inputObj = {
+        spatialImageLayer: {
+          $CL: [
+            {
+              image: { $value: 'S-1905-017737_bf' },
+              spatialLayerVisible: { $value: true },
+              spatialLayerOpacity: { $value: 1 },
+              spatialImageChannel: {
+                $CL: [
+                  {
+                    spatialTargetC: { $value: 0 },
+                    spatialChannelColor: { $value: [255, 0, 0] },
+                  },
+                  {
+                    spatialTargetC: { $value: 1 },
+                    spatialChannelColor: { $value: [0, 255, 0] },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        embeddingZoom: { $value: 10 },
+      };
+      const expanded = expandMultiLevelObject(inputObj);
+      expect(tryCollapseMultiLevelObject(expanded)).toEqual(inputObj);
+      // Collapsing and re-expanding is a fixed point.
+      expect(expandMultiLevelObject(tryCollapseMultiLevelObject(expanded)!)).toEqual(expanded);
+    });
+
+    it('inlines the value of a $scope reference which is used only once', () => {
+      // A `$scope` reference is indistinguishable from a `$value` once expanded,
+      // so the value is inlined rather than referenced.
+      const expanded = expandMultiLevelObject({
+        spatialImageChannel: {
+          $CL: [
+            {
+              spatialTargetC: { $value: 0 },
+              spatialChannelColor: { $scope: 'myExistingColorScope' },
+            },
+          ],
+        },
+      }, {
+        coordinationSpace: {
+          spatialChannelColor: { myExistingColorScope: [0, 0, 255] },
+        },
+      });
+      expect(tryCollapseMultiLevelObject(expanded)).toEqual({
+        spatialImageChannel: {
+          $CL: [
+            {
+              spatialTargetC: { $value: 0 },
+              spatialChannelColor: { $value: [0, 0, 255] },
+            },
+          ],
+        },
+      });
     });
   });
 });

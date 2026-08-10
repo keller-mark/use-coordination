@@ -1,6 +1,7 @@
 export { CmvConfig, CL as CoordinationLevel, getCoordinationSpaceAndScopes } from './CmvConfig.js';
 export {
   expandMultiLevelObject,
+  tryCollapseMultiLevelObject,
   CL_SENTINEL,
   VALUE_SENTINEL,
   SCOPE_SENTINEL,
@@ -10,4 +11,5 @@ export type {
   MultiLevelValue,
   ExpandMultiLevelObjectOptions,
   ExpandedMultiLevelObject,
+  CollapseMultiLevelObjectInput,
 } from './multilevel-helpers.js';

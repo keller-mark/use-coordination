@@ -23,6 +23,12 @@ export const SCOPE_SENTINEL = '$scope';
 const SENTINELS = [CL_SENTINEL, VALUE_SENTINEL, SCOPE_SENTINEL];
 
 /**
+ * The value which `CmvConfig.addCoordinationByObject` assigns to the
+ * scopes which it creates for coordination levels.
+ */
+const DUMMY_VALUE = '__dummy__';
+
+/**
  * The value for a coordination type in a multi-level object.
  * Exactly one sentinel key is expected, so that a coordination value
  * which happens to be an object is never mistaken for a nested level.
@@ -251,4 +257,194 @@ export function expandMultiLevelObject(
     coordinationScopes,
     coordinationScopesBy,
   };
+}
+
+export interface CollapseMultiLevelObjectInput {
+  /**
+   * The coordination space in which the scope names are defined. Optional:
+   * scopes whose values are not found here are referenced via
+   * the `{ "$scope": ... }` sentinel rather than inlined.
+   */
+  coordinationSpace?: CoordinationSpace;
+  /** The mapping for the top level, e.g., a view's `coordinationScopes`. */
+  coordinationScopes?: CoordinationScopesMapping<CoordinationSpace>;
+  /** The mapping for the nested levels, e.g., a view's `coordinationScopesBy`. */
+  coordinationScopesBy?: CoordinationScopesByMapping<CoordinationSpace>;
+}
+
+/** A scope name, or an array of them, as found in the scope mappings. */
+type ScopeRef = string | string[];
+
+/** A key for a (coordination type, scope name) pair, or a scopes-by entry. */
+function tupleKey(...parts: string[]): string {
+  return JSON.stringify(parts);
+}
+
+/**
+ * Try to reconstruct the concise multi-level object which corresponds to a set of
+ * scope mappings: the reverse of `expandMultiLevelObject`.
+ *
+ * Not every set of mappings can be expressed as a multi-level object, since the
+ * multi-level representation assumes a tree: each scope in `coordinationScopesBy`
+ * has exactly one parent, and each non-level scope holds one value. When the
+ * mappings do form a tree, the result round-trips: expanding it (passing the same
+ * `coordinationSpace`) yields equivalent mappings, up to generated scope names.
+ *
+ * A best attempt is made in the cases which are only partially expressible:
+ * a scope which is shared between multiple places, or which is absent from the
+ * coordination space, is referenced via `{ "$scope": ... }` rather than inlined
+ * via `{ "$value": ... }`, so no value is duplicated or invented.
+ * @param input An object containing `coordinationSpace` (optional),
+ * `coordinationScopes`, and `coordinationScopesBy`. The output of
+ * `expandMultiLevelObject` can be passed directly.
+ * @returns The multi-level object, or `null` if the mappings cannot be
+ * represented as one.
+ */
+export function tryCollapseMultiLevelObject(
+  input: CollapseMultiLevelObjectInput,
+): MultiLevelObject | null {
+  const {
+    coordinationSpace = {},
+    coordinationScopes = {},
+    coordinationScopesBy = {},
+  } = input;
+
+  // The mapped types are awkward to index by plain strings, and the
+  // recursion below does not depend on the coordination type parameters.
+  const scopes = coordinationScopes as Record<string, ScopeRef | undefined>;
+  const scopesBy = coordinationScopesBy as Record<
+    string, Record<string, Record<string, ScopeRef> | undefined> | undefined
+  >;
+
+  // Whether the mappings turned out not to be representable.
+  let failed = false;
+
+  // How many times each (coordination type, scope name) pair is referenced by
+  // the mappings. A scope which is referenced more than once is shared, so its
+  // value cannot be inlined (and a shared level cannot be expressed at all).
+  const usageCounts = new Map<string, number>();
+  function countUsage(cType: string, scopeRef: ScopeRef): void {
+    (Array.isArray(scopeRef) ? scopeRef : [scopeRef]).forEach((cScopeName) => {
+      const key = tupleKey(cType, cScopeName);
+      usageCounts.set(key, (usageCounts.get(key) || 0) + 1);
+    });
+  }
+  Object.entries(scopes).forEach(([cType, scopeRef]) => {
+    if (scopeRef !== undefined) {
+      countUsage(cType, scopeRef);
+    }
+  });
+  Object.values(scopesBy).forEach((byType) => {
+    Object.entries(byType || {}).forEach(([childCType, mapping]) => {
+      Object.values(mapping || {}).forEach(scopeRef => countUsage(childCType, scopeRef));
+    });
+  });
+
+  function isShared(cType: string, cScopeName: string): boolean {
+    return (usageCounts.get(tupleKey(cType, cScopeName)) || 0) > 1;
+  }
+
+  // How many times each entry of `coordinationScopesBy` was reached by the
+  // recursion below, to detect entries which would be dropped or duplicated.
+  const consumedCounts = new Map<string, number>();
+  // The scopes on the current path, to detect cyclic mappings.
+  const visiting = new Set<string>();
+
+  /**
+   * Whether a scope has nested levels, i.e., whether it is a level scope
+   * (created by `CL(...)`) rather than one which holds a coordination value.
+   */
+  function hasChildren(cType: string, cScopeName: string): boolean {
+    return Object.values(scopesBy[cType] || {})
+      .some(mapping => Object.hasOwn(mapping || {}, cScopeName));
+  }
+
+  /** The value for a coordination type which does not have nested levels. */
+  function leafValue(cType: string, cScopeName: string): MultiLevelValue {
+    if (isShared(cType, cScopeName) || !Object.hasOwn(coordinationSpace[cType] || {}, cScopeName)) {
+      // Inlining a shared scope would duplicate its value (and un-share it), and a
+      // scope which is absent from the coordination space has no value to inline,
+      // so refer to the scope by name in both cases.
+      return { [SCOPE_SENTINEL]: cScopeName };
+    }
+    return { [VALUE_SENTINEL]: coordinationSpace[cType][cScopeName] };
+  }
+
+  /** One level of the multi-level object: the children of a level scope. */
+  function levelFor(cType: string, cScopeName: string): MultiLevelObject {
+    if (isShared(cType, cScopeName)) {
+      // The level would need to be repeated at each place which references it,
+      // which would create a separate copy of its scopes per place.
+      failed = true;
+      return {};
+    }
+    const visitKey = tupleKey(cType, cScopeName);
+    if (visiting.has(visitKey)) {
+      // Cyclic mappings have no finite multi-level representation.
+      failed = true;
+      return {};
+    }
+    visiting.add(visitKey);
+    const level: MultiLevelObject = {};
+    Object.entries(scopesBy[cType] || {}).forEach(([childCType, mapping]) => {
+      if (!mapping || !Object.hasOwn(mapping, cScopeName)) {
+        return;
+      }
+      const consumedKey = tupleKey(cType, childCType, cScopeName);
+      consumedCounts.set(consumedKey, (consumedCounts.get(consumedKey) || 0) + 1);
+      // eslint-disable-next-line no-use-before-define
+      level[childCType] = valueFor(childCType, mapping[cScopeName]);
+    });
+    visiting.delete(visitKey);
+    return level;
+  }
+
+  /** One level, for a scope which is used in a position where a level is required. */
+  function requiredLevelFor(cType: string, cScopeName: string): MultiLevelObject {
+    if (!hasChildren(cType, cScopeName)) {
+      // The scope is not a level scope, so it presumably holds a coordination value,
+      // which the nested-level representation has nowhere to store.
+      const cValue = coordinationSpace[cType]?.[cScopeName];
+      if (cValue !== undefined && cValue !== DUMMY_VALUE) {
+        failed = true;
+      }
+      return {};
+    }
+    return levelFor(cType, cScopeName);
+  }
+
+  /** The value for a coordination type, given the scope(s) mapped to it. */
+  function valueFor(cType: string, scopeRef: ScopeRef): MultiLevelValue {
+    if (Array.isArray(scopeRef)) {
+      // Multiple scopes for one coordination type are only expressible
+      // as an array of nested levels.
+      return { [CL_SENTINEL]: scopeRef.map(s => requiredLevelFor(cType, s)) };
+    }
+    if (hasChildren(cType, scopeRef)) {
+      return { [CL_SENTINEL]: levelFor(cType, scopeRef) };
+    }
+    return leafValue(cType, scopeRef);
+  }
+
+  const result: MultiLevelObject = {};
+  Object.entries(scopes).forEach(([cType, scopeRef]) => {
+    if (scopeRef !== undefined) {
+      result[cType] = valueFor(cType, scopeRef);
+    }
+  });
+
+  // Every entry of `coordinationScopesBy` must have been reached exactly once,
+  // otherwise the multi-level object would omit it (its parent scope is not
+  // referenced anywhere) or repeat it.
+  Object.entries(scopesBy).forEach(([parentCType, byType]) => {
+    Object.entries(byType || {}).forEach(([childCType, mapping]) => {
+      Object.keys(mapping || {}).forEach((parentScopeName) => {
+        if (consumedCounts.get(tupleKey(parentCType, childCType, parentScopeName)) !== 1) {
+          failed = true;
+        }
+      });
+    });
+  });
+
+  return failed ? null : result;
 }
