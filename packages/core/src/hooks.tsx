@@ -463,18 +463,38 @@ export const createCoordinationStore = (initialSpec: CmvConfigObject, onCreateSt
   ...(onCreateStore ? onCreateStore(set) : {}),
 })));
 
+export type ViewCoordinationScopes = Record<string, string | string[]>;
+export type ViewCoordinationScopesBy = Record<string, Record<string, Record<string, string | string[]>>>;
+export type ViewCoordinationValues = Record<string, any>;
+
+// The raw (pre-meta-coordination) mapping may omit any of its parts.
+export type RawViewMapping = [
+  ViewCoordinationScopes | undefined,
+  ViewCoordinationScopesBy | undefined,
+  ViewCoordinationValues | undefined,
+];
+
+// After meta-coordination, the scope objects are always defined
+// (getScopes/getScopesBy return at least an empty object),
+// but coordinationValues may still be undefined.
+export type ViewMapping = [
+  ViewCoordinationScopes,
+  ViewCoordinationScopesBy,
+  ViewCoordinationValues | undefined,
+];
+
 /**
  * Get the coordination information for a view.
  * @param {string} viewUid The view of interest
  * @returns {[coordinationScopes, coordinationScopesBy, coordinationValues]}
  */
-export function useRawViewMapping(viewUid: string) {
+export function useRawViewMapping(viewUid: string): RawViewMapping {
   const viewCoordination = useCoordinationStoreShallow((state) => {
     const { viewCoordination } = state.spec;
     return viewCoordination;
   });
 
-  return useMemo(() => {
+  return useMemo<RawViewMapping>(() => {
     return [
       viewCoordination?.[viewUid]?.coordinationScopes,
       viewCoordination?.[viewUid]?.coordinationScopesBy,
@@ -491,7 +511,7 @@ export function useRawViewMapping(viewUid: string) {
  * @param {string} viewUid The view of interest
  * @returns {[coordinationScopes, coordinationScopesBy, coordinationValues]}
  */
-export function useViewMapping(viewUid: string) {
+export function useViewMapping(viewUid: string): ViewMapping {
   const [coordinationScopesRaw, coordinationScopesByRaw, coordinationValues] = useRawViewMapping(viewUid);
 
   const metaSpace = useCoordinationStoreShallow((state) => {
@@ -507,7 +527,7 @@ export function useViewMapping(viewUid: string) {
       metaSpace,
       coordinationScopesRaw,
       viewMetaScopes,
-    );
+    ) as ViewCoordinationScopes;
   }, [coordinationScopesRaw, metaSpace, viewMetaScopes]);
 
   const metaSpaceBy = useCoordinationStoreShallow((state) => {
@@ -523,7 +543,7 @@ export function useViewMapping(viewUid: string) {
       metaSpaceBy,
       coordinationScopesByRaw,
       viewMetaScopesBy,
-    );
+    ) as ViewCoordinationScopesBy;
   }, [coordinationScopesByRaw, metaSpaceBy, viewMetaScopesBy]);
 
   return [coordinationScopes, coordinationScopesBy, coordinationValues];
@@ -584,7 +604,11 @@ export function useInitialCoordination<
   const initialCoordinationValues = useCoordinationStoreShallow(
     (state) => state.initialSpec.viewCoordination?.[viewUid]?.coordinationValues,
   );
-  return _useInitialCoordination<CTypes, P>(coordinationScopes, parameters, initialCoordinationValues);
+  return _useInitialCoordination<CTypes, P>(
+    coordinationScopes, parameters,
+    // Values from the spec are not statically typed, so a cast is required here.
+    initialCoordinationValues as Partial<PickValues<CTypes, P>> | undefined,
+  );
 }
 
 
@@ -652,7 +676,12 @@ export function useCoordination<
   const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(viewUid: string, parameters: P): [PickValues<CTypes, P>, PickSetters<CTypes, P>] {
   const [coordinationScopes, _coordinationScopesBy, coordinationValues] = useViewMapping(viewUid);
-  return _useCoordination<CTypes, P>(coordinationScopes, parameters, coordinationValues, viewUid);
+  return _useCoordination<CTypes, P>(
+    coordinationScopes, parameters,
+    // Values from the spec are not statically typed, so a cast is required here.
+    coordinationValues as Partial<PickValues<CTypes, P>> | undefined,
+    viewUid,
+  );
 }
 
 export function _useCoordinationScopesAll<
@@ -967,7 +996,12 @@ export function useCoordinationL1<
   const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(viewUid: string, byType: Extract<keyof CTypes, string>, parameters: P): [PickValuesL1<CTypes, P>, PickSettersL1<CTypes, P>] {
   const [coordinationScopes, coordinationScopesBy, coordinationValues] = useViewMapping(viewUid);
-  return _useCoordinationL1<CTypes, P>(coordinationScopes, coordinationScopesBy, byType, parameters, coordinationValues, viewUid);
+  return _useCoordinationL1<CTypes, P>(
+    coordinationScopes, coordinationScopesBy, byType, parameters,
+    // Values from the spec are not statically typed, so a cast is required here.
+    coordinationValues as Partial<PickValues<CTypes, P>> | undefined,
+    viewUid,
+  );
 }
 
 /**
@@ -1079,7 +1113,12 @@ export function useCoordinationL2<
   const P extends readonly (Extract<keyof CTypes, string>)[] = (Extract<keyof CTypes, string>)[],
 >(viewUid: string, primaryType: Extract<keyof CTypes, string>, secondaryType: Extract<keyof CTypes, string>, parameters: P): [PickValuesL2<CTypes, P>, PickSettersL2<CTypes, P>] {
   const [coordinationScopes, coordinationScopesBy, coordinationValues] = useViewMapping(viewUid);
-  return _useCoordinationL2<CTypes, P>(coordinationScopes, coordinationScopesBy, primaryType, secondaryType, parameters, coordinationValues, viewUid);
+  return _useCoordinationL2<CTypes, P>(
+    coordinationScopes, coordinationScopesBy, primaryType, secondaryType, parameters,
+    // Values from the spec are not statically typed, so a cast is required here.
+    coordinationValues as Partial<PickValues<CTypes, P>> | undefined,
+    viewUid,
+  );
 }
 
 /**
