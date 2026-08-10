@@ -12,11 +12,11 @@ import 'jsdom-worker';
 
 beforeAll(() => {
     // jsdom doesn't come with a WebCrypto implementation (required for uuid)
-    global.crypto = {
+    /*global.crypto = {
         getRandomValues: function (buffer) {
             return randomFillSync(buffer);
         }
-    };
+        };*/
     // jsdom doesn't come with a `URL.createObjectURL` implementation
     global.URL.createObjectURL = () => { return ''; };
 });
