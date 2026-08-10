@@ -118,12 +118,12 @@ const EXAMPLE_SPEC: Fixture = {
 /** The nested `--input` example from the README. */
 const IMAGE_LAYER_INPUT = JSON.stringify({
   spatialImageLayer: {
-    $CL: [
+    $level: [
       {
         fileUid: 'my-image',
         spatialLayerVisible: true,
         spatialImageChannel: {
-          $CL: [
+          $level: [
             { spatialTargetC: 0, spatialChannelColor: [255, 0, 0] },
             { spatialTargetC: 1, spatialChannelColor: [0, 255, 0] },
           ],
@@ -355,18 +355,18 @@ describe('usecoord', () => {
       expect(await one(['link-views-by-object', '--views', 'v1', '--input', 'zoom']))
         .toMatchSnapshot();
     });
-    it('errors when the $CL sentinel has sibling keys', async () => {
+    it('errors when the $level sentinel has sibling keys', async () => {
       expect(await one([
         'link-views-by-object',
         '--views', 'v1',
-        '--input', '{"spatialImageLayer":{"$CL":[{"fileUid":"a"}],"other":1}}',
+        '--input', '{"spatialImageLayer":{"$level":[{"fileUid":"a"}],"other":1}}',
       ])).toMatchSnapshot();
     });
-    it('errors when the $CL sentinel value is not an object', async () => {
+    it('errors when the $level sentinel value is not an object', async () => {
       expect(await one([
         'link-views-by-object',
         '--views', 'v1',
-        '--input', '{"spatialImageLayer":{"$CL":10}}',
+        '--input', '{"spatialImageLayer":{"$level":10}}',
       ])).toMatchSnapshot();
     });
   });

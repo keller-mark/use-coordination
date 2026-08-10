@@ -268,7 +268,7 @@ const linkViewsByObjectCommand = defineTransform({
     input: {
       kind: 'string',
       placeholder: '<json>',
-      description: 'The (potentially nested) coordination input object. Use {"$CL": ...} for a nested coordination level.',
+      description: 'The (potentially nested) coordination input object. Use {"$level": ...} for a nested coordination level.',
     },
     'no-meta': {
       kind: 'boolean',
